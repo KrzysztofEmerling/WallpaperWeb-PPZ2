@@ -32,3 +32,10 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
+#slider::-webkit-slider-thumb {
+    background-color: var(--bs-secondary);
+}
+
+#slider::-moz-range-thumb {
+    background-color: var(--bs-secondary);
+}
