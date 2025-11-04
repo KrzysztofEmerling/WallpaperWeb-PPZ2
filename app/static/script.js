@@ -1,5 +1,5 @@
 const canvas = document.getElementById('glcanvas');
-const gl = canvas.getContext("webgl");
+const gl = canvas.getContext("webgl2");
 
 if (!gl) {
     alert('Unable to initialize WebGL. Your browser may not support it.');
@@ -14,30 +14,36 @@ function resizeCanvas() {
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
-function render(time) {
-    const r=Math.sin(time*0.001)*0.5+0.5;
-    const g=Math.cos(time*0.001)*0.5+0.5;
-    gl.clearColor(r,g,0.7,1);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    requestAnimationFrame(render);
-}
-
-// requestAnimationFrame(render);
-
-
 // Vertex shader (przekazuje pozycję)
-const vertexShaderSource = `
-  attribute vec4 a_position;
+const vertexShaderSource = `#version 300 es
+  in vec2 a_position;
+  out vec2 v_TexCoord;
+
   void main() {
-    gl_Position = a_position;
+  gl_Position = vec4(a_position, 0.0, 1.0);
+  v_TexCoord = a_position * 0.5 + 0.5;
   }
 `;
 
 // Fragment shader (ustawia kolor pikseli na czerwony)
-const fragmentShaderSource = `
+const fragmentShaderSource = `#version 300 es
   precision mediump float;
+
+  in vec2 v_TexCoord;
+  uniform float u_Time;
+
+  out vec4 fragColor;
+
   void main() {
-    gl_FragColor = vec4(1, 0, 0, 1); // czerwony
+    float r = (sin(u_Time * 0.0001) + 1.0) / 2.0;
+    float g = (sin(u_Time * 0.0003) + 1.0) / 2.0;
+    float b = (sin(u_Time * 0.0005) + 1.0) / 2.0;
+
+    // pokazanie uniformów na zasadzie u_Time
+    // fragColor = vec4(r, g, b, 1.0);
+
+    // pokazanie przestrzeni teksturowej + animacja na kanale b
+    fragColor =  vec4(v_TexCoord, b, 1.0);
   }
 `;
 
@@ -75,7 +81,7 @@ const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource
 const program = createProgram(gl, vertexShader, fragmentShader);
 gl.useProgram(program);
 
-// Ustaw bufor współrzędnych prostokąta obejmującego cały ekran
+// Ustaw bufor współrzędnych prostokąta obejmującego cały canvas
 const positionBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 const positions = [
@@ -93,8 +99,25 @@ const positionLocation = gl.getAttribLocation(program, 'a_position');
 gl.enableVertexAttribArray(positionLocation);
 gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
+// Znajdź wszystkie lokalizacje uniformów:
+const uTimeLocation = gl.getUniformLocation(program, "u_Time");
+
+// ...
+
 // Narysuj na ekranie
-gl.viewport(0, 0, canvas.width, canvas.height);
-gl.clearColor(0, 0, 0, 1); // czarne tło
-gl.clear(gl.COLOR_BUFFER_BIT);
-gl.drawArrays(gl.TRIANGLES, 0, 6);
+function render(time) {
+    gl.viewport(0, 0, canvas.width, canvas.height);
+
+    gl.clearColor(0, 0, 0, 1); 
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+    // zaktualizuj uniformy
+    gl.uniform1f(uTimeLocation, time);
+
+    // ...
+
+    requestAnimationFrame(render);
+}
+requestAnimationFrame(render);
+
