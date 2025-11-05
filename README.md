@@ -6,10 +6,13 @@ git clone https://github.com/KrzysztofEmerling/WallpaperWeb-PPZ2
 
 utworzenie flaskEnv z pliku requirements.txt:
 ~~~
-python3 -m venv flaskEnv
-./flaskEnv/bin/activate           (Unix)
-flaskEnv\Scripts\activate         (Windows)
-source flaskEnv/bin/activate      (MacOS)
+python3 -m venv flaskEnv         (Unix)
+python -m venv flaskEnv          (Windows)
+
+./flaskEnv/bin/activate          (Unix)
+flaskEnv\Scripts\activate        (Windows)
+source flaskEnv/bin/activate     (MacOS)
+
 pip install -r requirements.txt
 ~~~
 
