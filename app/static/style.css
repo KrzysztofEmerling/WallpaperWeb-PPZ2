@@ -3,40 +3,48 @@ body {
     overflow: hidden;
 }
 
-.sidebar{
-            width: 60px;
-            flex-shrink: 0;
-            transition: width 0.3s ease;
-            overflow:hidden;
-        }
-        .sidebar:hover{
-            width: 300px;
-        }
-        .hidden{
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .sidebar:hover .hidden{
-            opacity: 100;
-            transition: opacity 0.3s ease;
-        }
-        .bg-blur{
-            backdrop-filter: blur(10px);
-        }
-        .custom-color{
-            color: rgba(255, 255, 255);
-        }
-        .custom-color:hover{
-            color: rgb(98, 98, 98);
-        }
-        .hidden-reverse{
-            opacity: 100;
-            transition: opacity 0.3s ease;
-        }
-        .sidebar:hover .hidden-reverse{
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
+.sidebar {
+    width: 60px;
+    flex-shrink: 0;
+    transition: width 0.3s ease;
+    overflow:hidden;
+}
+
+.sidebar:hover {
+    width: 300px;
+}
+
+.hidden {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar:hover .hidden {
+    opacity: 100;
+    transition: opacity 0.3s ease;
+}
+.bg-blur {
+    backdrop-filter: blur(10px);
+}
+
+.custom-color {
+    color: rgba(255, 255, 255);
+}
+
+.custom-color:hover {
+    color: rgb(98, 98, 98);
+}
+
+.hidden-reverse {
+    opacity: 100;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar:hover .hidden-reverse {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
 #slider::-webkit-slider-thumb {
     background-color: var(--bs-secondary);
 }
