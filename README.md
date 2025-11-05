@@ -2,9 +2,10 @@
 Sklonowanie repozytorium:
 ~~~
 git clone https://github.com/KrzysztofEmerling/WallpaperWeb-PPZ2
+cd WallpaperWeb-PPZ2
 ~~~
 
-utworzenie flaskEnv z pliku requirements.txt:
+Utworzenie flaskEnv z pliku requirements.txt:
 ~~~
 python3 -m venv flaskEnv         (Unix)
 python -m venv flaskEnv          (Windows)
