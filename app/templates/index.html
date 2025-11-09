@@ -12,17 +12,90 @@
     <canvas id="glcanvas"></canvas>
     <div class="container m-0 p-0 overlay-content">
         <div class="flex-shrink-0 p-3 vh-100 rounded-2 sidebar bg-opacity-10 bg-blur bg-dark">
-            <i class="bi bi-list fs-3 text-white hidden-reverse"></i> 
-            <ul class="list-unstyled ps-0 text-start"> 
-                <li class="mb-1"> 
-                    <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">Category 1</button>
-                    <div class="collapse ps-3" id="home-collapse">
-                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                            <li><input type="range" class="form-range hidden pe-4" min="0" max="5" id="slider"></li> 
-                        </ul> 
-                    </div> 
-                </li> 
-            </ul>
+
+            <i class="bi bi-list fs-3 text-white hidden-reverse"></i>
+
+            <div class="pt-3">
+                <ul class="list-unstyled ps-0 text-start"> 
+
+                    <li class="mb-1"> 
+                        <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#ls-collapse" aria-expanded="true">
+                            Load/Save
+                        </button>
+
+                        <div class="collapse ps-3 pt-2" id="ls-collapse">
+
+                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                <li>
+                                    <div class="d-flex justify-content-center flex-column">
+                                        <input class="form-control form-control-sm hidden flex-shrink-0" type="file" id="formFile">
+                                        <div class="d-flex justify-content-between gap-3 pt-2">
+                                            <button class="btn btn-light btn-sm hidden flex-shrink-0 flex-fill"><i class="bi bi-upload pe-2"></i>Import</button>
+                                            <button class="btn btn-light btn-sm hidden flex-shrink-0 flex-fill"><i class="bi bi-download pe-2"></i>Export</button>
+                                        </div>
+                                        <button class="btn btn-light btn-sm hidden flex-shrink-0 flex-fill mt-2"><i class="bi bi-floppy-fill pe-2"></i>Save as image</button>
+                                    </div>
+                                </li> 
+                            </ul> 
+
+                        </div> 
+                    </li>
+
+                    <!-- To jest template dla shadera, ktory ma tylko 1 parametr -->
+
+                    <li class="mb-1"> 
+                        <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#cat1-collapse" aria-expanded="true">
+                            Category 1
+                        </button>
+
+                        <div class="collapse ps-3 pt-2" id="cat1-collapse">
+
+                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                <li>
+                                    <div class="d-flex justify-content-between align-items-center gap-4">
+                                        <input type="range" class="form-range hidden flex-fill slider" min="0" max="100" value="50" id="slider1">
+                                        <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="0" max="100" value="50"id="value1">
+                                    </div>
+                                </li> 
+                            </ul> 
+
+                        </div> 
+                    </li>
+
+                    <!-- To jest template dla shadera, ktory ma wiecej niz 1 parametr -->
+
+                    <li class="mb-1"> 
+                        <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#cat2-collapse" aria-expanded="true">
+                            Category 2
+                        </button>
+
+                        <div class="collapse ps-3 pt-2" id="cat2-collapse">
+                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+
+                                <li> <!-- Jeden znacznik li to jest jedna podkategoria -->
+                                    <span class="text-white text-nowrap hidden">sub-category 1</span>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="100" value="50" id="slider2">
+                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="100" value="50" id="value2">
+                                    </div>
+                                </li> 
+
+                                <li>
+                                    <span class="text-white text-nowrap hidden">sub-category 2</span>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="100" value="50" id="slider3">
+                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="100" value="50" id="value3">
+                                    </div>
+                                </li>
+
+                                <!-- W tym miejscu dodac kolejne elementy listy tak jak wyzej -->
+
+                            </ul> 
+                        </div>
+                    </li> 
+                </ul>
+            </div>
+
         </div>
     </div>
 

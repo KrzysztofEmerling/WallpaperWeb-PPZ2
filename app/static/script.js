@@ -1,3 +1,5 @@
+// ======================================================================= WebGL
+
 const canvas = document.getElementById('glcanvas');
 const gl = canvas.getContext("webgl2");
 
@@ -121,3 +123,76 @@ function render(time) {
 }
 requestAnimationFrame(render);
 
+// ======================================================================= Reszta Skryptow
+
+function sliderValue(slider, input){
+  const min = slider.min;
+  const max = slider.max;
+
+  let val = parseFloat(input.value);
+
+  if (val < min) val = min;
+  if (val > max) val = max;
+
+  slider.value = val;
+}
+
+function inputValue(slider, input){
+  input.value = slider.value;
+}
+
+function inputValidation(input){
+  const min = input.min;
+  const max = input.max;
+
+  let val = parseFloat(input.value);
+
+  if (val < min) val = min;
+  if (val > max) val = max;
+
+  input.value = val;
+}
+
+// ======================================================================= Podpiecia funkcji pod elementy HTML
+
+// ======= Slider 1
+
+const slider1 = document.getElementById('slider1');
+const value1 = document.getElementById('value1');
+
+slider1.addEventListener('input', () => {
+  inputValue(slider1, value1);
+});
+
+value1.addEventListener('input', () => {
+  sliderValue(slider1, value1);
+  inputValidation(value1);
+});
+
+// ======= Slider 2
+
+const slider2 = document.getElementById('slider2');
+const value2 = document.getElementById('value2');
+
+slider2.addEventListener('input', () => {
+  inputValue(slider2, value2);
+});
+
+value2.addEventListener('input', () => {
+  sliderValue(slider2, value2);
+  inputValidation(value2);
+});
+
+// ======= Slider 3
+
+const slider3 = document.getElementById('slider3');
+const value3 = document.getElementById('value3');
+
+slider3.addEventListener('input', () => { 
+  inputValue(slider3, value3);
+});
+
+value3.addEventListener('input', () => {
+  sliderValue(slider3, value3);
+  inputValidation(value3);
+});

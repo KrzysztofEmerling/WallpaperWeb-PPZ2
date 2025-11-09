@@ -45,12 +45,20 @@ body {
     transition: opacity 0.3s ease;
 }
 
-#slider::-webkit-slider-thumb {
+.slider::-webkit-slider-thumb {
     background-color: var(--bs-secondary);
 }
 
-#slider::-moz-range-thumb {
+.slider::-moz-range-thumb {
     background-color: var(--bs-secondary);
+}
+
+.single-value{
+    width: 30%;
+}
+
+.multi-value{
+    width: 28%;
 }
 
 canvas {
