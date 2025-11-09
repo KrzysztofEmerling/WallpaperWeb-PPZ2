@@ -1,1 +1,3 @@
 /flaskEnv
+app/__pycache__
+docs/build/*
