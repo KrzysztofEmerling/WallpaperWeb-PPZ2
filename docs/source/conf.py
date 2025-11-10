@@ -19,9 +19,13 @@ release = '1.0.0'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
+# Hello! If You have problems with sphinx_js on windows (node.cmd not found) it
+# probably means You have a newer version of node that does not come with 
+# node.cmd file. As of now, Sphinx is outdated and doesn't know this. In this
+# case you have to create node.cmd by yourself and add it to path - SD
 extensions = [
-    'sphinx.ext.autodoc',  # dla Pythona
-    'sphinx_js'
+    'sphinx.ext.autodoc',  # for python
+    'sphinx_js',
 ]
 
 js_source_path = '../../app/static'
