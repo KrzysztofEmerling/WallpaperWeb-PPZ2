@@ -33,6 +33,7 @@ const fragmentShaderSource = `#version 300 es
 
   in vec2 v_TexCoord;
   uniform float u_Time;
+  uniform vec4 u_Color;
 
   out vec4 fragColor;
 
@@ -45,7 +46,7 @@ const fragmentShaderSource = `#version 300 es
     // fragColor = vec4(r, g, b, 1.0);
 
     // pokazanie przestrzeni teksturowej + animacja na kanale b
-    fragColor =  vec4(v_TexCoord, b, 1.0);
+    fragColor =  u_Color;
   }
 `;
 
@@ -103,8 +104,25 @@ gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
 // Znajdź wszystkie lokalizacje uniformów:
 const uTimeLocation = gl.getUniformLocation(program, "u_Time");
+const uColorLocation = gl.getUniformLocation(program, "u_Color");
 
 // ...
+
+function rgbCreator(red, green, blue){
+  const red_slider = document.getElementById(red);
+  const green_slider = document.getElementById(green);
+  const blue_slider = document.getElementById(blue);
+
+  const r = red_slider.value / 255;
+  const g = green_slider.value / 255;
+  const b = blue_slider.value / 255;
+  const a = 1.0;
+
+  const colors = [r, g, b, a];
+
+  return colors;
+}
+
 
 // Narysuj na ekranie
 function render(time) {
@@ -115,7 +133,11 @@ function render(time) {
     gl.drawArrays(gl.TRIANGLES, 0, 6);
 
     // zaktualizuj uniformy
-    gl.uniform1f(uTimeLocation, time);
+    //gl.uniform1f(uTimeLocation, time);
+
+    const [r, g, b, a] = rgbCreator('red-slider', 'green-slider', 'blue-slider');
+
+    gl.uniform4f(uColorLocation, r, g, b, a);
 
     // ...
 
@@ -141,6 +163,12 @@ function inputValue(slider, input){
   input.value = slider.value;
 }
 
+function restoreDefault(input){
+  if (input.value === ''){
+    input.value = input.min;
+  }
+}
+
 function inputValidation(input){
   const min = input.min;
   const max = input.max;
@@ -164,7 +192,8 @@ slider1.addEventListener('input', () => {
   inputValue(slider1, value1);
 });
 
-value1.addEventListener('input', () => {
+value1.addEventListener('input', () => { // funkcje musza byc w tej kolejnosci (restoreDefault() -> sliderValue() -> inputValidation()) zeby suwaki dzialaly poprawnie
+  restoreDefault(value1);
   sliderValue(slider1, value1);
   inputValidation(value1);
 });
@@ -179,6 +208,7 @@ slider2.addEventListener('input', () => {
 });
 
 value2.addEventListener('input', () => {
+  restoreDefault(value2);
   sliderValue(slider2, value2);
   inputValidation(value2);
 });
@@ -193,6 +223,48 @@ slider3.addEventListener('input', () => {
 });
 
 value3.addEventListener('input', () => {
+  restoreDefault(value3);
   sliderValue(slider3, value3);
   inputValidation(value3);
+});
+
+// ======= RGB sliders
+
+const red_slider = document.getElementById('red-slider');
+const red_value = document.getElementById('red-value');
+
+red_slider.addEventListener('input', () => { 
+  inputValue(red_slider, red_value);
+});
+
+red_value.addEventListener('input', () => {
+  restoreDefault(red_value);
+  sliderValue(red_slider, red_value);
+  inputValidation(red_value);
+});
+
+const green_slider = document.getElementById('green-slider');
+const green_value = document.getElementById('green-value');
+
+green_slider.addEventListener('input', () => { 
+  inputValue(green_slider, green_value);
+});
+
+green_value.addEventListener('input', () => {
+  restoreDefault(green_value);
+  sliderValue(green_slider, green_value);
+  inputValidation(green_value);
+});
+
+const blue_slider = document.getElementById('blue-slider');
+const blue_value = document.getElementById('blue-value');
+
+blue_slider.addEventListener('input', () => { 
+  inputValue(blue_slider, blue_value);
+});
+
+blue_value.addEventListener('input', () => {
+  restoreDefault(blue_value);
+  sliderValue(blue_slider, blue_value);
+  inputValidation(blue_value);
 });

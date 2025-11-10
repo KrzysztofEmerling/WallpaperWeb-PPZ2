@@ -92,7 +92,44 @@
 
                             </ul> 
                         </div>
-                    </li> 
+                    </li>
+
+                    <!-- Test RGB -->
+
+                    <li class="mb-1"> 
+                        <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#rgb-collapse" aria-expanded="true">
+                            RGB test
+                        </button>
+
+                        <div class="collapse ps-3 pt-2" id="rgb-collapse">
+                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+
+                                    <span class="text-white text-nowrap hidden">Red</span>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="255" value="128" id="red-slider">
+                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="128" id="red-value">
+                                    </div>
+                                </li> 
+
+                                <li>
+                                    <span class="text-white text-nowrap hidden">Green</span>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="255" value="128" id="green-slider">
+                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="128" id="green-value">
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <span class="text-white text-nowrap hidden">Blue</span>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="255" value="128" id="blue-slider">
+                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="128" id="blue-value">
+                                    </div>
+                                </li>
+
+                            </ul> 
+                        </div>
+                    </li>
                 </ul>
             </div>
 
