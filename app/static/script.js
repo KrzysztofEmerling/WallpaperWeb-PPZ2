@@ -158,7 +158,36 @@ function inputValidation(input){
   input.value = val;
 }
 
+function createJSON(){
+  const sliders = document.querySelectorAll('.container input.slider');
+  const data = {};
+
+  sliders.forEach(input => {
+    data[input.id] = input.value;
+  });
+
+  const jsonStr = JSON.stringify(data, null, 2)
+
+  const blob = new Blob([jsonStr], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `config-${Date.now()}.json`;
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
 // ======================================================================= Podpiecia funkcji pod elementy HTML
+
+// ======= Pobieranie pliku JSON
+
+const export_btn = document.getElementById('export-btn');
+
+export_btn.addEventListener('click', () => {
+  createJSON();
+});
 
 // ======= Slider 1
 
