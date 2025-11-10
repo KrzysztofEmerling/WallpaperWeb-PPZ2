@@ -1,7 +1,7 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../../app'))
 
 # Configuration file for the Sphinx documentation builder.
 #
@@ -21,8 +21,10 @@ release = '1.0.0'
 
 extensions = [
     'sphinx.ext.autodoc',  # dla Pythona
-    'sphinx_js',           # dla JS
+    'sphinx_js'
 ]
+
+js_source_path = '../../app/static'
 
 templates_path = ['_templates']
 exclude_patterns = []
