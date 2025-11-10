@@ -16,40 +16,6 @@ function resizeCanvas() {
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
-// Vertex shader (przekazuje pozycję)
-const vertexShaderSource = `#version 300 es
-  in vec2 a_position;
-  out vec2 v_TexCoord;
-
-  void main() {
-  gl_Position = vec4(a_position, 0.0, 1.0);
-  v_TexCoord = a_position * 0.5 + 0.5;
-  }
-`;
-
-// Fragment shader (ustawia kolor pikseli na czerwony)
-const fragmentShaderSource = `#version 300 es
-  precision mediump float;
-
-  in vec2 v_TexCoord;
-  uniform float u_Time;
-  uniform vec4 u_Color;
-
-  out vec4 fragColor;
-
-  void main() {
-    float r = (sin(u_Time * 0.0001) + 1.0) / 2.0;
-    float g = (sin(u_Time * 0.0003) + 1.0) / 2.0;
-    float b = (sin(u_Time * 0.0005) + 1.0) / 2.0;
-
-    // pokazanie uniformów na zasadzie u_Time
-    // fragColor = vec4(r, g, b, 1.0);
-
-    // pokazanie przestrzeni teksturowej + animacja na kanale b
-    fragColor =  u_Color;
-  }
-`;
-
 // Funkcja do tworzenia i kompilacji shaderów
 function createShader(gl, type, source) {
   const shader = gl.createShader(type);
@@ -62,8 +28,7 @@ function createShader(gl, type, source) {
   }
   return shader;
 }
-
-// Funkcja do tworzenia programu shaderowego
+// Funkcja do tworzenia programu
 function createProgram(gl, vertexShader, fragmentShader) {
   const program = gl.createProgram();
   gl.attachShader(program, vertexShader);
@@ -75,38 +40,54 @@ function createProgram(gl, vertexShader, fragmentShader) {
   }
   return program;
 }
+//ładowanie shaderów
+async function loadShaderSource(name) {
+  const response = await fetch(`/static/shaders/${name}`);
+  if (!response.ok) {
+    throw new Error(`Nie udało się załadować shadera: ${name}`);
+  }
+  return await response.text();
+}
+async function init() {
+  const vertexShaderSource = await loadShaderSource('vertex.shader');
+  const fragmentShaderSource = await loadShaderSource('fragment.shader');
 
-// Kompiluj shadery
-const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+  return {vertexShaderSource, fragmentShaderSource}
+}
 
-// Stwórz program i ustaw go
-const program = createProgram(gl, vertexShader, fragmentShader);
-gl.useProgram(program);
+(async () => {
+  const { vertexShaderSource, fragmentShaderSource } = await init();
 
-// Ustaw bufor współrzędnych prostokąta obejmującego cały canvas
-const positionBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-const positions = [
-  -1, -1, 
-   1, -1, 
-  -1,  1, 
-  -1,  1, 
-   1, -1, 
-   1,  1,
-];
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+  // Kompiluj shadery
+  const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+  const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+  // Stwórz program i ustaw go
+  const program = createProgram(gl, vertexShader, fragmentShader);
+  gl.useProgram(program);
 
-// Połącz atrybut pozycji z buforem
-const positionLocation = gl.getAttribLocation(program, 'a_position');
-gl.enableVertexAttribArray(positionLocation);
-gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+  // Ustaw bufor współrzędnych prostokąta obejmującego cały canvas
+  const positionBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+  const positions = [
+    -1, -1, 
+    1, -1, 
+    -1,  1, 
+    -1,  1, 
+    1, -1, 
+    1,  1,
+  ];
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
-// Znajdź wszystkie lokalizacje uniformów:
-const uTimeLocation = gl.getUniformLocation(program, "u_Time");
-const uColorLocation = gl.getUniformLocation(program, "u_Color");
+  // Połącz atrybut pozycji z buforem
+  const positionLocation = gl.getAttribLocation(program, 'a_position');
+  gl.enableVertexAttribArray(positionLocation);
+  gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
-// ...
+  // ============================================================ Podpinanie uniformów:
+  const uTimeLocation = gl.getUniformLocation(program, "u_Time");
+  const uColorLocation = gl.getUniformLocation(program, "u_Color");
+  //===================================================================================
+
 
 function rgbCreator(red, green, blue){
   const red_slider = document.getElementById(red);
@@ -122,28 +103,24 @@ function rgbCreator(red, green, blue){
 
   return colors;
 }
+  // Narysuj na ekranie
+  function render(time) {
+      gl.viewport(0, 0, canvas.width, canvas.height);
 
+      gl.clearColor(0, 0, 0, 1); 
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-// Narysuj na ekranie
-function render(time) {
-    gl.viewport(0, 0, canvas.width, canvas.height);
+      // zaktualizuj uniformy
+      const [r, g, b, a] = rgbCreator('red-slider', 'green-slider', 'blue-slider');
+      gl.uniform4f(uColorLocation, r, g, b, a);
+      gl.uniform1f(uTimeLocation, time);
 
-    gl.clearColor(0, 0, 0, 1); 
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.drawArrays(gl.TRIANGLES, 0, 6);
+      requestAnimationFrame(render);
+  }
+  requestAnimationFrame(render);
 
-    // zaktualizuj uniformy
-    //gl.uniform1f(uTimeLocation, time);
-
-    const [r, g, b, a] = rgbCreator('red-slider', 'green-slider', 'blue-slider');
-
-    gl.uniform4f(uColorLocation, r, g, b, a);
-
-    // ...
-
-    requestAnimationFrame(render);
-}
-requestAnimationFrame(render);
+})();
 
 // ======================================================================= Reszta Skryptow
 
@@ -159,14 +136,14 @@ function sliderValue(slider, input){
   slider.value = val;
 }
 
-function inputValue(slider, input){
-  input.value = slider.value;
-}
-
 function restoreDefault(input){
   if (input.value === ''){
     input.value = input.min;
   }
+}
+
+function inputValue(slider, input){
+  input.value = slider.value;
 }
 
 function inputValidation(input){
@@ -192,7 +169,7 @@ slider1.addEventListener('input', () => {
   inputValue(slider1, value1);
 });
 
-value1.addEventListener('input', () => { // funkcje musza byc w tej kolejnosci (restoreDefault() -> sliderValue() -> inputValidation()) zeby suwaki dzialaly poprawnie
+value1.addEventListener('input', () => {
   restoreDefault(value1);
   sliderValue(slider1, value1);
   inputValidation(value1);
@@ -209,6 +186,7 @@ slider2.addEventListener('input', () => {
 
 value2.addEventListener('input', () => {
   restoreDefault(value2);
+
   sliderValue(slider2, value2);
   inputValidation(value2);
 });
@@ -227,6 +205,7 @@ value3.addEventListener('input', () => {
   sliderValue(slider3, value3);
   inputValidation(value3);
 });
+
 
 // ======= RGB sliders
 
