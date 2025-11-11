@@ -179,7 +179,62 @@ function createJSON(){
   URL.revokeObjectURL(url);
 }
 
+function loadJSON() {
+  const fileInput = document.getElementById('formFile');
+  const sliders = document.querySelectorAll('.container input.slider');
+  const data_min = {};
+  const data_max = {};
+
+  sliders.forEach(i => {
+    data_min[i.id] = i.min;
+    data_max[i.id] = i.max;
+  });
+
+  if (!fileInput) {
+    alert('Nie znaleziono inputa pliku JSON w HTML.');
+    return;
+  }
+
+  const file = fileInput.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = event => {
+    try {
+      const data = JSON.parse(event.target.result);
+
+      for (const id in data) {
+        const element = document.getElementById(id);
+        if (element) {
+          if (data[id] < data_min[id]) {
+            element.value = data_min[id];
+          }
+          else if (data[id] > data_max[id]) {
+            element.value = data_max[id];
+          }
+          else {
+            element.value = data[id];
+          }
+          element.dispatchEvent(new Event('input')); // jeśli chcesz odświeżyć widok
+        }
+      }
+      
+    } catch (err) {
+      alert('Błąd podczas wczytywania pliku JSON.');
+      console.error(err);
+    }
+  };
+
+  reader.readAsText(file);
+}
+
 // ======================================================================= Podpiecia funkcji pod elementy HTML
+
+const import_btn = document.getElementById('import-btn'); //dostajemy się do elementu
+
+import_btn.addEventListener('click', () => {
+  loadJSON();
+});
 
 // ======= Pobieranie pliku JSON
 
