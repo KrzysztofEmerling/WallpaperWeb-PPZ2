@@ -84,8 +84,9 @@ async function init() {
   gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
   // ============================================================ Podpinanie uniformów:
-  const uTimeLocation = gl.getUniformLocation(program, "u_Time");
-  const uColorLocation = gl.getUniformLocation(program, "u_Color");
+  // const uTimeLocation = gl.getUniformLocation(program, "u_Time");
+  // const uColorLocation = gl.getUniformLocation(program, "u_Color");
+  const uResolutionLocation = gl.getUniformLocation(program, "u_Resolution");
   //===================================================================================
 
 
@@ -112,9 +113,10 @@ function rgbCreator(red, green, blue){
       gl.drawArrays(gl.TRIANGLES, 0, 6);
 
       // zaktualizuj uniformy
-      const [r, g, b, a] = rgbCreator('red-slider', 'green-slider', 'blue-slider');
-      gl.uniform4f(uColorLocation, r, g, b, a);
-      gl.uniform1f(uTimeLocation, time);
+      // const [r, g, b, a] = rgbCreator('red-slider', 'green-slider', 'blue-slider');
+      // gl.uniform4f(uColorLocation, r, g, b, a);
+      // gl.uniform1f(uTimeLocation, time);
+      gl.uniform2f(uResolutionLocation, canvas.width, canvas.height);
 
       requestAnimationFrame(render);
   }
