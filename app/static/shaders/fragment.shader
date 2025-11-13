@@ -5,25 +5,19 @@ uniform vec2 u_Resolution;
 
 out vec4 fragColor;
 
-// -----------------------------
-// Funkcje pomocnicze
-// -----------------------------
-
 float sdSphere(vec3 p, float r) {
     return length(p) - r;
 }
 
-// Zwraca najmniejszą odległość do obiektów w scenie
+// Zwraca najmniejszą odległość do obiektów w scenie (matemtyczna reprezentacja sceny)
 float sceneSDF(vec3 p) {
-    // sfera w środku
-    float sphere1 = sdSphere(p - vec3(0.25, 0.3, 3.0), 0.3);
-    float sphere2 = sdSphere(p - vec3(0.2, 0.0, 4.0), 1.0);
+    float sphere1 = sdSphere(p - vec3(0.2, 0.0, 4.0), 1.0);
+    float sphere2 = sdSphere(p - vec3(0.25, 0.3, 3.0), 0.3);
 
-    // zwróć najmniejszy dystans — czyli kombinację obiektów
-    return max(sphere2, -sphere1);
+    return max(sphere1, -sphere2); //wycinanie sfery2 z sphere1
+    // return min (sphere1, sphere2); //normalne rysowanie obu sfer (bez cieni)
 }
 
-// Raymarching — zwraca odległość do najbliższego punktu kolizji
 float raymarch(vec3 ro, vec3 rd) {
     float t = 0.0;
     const float MAX_DIST = 100.0;
@@ -35,7 +29,7 @@ float raymarch(vec3 ro, vec3 rd) {
         t += d;
         if (t > MAX_DIST) break;
     }
-    return -1.0; // nic nie trafione
+    return -1.0;
 }
 
 // Przybliżenie normalnej przez różniczkowanie
@@ -51,12 +45,10 @@ vec3 estimateNormal(vec3 p) {
 // Oświetlenie lambertowskie
 vec3 lighting(vec3 p, vec3 n, vec3 lightDir) {
     float diff = max(dot(n, lightDir), 0.0);
-    return vec3(1.0, 0.9, 0.7) * diff;
+    // kolor światła * ilość trafiającego do kamery
+    return vec3(0.9, 0.9, 1.0) * diff;
 }
 
-// -----------------------------
-// Główny shader
-// -----------------------------
 void main() {
     vec2 uv = (gl_FragCoord.xy - 0.5 * u_Resolution.xy) / u_Resolution.y;
 
@@ -76,7 +68,7 @@ void main() {
         vec3 n = estimateNormal(p);
         col = lighting(p, n, lightDir);
     } else {
-        col = vec3(0.1, 0.1, 0.1); // tło
+        col = vec3(0.2, 0.2, 0.2); // tło
     }
 
     fragColor = vec4(col, 1.0);
