@@ -109,8 +109,9 @@ async function init() {
 
 
   // ============================================================ Podpinanie uniformów:
-  const uTimeLocation = gl.getUniformLocation(program, "u_Time");
-  const uColorLocation = gl.getUniformLocation(program, "u_Color");
+  // const uTimeLocation = gl.getUniformLocation(program, "u_Time");
+  // const uColorLocation = gl.getUniformLocation(program, "u_Color");
+  const uResolutionLocation = gl.getUniformLocation(program, "u_Resolution");
   //===================================================================================
 
   function rgbCreator(red, green, blue){
