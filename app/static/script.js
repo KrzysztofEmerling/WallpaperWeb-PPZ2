@@ -2,85 +2,170 @@
 
 const canvas = document.getElementById('glcanvas');
 const gl = canvas.getContext("webgl2");
+const scenesData = fetchSceneValues();
+let activeScene = null;
 
 if (!gl) {
-  alert('Unable to initialize WebGL. Your browser may not support it.');
+    alert('Unable to initialize WebGL. Your browser may not support it.');
 }
 
-// dopasowanie canvasa do okna
 function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 }
 
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
-// ----------------------------- TEMPLATE SCEN -----------------------------
-
-class Scene {
-  constructor(gl, initFn, renderFn) {
-    this.gl = gl;
-    this.init = initFn;       // np. przygotowanie zasobów
-    this.render = renderFn;   // rysowanie w każdej klatce
-    this.init(gl);
+// Funkcja do tworzenia i kompilacji shaderów
+function createShader(gl, type, source) {
+  const shader = gl.createShader(type);
+  gl.shaderSource(shader, source);
+  gl.compileShader(shader);
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    console.error('Błąd kompilacji shadera:', gl.getShaderInfoLog(shader));
+    gl.deleteShader(shader);
+    return null;
   }
+  return shader;
+}
+// Funkcja do tworzenia programu
+function createProgram(gl, vertexShader, fragmentShader) {
+  const program = gl.createProgram();
+  gl.attachShader(program, vertexShader);
+  gl.attachShader(program, fragmentShader);
+  gl.linkProgram(program);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    console.error('Błąd linkowania programu:', gl.getProgramInfoLog(program));
+    return null;
+  }
+  return program;
+}
+//ładowanie shaderów
+async function loadShaderSource(name) {
+  const response = await fetch(`/static/shaders/${name}`);
+  if (!response.ok) {
+    throw new Error(`Nie udało się załadować shadera: ${name}`);
+  }
+  return await response.text();
+}
+async function init() {
+  const vertexShaderSource = await loadShaderSource('vertex.shader');
+  const fragmentShaderSource = await loadShaderSource('fragment.shader');
+
+  return {vertexShaderSource, fragmentShaderSource}
 }
 
-// Scena 0 
-const scene0 = new Scene(
-  gl,
-  (gl) => {
-    // init scena 0 
-  },
-  (gl) => {
-    gl.clearColor(1, 0.2, 0.2, 1); // czerwony-ish
-    gl.clear(gl.COLOR_BUFFER_BIT);
+(async () => {
+  const { vertexShaderSource, fragmentShaderSource } = await init();
+
+  // Kompiluj shadery
+  const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+  const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+  // Stwórz program i ustaw go
+  const program = createProgram(gl, vertexShader, fragmentShader);
+  gl.useProgram(program);
+
+  // Ustaw bufor współrzędnych prostokąta obejmującego cały canvas
+  const positionBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+  const positions = [
+    -1, -1, 
+    1, -1, 
+    -1,  1, 
+    -1,  1, 
+    1, -1, 
+    1,  1,
+  ];
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+  // Połącz atrybut pozycji z buforem
+  const positionLocation = gl.getAttribLocation(program, 'a_position');
+  gl.enableVertexAttribArray(positionLocation);
+  gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+  // ============================================================ Podpinanie uniformów:
+  const uTimeLocation = gl.getUniformLocation(program, "u_Time");
+  const uColorLocation = gl.getUniformLocation(program, "u_Color");
+  //===================================================================================
+
+  function rgbCreator(red, green, blue){
+    const red_slider = document.getElementById(red);
+    const green_slider = document.getElementById(green);
+    const blue_slider = document.getElementById(blue);
+
+    const r = red_slider.value / 255;
+    const g = green_slider.value / 255;
+    const b = blue_slider.value / 255;
+    const a = 1.0;
+
+    const colors = [r, g, b, a];
+
+    return colors;
   }
-);
 
-// Scena 1 
-const scene1 = new Scene(
-  gl,
-  (gl) => {
-    // init scena 1 
-  },
-  (gl) => {
-    gl.clearColor(0.2, 0.4, 1, 1); // niebieski-ish
-    gl.clear(gl.COLOR_BUFFER_BIT);
+  const scenes = {
+    scene1: {
+      program: program,
+      render: function(time) {
+        gl.useProgram(this.program);
+        gl.viewport(0,0,canvas.width,canvas.height);
+        gl.clearColor(0,0,0,1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        const [r,g,b,a] = rgbCreator('red-slider','green-slider','blue-slider');
+        gl.uniform4f(uColorLocation, r, g, b, a);
+        gl.uniform1f(uTimeLocation, time * 0.001); // time w sekundach
+
+        gl.drawArrays(gl.TRIANGLES,0,6);
+      }
+    },
+    scene2: {
+      program: program,
+      render: function(time) {
+        gl.useProgram(this.program);
+        gl.viewport(0,0,canvas.width,canvas.height);
+
+        // efekt migającego tła
+        const [r,g,b,a] = rgbCreator('red-slider','green-slider','blue-slider');
+        const t = Math.sin(time * 0.002);
+        gl.clearColor(r*t, g*t, b*t, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        gl.uniform4f(uColorLocation, r, g, b, a);
+        gl.uniform1f(uTimeLocation, time * 0.001);
+
+        gl.drawArrays(gl.TRIANGLES,0,6);
+      }
+    }
+  };
+
+  activeScene = 'scene1';
+
+  function toggleScene() {
+    if (activeScene === 'scene1') {
+        activeScene = 'scene2';
+    } else {
+        activeScene = 'scene1';
+    }
   }
-);
 
-// aktualna scena
-let currentScene = scene0;
+  const switch_scene = document.getElementById('switch-scene');
 
-// funkcja wywoływana z listenera przycisków (data-scene="0"/"1")
-function setScene(index) {
-  switch (index) {
-    case 0:
-      currentScene = scene0;
-      break;
-    case 1:
-      currentScene = scene1;
-      break;
-    default:
-      console.warn('Nieznany indeks sceny:', index);
-      return;
+  switch_scene.addEventListener('change', () => {
+    updateSceneValues(scenesData, activeScene);
+    toggleScene();
+    setSceneValues(scenesData, activeScene);
+  });
+
+  function render(time){
+    scenes[activeScene].render(time);
+    requestAnimationFrame(render);
   }
-}
+  requestAnimationFrame(render);
 
-// pętla rysująca
-function renderLoop() {
-  resizeCanvas();
-  if (currentScene && typeof currentScene.render === 'function') {
-    currentScene.render(gl);
-  }
-  requestAnimationFrame(renderLoop);
-}
-
-renderLoop();
-
+})();
 
 // ======================================================================= Reszta Skryptow
 
@@ -116,6 +201,35 @@ function inputValidation(input){
   if (val > max) val = max;
 
   input.value = val;
+}
+
+function fetchSceneValues(){
+  const sliders = document.querySelectorAll('.container input.slider');
+  const values = { scene1: {}, scene2: {} };
+
+  sliders.forEach(input => {
+    values.scene1[input.id] = input.value;
+    values.scene2[input.id] = input.value;
+  });
+
+  return values;
+}
+
+function updateSceneValues(array, scene){
+  const sliders = document.querySelectorAll('.container input.slider');
+
+  sliders.forEach(input => {
+    array[scene][input.id] = input.value;
+  });
+}
+
+function setSceneValues(array, scene){
+  const sliders = document.querySelectorAll('.container input.slider');
+
+  sliders.forEach(input => {
+    input.value = array[scene][input.id]
+    input.dispatchEvent(new Event('input'));
+  });
 }
 
 function createJSON(){
@@ -166,16 +280,16 @@ function loadJSON() {
       for (const id in data) {
         const element = document.getElementById(id);
         if (element) {
-          if (data[id] < data_min[id]) {
+          if (Number(data[id]) < data_min[id]) {
             element.value = data_min[id];
           }
-          else if (data[id] > data_max[id]) {
+          else if (Number(data[id]) > data_max[id]) {
             element.value = data_max[id];
           }
           else {
             element.value = data[id];
           }
-          element.dispatchEvent(new Event('input')); 
+          element.dispatchEvent(new Event('input')); // jeśli chcesz odświeżyć widok
         }
       }
       
@@ -290,23 +404,4 @@ blue_value.addEventListener('input', () => {
   restoreDefault(blue_value);
   sliderValue(blue_slider, blue_value);
   inputValidation(blue_value);
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-  const sceneButtons = document.querySelectorAll('.scene-btn');
-
-  sceneButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-          const sceneIndex = parseInt(btn.dataset.scene, 10);
-
-          sceneButtons.forEach(b => b.classList.remove('active-scene'));
-          btn.classList.add('active-scene');
-
-          if (typeof setScene === 'function') {
-              setScene(sceneIndex);
-          } else {
-              console.warn('Funkcja setScene(sceneIndex) nie jest zdefiniowana w script.js');
-          }
-      });
-  });
 });
