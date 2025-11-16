@@ -80,3 +80,8 @@ canvas {
     flex-direction: column;
     min-height: 100vh;
 }
+
+.active-scene {
+    outline: 2px solid #ffffff;
+    font-weight: 600;
+}
