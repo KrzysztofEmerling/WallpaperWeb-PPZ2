@@ -9,13 +9,16 @@ float sdSphere(vec3 p, float r) {
     return length(p) - r;
 }
 
+float sdCylinder(vec3 p, float r, float h) {
+    return max(sqrt(p.x * p.x + p.z * p.z) - r, abs(p.y) - (h / 2.0));
+}
 // Zwraca najmniejszą odległość do obiektów w scenie (matemtyczna reprezentacja sceny)
 float sceneSDF(vec3 p) {
-    float sphere1 = sdSphere(p - vec3(0.2, 0.0, 4.0), 1.0);
-    float sphere2 = sdSphere(p - vec3(0.25, 0.3, 3.0), 0.3);
+    float bhole = sdSphere(p - vec3(0.4, -1.0, 4.0), 1.0);
+    float nebula = sdCylinder(p - vec3(0.4, -1.0, 4.0), 1.8, 0.12);
 
-    return max(sphere1, -sphere2); //wycinanie sfery2 z sphere1
-    // return min (sphere1, sphere2); //normalne rysowanie obu sfer (bez cieni)
+    return min(bhole, nebula); 
+    
 }
 
 float raymarch(vec3 ro, vec3 rd) {
@@ -54,7 +57,7 @@ void main() {
 
     // Kamera
     vec3 ro = vec3(0.0, 0.0, 0.0); 
-    vec3 rd = normalize(vec3(uv, 1.0)); 
+    vec3 rd = normalize(vec3(uv.x, uv.y, 1.0)); 
 
     // światło kierunkowe
     vec3 lightDir = normalize(vec3(-0.5, 1.0, -0.3));
