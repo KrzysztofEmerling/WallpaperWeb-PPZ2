@@ -53,19 +53,23 @@ async function loadShaderSource(name) {
 async function init() {
   const vertexShaderSource = await loadShaderSource('vertex.shader');
   const fragmentShaderSource = await loadShaderSource('fragment.shader');
+  const fragmentAsciiShaderSource = await loadShaderSource('fragment_ascii.shader');
 
-  return {vertexShaderSource, fragmentShaderSource}
+  return {vertexShaderSource, fragmentShaderSource, fragmentAsciiShaderSource};
 }
 
 (async () => {
-  const { vertexShaderSource, fragmentShaderSource } = await init();
+  const { vertexShaderSource, fragmentShaderSource, fragmentAsciiShaderSource } = await init();
 
   // Kompiluj shadery
   const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
   const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+  const fragmentAsciiShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentAsciiShaderSource);
   // Stwórz program i ustaw go
   const program = createProgram(gl, vertexShader, fragmentShader);
+  const programAscii = createProgram(gl, vertexShader, fragmentAsciiShader);
   gl.useProgram(program);
+
 
   // Ustaw bufor współrzędnych prostokąta obejmującego cały canvas
   const positionBuffer = gl.createBuffer();
@@ -84,6 +88,25 @@ async function init() {
   const positionLocation = gl.getAttribLocation(program, 'a_position');
   gl.enableVertexAttribArray(positionLocation);
   gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+  const image = new Image();
+  image.src = 'static/images/image.png';
+  image.onload = () => {
+    const texture = gl.createTexture();
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    const uTextureLocation = gl.getUniformLocation(program, "u_Texture");
+    gl.uniform1i(uTextureLocation, 0);
+    scenes.scene2.render(0);
+    
+  }
+
 
   // ============================================================ Podpinanie uniformów:
   const uTimeLocation = gl.getUniformLocation(program, "u_Time");
@@ -122,21 +145,14 @@ async function init() {
       }
     },
     scene2: {
-      program: program,
+      program: programAscii,
       render: function(time) {
         gl.useProgram(this.program);
         gl.viewport(0,0,canvas.width,canvas.height);
-
-        // efekt migającego tła
-        const [r,g,b,a] = rgbCreator('red-slider','green-slider','blue-slider');
-        const t = Math.sin(time * 0.002);
-        gl.clearColor(r*t, g*t, b*t, 1);
+        gl.clearColor(0,0,0,1);
         gl.clear(gl.COLOR_BUFFER_BIT);
-
-        gl.uniform4f(uColorLocation, r, g, b, a);
-        gl.uniform1f(uTimeLocation, time * 0.001);
-
         gl.drawArrays(gl.TRIANGLES,0,6);
+
       }
     }
   };
