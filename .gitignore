@@ -1,2 +1,6 @@
 /flaskEnv
-app/__pycache__/
+app/__pycache__
+docs/build/*
+docs/node_modules
+docs/package-lock.json
+docs/package.json
