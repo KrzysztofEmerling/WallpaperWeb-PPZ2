@@ -418,3 +418,198 @@ blue_value.addEventListener('input', () => {
   sliderValue(blue_slider, blue_value);
   inputValidation(blue_value);
 });
+
+const brightness_slider = document.getElementById('brightness-slider');
+const brightness_value = document.getElementById('brightness-value');
+
+brightness_slider.addEventListener('input', () => { 
+  inputValue(brightness_slider, brightness_value);
+});
+
+brightness_value.addEventListener('input', () => {
+  restoreDefault(brightness_value);
+  sliderValue(brightness_slider, brightness_value);
+  inputValidation(brightness_value);
+});
+
+const shadows_slider = document.getElementById('shadows-slider');
+const shadows_value = document.getElementById('shadows-value');
+
+shadows_slider.addEventListener('input', () => { 
+  inputValue(shadows_slider, shadows_value);
+});
+
+shadows_value.addEventListener('input', () => {
+  restoreDefault(shadows_value);
+  sliderValue(shadows_slider, shadows_value);
+  inputValidation(shadows_value);
+});
+
+const midtones_slider = document.getElementById('midtones-slider');
+const midtones_value = document.getElementById('midtones-value');
+
+midtones_slider.addEventListener('input', () => { 
+  inputValue(midtones_slider, midtones_value);
+});
+
+midtones_value.addEventListener('input', () => {
+  restoreDefault(midtones_value);
+  sliderValue(midtones_slider, midtones_value);
+  inputValidation(midtones_value);
+});
+
+const highlights_slider = document.getElementById('highlights-slider');
+const highlights_value = document.getElementById('highlights-value');
+
+highlights_slider.addEventListener('input', () => { 
+  inputValue(highlights_slider, highlights_value);
+});
+
+highlights_value.addEventListener('input', () => {
+  restoreDefault(highlights_value);
+  sliderValue(highlights_slider, highlights_value);
+  inputValidation(highlights_value);
+});
+
+const gamma_slider = document.getElementById('gamma-slider');
+const gamma_value = document.getElementById('gamma-value');
+
+gamma_slider.addEventListener('input', () => { 
+  inputValue(gamma_slider, gamma_value);
+});
+
+gamma_value.addEventListener('input', () => {
+  restoreDefault(gamma_value);
+  sliderValue(gamma_slider, gamma_value);
+  inputValidation(gamma_value);
+});
+
+const contrast_slider = document.getElementById('contrast-slider');
+const contrast_value = document.getElementById('contrast-value');
+
+contrast_slider.addEventListener('input', () => { 
+  inputValue(contrast_slider, contrast_value);
+});
+
+contrast_value.addEventListener('input', () => {
+  restoreDefault(contrast_value);
+  sliderValue(contrast_slider, contrast_value);
+  inputValidation(contrast_value);
+});
+
+const gauss_slider = document.getElementById('gauss-slider');
+const gauss_value = document.getElementById('gauss-value');
+
+gauss_slider.addEventListener('input', () => { 
+  inputValue(gauss_slider, gauss_value);
+});
+
+gauss_value.addEventListener('input', () => {
+  restoreDefault(gauss_value);
+  sliderValue(gauss_slider, gauss_value);
+  inputValidation(gauss_value);
+});
+
+const sobel_slider = document.getElementById('sobel-slider');
+const sobel_value = document.getElementById('sobel-value');
+
+sobel_slider.addEventListener('input', () => { 
+  inputValue(sobel_slider, sobel_value);
+});
+
+sobel_value.addEventListener('input', () => {
+  restoreDefault(sobel_value);
+  sliderValue(sobel_slider, sobel_value);
+  inputValidation(sobel_value);
+});
+
+const perlin_width_slider = document.getElementById('perlin-width-slider');
+const perlin_width_value = document.getElementById('perlin-width-value');
+
+perlin_width_slider.addEventListener('input', () => { 
+  inputValue(perlin_width_slider, perlin_width_value);
+});
+
+perlin_width_value.addEventListener('input', () => {
+  restoreDefault(perlin_width_value);
+  sliderValue(perlin_width_slider, perlin_width_value);
+  inputValidation(perlin_width_value);
+});
+
+const perlin_height_slider = document.getElementById('perlin-height-slider');
+const perlin_height_value = document.getElementById('perlin-height-value');
+
+perlin_height_slider.addEventListener('input', () => { 
+  inputValue(perlin_height_slider, perlin_height_value);
+});
+
+perlin_height_value.addEventListener('input', () => {
+  restoreDefault(perlin_height_value);
+  sliderValue(perlin_height_slider, perlin_height_value);
+  inputValidation(perlin_height_value);
+});
+
+const perlin_time_slider = document.getElementById('perlin-time-slider');
+const perlin_time_value = document.getElementById('perlin-time-value');
+
+perlin_time_slider.addEventListener('input', () => { 
+  inputValue(perlin_time_slider, perlin_time_value);
+});
+
+perlin_time_value.addEventListener('input', () => {
+  restoreDefault(perlin_time_value);
+  sliderValue(perlin_time_slider, perlin_time_value);
+  inputValidation(perlin_time_value);
+});
+
+const voronoii_width_slider = document.getElementById('voronoii-width-slider');
+const voronoii_width_value = document.getElementById('voronoii-width-value');
+
+voronoii_width_slider.addEventListener('input', () => { 
+  inputValue(voronoii_width_slider, voronoii_width_value);
+});
+
+voronoii_width_value.addEventListener('input', () => {
+  restoreDefault(voronoii_width_value);
+  sliderValue(voronoii_width_slider, voronoii_width_value);
+  inputValidation(voronoii_width_value);
+});
+
+const voronoii_height_slider = document.getElementById('voronoii-height-slider');
+const voronoii_height_value = document.getElementById('voronoii-height-value');
+
+voronoii_height_slider.addEventListener('input', () => { 
+  inputValue(voronoii_height_slider, voronoii_height_value);
+});
+
+voronoii_height_value.addEventListener('input', () => {
+  restoreDefault(voronoii_height_value);
+  sliderValue(voronoii_height_slider, voronoii_height_value);
+  inputValidation(voronoii_height_value);
+});
+
+const voronoii_time_slider = document.getElementById('voronoii-time-slider');
+const voronoii_time_value = document.getElementById('voronoii-time-value');
+
+voronoii_time_slider.addEventListener('input', () => { 
+  inputValue(voronoii_time_slider, voronoii_time_value);
+});
+
+voronoii_time_value.addEventListener('input', () => {
+  restoreDefault(voronoii_time_value);
+  sliderValue(voronoii_time_slider, voronoii_time_value);
+  inputValidation(voronoii_time_value);
+});
+
+const bloom_slider = document.getElementById('bloom-slider');
+const bloom_value = document.getElementById('bloom-value');
+
+bloom_slider.addEventListener('input', () => { 
+  inputValue(bloom_slider, bloom_value);
+});
+
+bloom_value.addEventListener('input', () => {
+  restoreDefault(bloom_value);
+  sliderValue(bloom_slider, bloom_value);
+  inputValidation(bloom_value);
+});
