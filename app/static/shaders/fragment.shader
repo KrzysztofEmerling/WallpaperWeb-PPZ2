@@ -23,7 +23,7 @@ float sceneSDF(vec3 p) {
 
 float raymarch(vec3 ro, vec3 rd) {
     float t = 0.0;
-    const float MAX_DIST = 100.0;
+    const float MAX_DIST = 60.0;
     const float EPSILON = 0.001;
     for (int i = 0; i < 100; i++) {
         vec3 p = ro + rd * t;
