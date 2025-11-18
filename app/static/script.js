@@ -5,6 +5,7 @@ const gl = canvas.getContext("webgl2");
 const scenesData = fetchSceneValues();
 let activeScene = null;
 
+
 if (!gl) {
     alert('Unable to initialize WebGL. Your browser may not support it.');
 }
@@ -30,6 +31,7 @@ function createShader(gl, type, source) {
   }
   return shader;
 }
+
 // Funkcja do tworzenia programu
 function createProgram(gl, vertexShader, fragmentShader) {
   const program = gl.createProgram();
@@ -42,6 +44,7 @@ function createProgram(gl, vertexShader, fragmentShader) {
   }
   return program;
 }
+
 //ładowanie shaderów
 async function loadShaderSource(name) {
   const response = await fetch(`/static/shaders/${name}`);
@@ -50,6 +53,7 @@ async function loadShaderSource(name) {
   }
   return await response.text();
 }
+
 async function init() {
   const vertexShaderSource = await loadShaderSource('vertex.shader');
   const fragmentShaderSource = await loadShaderSource('fragment.shader');
@@ -179,6 +183,7 @@ async function init() {
     scenes[activeScene].render(time);
     requestAnimationFrame(render);
   }
+
   requestAnimationFrame(render);
 
 })();
@@ -308,7 +313,7 @@ function loadJSON() {
           element.dispatchEvent(new Event('input')); // jeśli chcesz odświeżyć widok
         }
       }
-      
+
     } catch (err) {
       alert('Błąd podczas wczytywania pliku JSON.');
       console.error(err);
@@ -317,6 +322,7 @@ function loadJSON() {
 
   reader.readAsText(file);
 }
+
 
 // ======================================================================= Podpiecia funkcji pod elementy HTML
 
@@ -364,6 +370,7 @@ value2.addEventListener('input', () => {
   sliderValue(slider2, value2);
   inputValidation(value2);
 });
+
 
 // ======= Slider 3
 
