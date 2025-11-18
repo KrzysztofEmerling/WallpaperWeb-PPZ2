@@ -109,8 +109,7 @@ async function init() {
 
 
   // ============================================================ Podpinanie uniformów:
-  const uTimeLocation = gl.getUniformLocation(program, "u_Time");
-  const uColorLocation = gl.getUniformLocation(program, "u_Color");
+  const uResolutionLocation = gl.getUniformLocation(program, "u_Resolution");
   //===================================================================================
 
   function rgbCreator(red, green, blue){
@@ -137,9 +136,7 @@ async function init() {
         gl.clearColor(0,0,0,1);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
-        const [r,g,b,a] = rgbCreator('red-slider','green-slider','blue-slider');
-        gl.uniform4f(uColorLocation, r, g, b, a);
-        gl.uniform1f(uTimeLocation, time * 0.001); // time w sekundach
+        gl.uniform2f(uResolutionLocation, canvas.width, canvas.height);
 
         gl.drawArrays(gl.TRIANGLES,0,6);
       }
