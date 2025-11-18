@@ -85,3 +85,14 @@ canvas {
     outline: 2px solid #ffffff;
     font-weight: 600;
 }
+
+.overflow-control{
+    overflow: scroll;
+    min-height: 75vh;
+    max-height: 90vh;
+    scrollbar-width: none;
+}
+
+.overflow-control::-webkit-scrollbar {
+  display: none;
+}

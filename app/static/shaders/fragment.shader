@@ -29,7 +29,7 @@ float raymarch(vec3 ro, vec3 rd, vec3 bHoleCenter, float SchwarzschildRadious) {
     float t = 0.0;
     const float MAX_DIST = 60.0;
     const float EPSILON = 0.001;
-    for (int i = 0; i < 2500; i++) {
+    for (int i = 0; i < 250; i++) {
         vec3 p = ro + rd * t;
         float d = sceneSDF(p);
         if (d < EPSILON) return t;
