@@ -4,6 +4,7 @@ const canvas = document.getElementById('glcanvas');
 const gl = canvas.getContext("webgl2");
 const scenesData = fetchSceneValues();
 let activeScene = null;
+let renderScene1Requested = true;
 
 // ======= render stats
 const fpsCounter = document.getElementById('fps');
@@ -139,6 +140,7 @@ async function init() {
 
   // ============================================================ Podpinanie uniformów:
   const uResolutionLocation = gl.getUniformLocation(program, "u_Resolution");
+  const uStepSizeLocation = gl.getUniformLocation(program, "u_StepSize");
   //===================================================================================
 
   function rgbCreator(red, green, blue){
@@ -155,20 +157,26 @@ async function init() {
 
     return colors;
   }
-
+  
   const scenes = {
     scene1: {
       program: program,
       render: function(time) {
-        updateStats();
-        gl.useProgram(this.program);
-        gl.viewport(0,0,canvas.width,canvas.height);
-        gl.clearColor(0,0,0,1);
-        gl.clear(gl.COLOR_BUFFER_BIT);
+        if(renderScene1Requested)
+        {
+          gl.useProgram(this.program);
+          gl.viewport(0,0,canvas.width,canvas.height);
+          gl.clearColor(0,0,0,1);
+          gl.clear(gl.COLOR_BUFFER_BIT);
 
-        gl.uniform2f(uResolutionLocation, canvas.width, canvas.height);
+          gl.uniform2f(uResolutionLocation, canvas.width, canvas.height);
+          
+          const step_slider = document.getElementById("sliderStepSize");
+          gl.uniform1f(uStepSizeLocation, step_slider.value);
 
-        gl.drawArrays(gl.TRIANGLES,0,6);
+          gl.drawArrays(gl.TRIANGLES,0,6); 
+          renderScene1Requested = false; 
+        }
       }
     },
     scene2: {
@@ -191,6 +199,7 @@ async function init() {
     if (activeScene === 'scene1') {
         activeScene = 'scene2';
     } else {
+        renderScene1Requested = true;
         activeScene = 'scene1';
     }
   }
@@ -383,4 +392,9 @@ valueInputs.forEach((element, index) => {
     sliderValue(sliderID, valueID);
     inputValidation(valueID);
   });
+});
+
+const buttonRenderScene1 = document.getElementById('render-scene1-button');
+buttonRenderScene1.addEventListener('click', () => {
+  renderScene1Requested = true;  
 });

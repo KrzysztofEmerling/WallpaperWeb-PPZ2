@@ -2,6 +2,7 @@
 precision highp float;
 
 uniform vec2 u_Resolution;
+uniform float u_StepSize;
 
 out vec4 fragColor;
 
@@ -29,7 +30,8 @@ float raymarch(vec3 ro, vec3 rd, vec3 bHoleCenter, float SchwarzschildRadious) {
     float t = 0.0;
     const float MAX_DIST = 60.0;
     const float EPSILON = 0.001;
-    for (int i = 0; i < 250; i++) {
+    int iter = int(floor(20.0 / u_StepSize));
+    for (int i = 0; i < iter; i++) {
         vec3 p = ro + rd * t;
         float d = sceneSDF(p);
         if (d < EPSILON) return t;
@@ -44,7 +46,7 @@ float raymarch(vec3 ro, vec3 rd, vec3 bHoleCenter, float SchwarzschildRadious) {
         float bendingStrength = bHoleMass / (distToCenter * distToCenter + 0.0001); 
         rd = normalize(rd + bendingStrength * dirToCenter * 0.000025); //ostatni parametr trzeba dobrać do lokalizacji kamery
         
-        t += 0.01;
+        t += u_StepSize;
         if (t > MAX_DIST) break;
     }
     return -2.0;
