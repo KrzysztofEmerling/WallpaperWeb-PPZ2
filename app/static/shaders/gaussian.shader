@@ -5,8 +5,8 @@ in vec2 v_TexCoord;
 out vec4 fragColor;
 
 uniform sampler2D uTexture;
-uniform int kernel_size;  
-uniform vec2 texelSize;   
+uniform int kernel_size;
+uniform vec2 texelSize;
 
 float gaussianWeight[6] = float[](
     0.06136, 0.24477, 0.38774, 0.24477, 0.06136, 0.0
