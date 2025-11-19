@@ -5,6 +5,35 @@ const gl = canvas.getContext("webgl2");
 const scenesData = fetchSceneValues();
 let activeScene = null;
 
+// ======= render stats
+const fpsCounter = document.getElementById('fps');
+const frametimeCounter = document.getElementById('frametime');
+
+let lastFrametime = performance.now();
+let lastFps = performance.now();
+let fpsFrames = 0;
+
+let fps = 0;
+let frametime = 0;
+
+function updateStats(){
+  const now = performance.now();
+
+  frametime = now - lastFrametime;
+  lastFrametime = now;
+
+  fpsFrames++;
+  if(now - lastFps >= 1000){
+    fps = fpsFrames;
+    fpsFrames = 0;
+    lastFps = now;
+    fpsCounter.textContent = fps;
+    frametimeCounter.textContent = frametime.toFixed(1);
+  }
+}
+
+// =======
+
 if (!gl) {
     alert('Unable to initialize WebGL. Your browser may not support it.');
 }
@@ -131,6 +160,7 @@ async function init() {
     scene1: {
       program: program,
       render: function(time) {
+        updateStats();
         gl.useProgram(this.program);
         gl.viewport(0,0,canvas.width,canvas.height);
         gl.clearColor(0,0,0,1);
@@ -144,6 +174,7 @@ async function init() {
     scene2: {
       program: programAscii,
       render: function(time) {
+        updateStats();
         gl.useProgram(this.program);
         gl.viewport(0,0,canvas.width,canvas.height);
         gl.clearColor(0,0,0,1);
@@ -154,7 +185,7 @@ async function init() {
     }
   };
 
-  activeScene = 'scene1';
+  activeScene = 'scene2';
 
   function toggleScene() {
     if (activeScene === 'scene1') {
