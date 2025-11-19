@@ -15,7 +15,7 @@ float sdCylinder(vec3 p, float r, float h) {
 }
 // Zwraca najmniejszą odległość do obiektów w scenie (matemtyczna reprezentacja sceny)
 float sceneSDF(vec3 p) {
-    float nebula = sdCylinder(p - vec3(0.4, -1.0, 12.0), 3.0, 0.25);
+    float nebula = sdCylinder(p - vec3(0.4, -1.0, 12.0), 6.0, 0.125);
 
     return nebula; 
     
@@ -25,34 +25,6 @@ float getbHoleMass(float r)
     // Mass = (c**2 * r) / (2 * G) gdzie G = 6.67 * 10**-11, c = 3 * 10 ** 8 pomniejszony o 10000000000000000000000000
     return(r * 90.0) / (1.334);
 }
-float raymarch(vec3 ro, vec3 rd, vec3 bHoleCenter, float SchwarzschildRadious) {
-    float bHoleMass = getbHoleMass(SchwarzschildRadious);
-    float t = 0.0;
-    const float MAX_DIST = 60.0;
-    const float EPSILON = 0.001;
-    int iter = int(floor(20.0 / u_StepSize));
-    for (int i = 0; i < iter; i++) {
-        vec3 p = ro + rd * t;
-        float d = sceneSDF(p);
-        if (d < EPSILON) return t;
-        
-        vec3 toCenter = bHoleCenter - p;
-        float distToCenter = length(toCenter);
-        if(distToCenter < SchwarzschildRadious) return -1.0;
-
-        vec3 dirToCenter = toCenter / distToCenter;
-        
-        // Korekta kierunku promienia - proporcjonalna do masy i odwrotnie kwadrat odległości
-        float bendingStrength = bHoleMass / (distToCenter * distToCenter + 0.0001); 
-        rd = normalize(rd + bendingStrength * dirToCenter * 0.000025); //ostatni parametr trzeba dobrać do lokalizacji kamery
-        
-        t += u_StepSize;
-        if (t > MAX_DIST) break;
-    }
-    return -2.0;
-}
-
-
 // Przybliżenie normalnej przez różniczkowanie
 vec3 estimateNormal(vec3 p) {
     const vec2 e = vec2(0.001, 0.0);
@@ -62,13 +34,47 @@ vec3 estimateNormal(vec3 p) {
         sceneSDF(p + e.yyx) - sceneSDF(p - e.yyx)
     ));
 }
-
-// Oświetlenie lambertowskie
-vec3 lighting(vec3 p, vec3 n, vec3 lightDir) {
-    float diff = max(dot(n, lightDir), 0.0);
-    // kolor światła * ilość trafiającego do kamery
-    return vec3(0.5, 0.5, 0.6) * diff + vec3(0.4, 0.4, 0.4);
+vec3 shade(vec3 p) {
+    vec3 normal = estimateNormal(p);
+    vec3 lightDir = normalize(vec3(-0.5, 1.0, -0.3));
+    float diff = max(dot(normal, lightDir), 0.0);
+    return vec3(0.5, 0.5, 0.7) * diff + vec3(0.2);
 }
+
+vec3 raymarch(vec3 ro, vec3 rd, vec3 bHoleCenter, float SchwarzschildRadious) {
+    float bHoleMass = getbHoleMass(SchwarzschildRadious);
+    float t = 0.0;
+    const float MAX_DIST = 60.0;
+    const float EPSILON = 0.001;
+    int iter = int(floor(20.0 / u_StepSize));
+
+    for (int i = 0; i < iter; i++) {
+        vec3 p = ro + rd * t;
+        float d = sceneSDF(p);
+
+        if (d < EPSILON) {
+            return shade(p);
+        }
+
+        // przekroczenie horyzontu zdarzeń
+        vec3 toCenter = bHoleCenter - p;
+        float distToCenter = length(toCenter);
+        if (distToCenter < SchwarzschildRadious)
+            return vec3(0.0);
+
+        // zakrzywienie promienia
+        vec3 dirToCenter = toCenter / distToCenter;
+        float bendingStrength = bHoleMass / (distToCenter * distToCenter + 0.0001);
+        rd = normalize(rd + bendingStrength * dirToCenter * 0.000025);
+
+        t += u_StepSize;
+        if (t > MAX_DIST) break;
+    }
+
+    // kolor tła
+    return vec3(0.15);
+}
+
 
 void main() {
     vec2 uv = (gl_FragCoord.xy - 0.5 * u_Resolution.xy) / u_Resolution.y;
@@ -77,21 +83,8 @@ void main() {
     vec3 ro = vec3(0.0, 0.0, 0.0); 
     vec3 rd = normalize(vec3(uv.x, uv.y, 1.0)); 
 
-    // światło kierunkowe
-    vec3 lightDir = normalize(vec3(-0.5, 1.0, -0.3));
-
-
-    float t = raymarch(ro, rd, vec3(0.4, -1.0, 12.0), 0.25);
-    vec3 col;
-    if (t > 0.0) { 
-        vec3 p = ro + rd * t;
-        vec3 n = estimateNormal(p);
-        col = lighting(p, n, lightDir);
-    } else {
-        // (-1)czarna dziura  (-2)tło
-        if(t == -1.0) col = vec3(0.0, 0.0, 0.0); 
-        else col = vec3(0.2, 0.2, 0.2); 
-    }
+    vec3 col = raymarch(ro, rd, vec3(0.4, -1.0, 12.0), 0.6);;
+    
 
     fragColor = vec4(col, 1.0);
 }
