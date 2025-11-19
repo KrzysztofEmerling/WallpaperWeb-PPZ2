@@ -157,12 +157,12 @@ async function init() {
 
     return colors;
   }
-  
+
   const scenes = {
     scene1: {
       program: program,
       render: function(time) {
-        updateStats()
+        updateStats();
         if(renderScene1Requested)
         {
           gl.useProgram(this.program);
