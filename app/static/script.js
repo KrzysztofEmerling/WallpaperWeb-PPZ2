@@ -35,6 +35,7 @@ function updateStats(){
 
 // =======
 
+
 if (!gl) {
     alert('Unable to initialize WebGL. Your browser may not support it.');
 }
@@ -60,6 +61,7 @@ function createShader(gl, type, source) {
   }
   return shader;
 }
+
 // Funkcja do tworzenia programu
 function createProgram(gl, vertexShader, fragmentShader) {
   const program = gl.createProgram();
@@ -72,6 +74,7 @@ function createProgram(gl, vertexShader, fragmentShader) {
   }
   return program;
 }
+
 //ładowanie shaderów
 async function loadShaderSource(name) {
   const response = await fetch(`/static/shaders/${name}`);
@@ -80,21 +83,30 @@ async function loadShaderSource(name) {
   }
   return await response.text();
 }
+
 async function init() {
   const vertexShaderSource = await loadShaderSource('vertex.shader');
   const fragmentShaderSource = await loadShaderSource('fragment.shader');
   const fragmentAsciiShaderSource = await loadShaderSource('fragment_ascii.shader');
+  const gammaCorrectionShaderSource = await loadShaderSource('gamma_correction.shader');
 
-  return {vertexShaderSource, fragmentShaderSource, fragmentAsciiShaderSource};
+  return {vertexShaderSource,
+          fragmentShaderSource,
+          fragmentAsciiShaderSource,
+          gammaCorrectionShaderSource};
 }
 
 (async () => {
-  const { vertexShaderSource, fragmentShaderSource, fragmentAsciiShaderSource } = await init();
+  const {vertexShaderSource,
+         fragmentShaderSource,
+         fragmentAsciiShaderSource,
+         gammaCorrectionShaderSource} = await init();
 
   // Kompiluj shadery
   const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
   const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
   const fragmentAsciiShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentAsciiShaderSource);
+  // const gammaCorrectionShader = createShader(gl, gl., gammaCorrectionShaderSource);
   // Stwórz program i ustaw go
   const program = createProgram(gl, vertexShader, fragmentShader);
   const programAscii = createProgram(gl, vertexShader, fragmentAsciiShader);
@@ -219,6 +231,7 @@ async function init() {
     scenes[activeScene].render(time);
     requestAnimationFrame(render);
   }
+
   requestAnimationFrame(render);
 
 })();
@@ -348,7 +361,7 @@ function loadJSON() {
           element.dispatchEvent(new Event('input')); // jeśli chcesz odświeżyć widok
         }
       }
-      
+
     } catch (err) {
       alert('Błąd podczas wczytywania pliku JSON.');
       console.error(err);
@@ -357,6 +370,7 @@ function loadJSON() {
 
   reader.readAsText(file);
 }
+
 
 // ======================================================================= Podpiecia funkcji pod elementy HTML
 
@@ -397,7 +411,76 @@ valueInputs.forEach((element, index) => {
   });
 });
 
-const buttonRenderScene1 = document.getElementById('render-scene1-button');
-buttonRenderScene1.addEventListener('click', () => {
-  renderScene1Requested = true;  
+// ======= Slider 2
+
+const slider2 = document.getElementById('slider2');
+const value2 = document.getElementById('value2');
+
+slider2.addEventListener('input', () => {
+  inputValue(slider2, value2);
+});
+
+value2.addEventListener('input', () => {
+  restoreDefault(value2);
+
+  sliderValue(slider2, value2);
+  inputValidation(value2);
+});
+
+
+// ======= Slider 3
+
+const slider3 = document.getElementById('slider3');
+const value3 = document.getElementById('value3');
+
+slider3.addEventListener('input', () => { 
+  inputValue(slider3, value3);
+});
+
+value3.addEventListener('input', () => {
+  restoreDefault(value3);
+  sliderValue(slider3, value3);
+  inputValidation(value3);
+});
+
+
+// ======= RGB sliders
+
+const red_slider = document.getElementById('red-slider');
+const red_value = document.getElementById('red-value');
+
+red_slider.addEventListener('input', () => { 
+  inputValue(red_slider, red_value);
+});
+
+red_value.addEventListener('input', () => {
+  restoreDefault(red_value);
+  sliderValue(red_slider, red_value);
+  inputValidation(red_value);
+});
+
+const green_slider = document.getElementById('green-slider');
+const green_value = document.getElementById('green-value');
+
+green_slider.addEventListener('input', () => { 
+  inputValue(green_slider, green_value);
+});
+
+green_value.addEventListener('input', () => {
+  restoreDefault(green_value);
+  sliderValue(green_slider, green_value);
+  inputValidation(green_value);
+});
+
+const blue_slider = document.getElementById('blue-slider');
+const blue_value = document.getElementById('blue-value');
+
+blue_slider.addEventListener('input', () => { 
+  inputValue(blue_slider, blue_value);
+});
+
+blue_value.addEventListener('input', () => {
+  restoreDefault(blue_value);
+  sliderValue(blue_slider, blue_value);
+  inputValidation(blue_value);
 });
