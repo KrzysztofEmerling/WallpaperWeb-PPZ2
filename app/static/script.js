@@ -58,17 +58,25 @@ async function init() {
   const vertexShaderSource = await loadShaderSource('vertex.shader');
   const fragmentShaderSource = await loadShaderSource('fragment.shader');
   const fragmentAsciiShaderSource = await loadShaderSource('fragment_ascii.shader');
+  const gammaCorrectionShaderSource = await loadShaderSource('gamma_correction.shader');
 
-  return {vertexShaderSource, fragmentShaderSource, fragmentAsciiShaderSource};
+  return {vertexShaderSource,
+          fragmentShaderSource,
+          fragmentAsciiShaderSource,
+          gammaCorrectionShaderSource};
 }
 
 (async () => {
-  const { vertexShaderSource, fragmentShaderSource, fragmentAsciiShaderSource } = await init();
+  const {vertexShaderSource,
+         fragmentShaderSource,
+         fragmentAsciiShaderSource,
+         gammaCorrectionShaderSource} = await init();
 
   // Kompiluj shadery
   const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
   const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
   const fragmentAsciiShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentAsciiShaderSource);
+  // const gammaCorrectionShader = createShader(gl, gl., gammaCorrectionShaderSource);
   // Stwórz program i ustaw go
   const program = createProgram(gl, vertexShader, fragmentShader);
   const programAscii = createProgram(gl, vertexShader, fragmentAsciiShader);
