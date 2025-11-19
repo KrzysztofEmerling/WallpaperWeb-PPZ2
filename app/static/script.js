@@ -162,6 +162,7 @@ async function init() {
     scene1: {
       program: program,
       render: function(time) {
+        updateStats()
         if(renderScene1Requested)
         {
           gl.useProgram(this.program);
@@ -171,7 +172,9 @@ async function init() {
 
           gl.uniform2f(uResolutionLocation, canvas.width, canvas.height);
           
-          const step_slider = document.getElementById("sliderStepSize");
+          const step_slider = document.getElementById("stepsize-slider");
+          console.log(sliderInputs)
+          console.log(valueInputs)
           gl.uniform1f(uStepSizeLocation, step_slider.value);
 
           gl.drawArrays(gl.TRIANGLES,0,6); 
@@ -257,7 +260,7 @@ function inputValidation(input){
 }
 
 function fetchSceneValues(){
-  const sliders = document.querySelectorAll('.container input.slider');
+  const sliders = document.querySelectorAll('input.slider');
   const values = { scene1: {}, scene2: {} };
 
   sliders.forEach(input => {
@@ -269,7 +272,7 @@ function fetchSceneValues(){
 }
 
 function updateSceneValues(array, scene){
-  const sliders = document.querySelectorAll('.container input.slider');
+  const sliders = document.querySelectorAll('input.slider');
 
   sliders.forEach(input => {
     array[scene][input.id] = input.value;
@@ -277,7 +280,7 @@ function updateSceneValues(array, scene){
 }
 
 function setSceneValues(array, scene){
-  const sliders = document.querySelectorAll('.container input.slider');
+  const sliders = document.querySelectorAll('input.slider');
 
   sliders.forEach(input => {
     input.value = array[scene][input.id]
@@ -286,7 +289,7 @@ function setSceneValues(array, scene){
 }
 
 function createJSON(){
-  const sliders = document.querySelectorAll('.container input.slider');
+  const sliders = document.querySelectorAll('input.slider');
   const data = {};
 
   sliders.forEach(input => {
@@ -308,7 +311,7 @@ function createJSON(){
 
 function loadJSON() {
   const fileInput = document.getElementById('formFile');
-  const sliders = document.querySelectorAll('.container input.slider');
+  const sliders = document.querySelectorAll('input.slider');
   const data_min = {};
   const data_max = {};
 
@@ -371,8 +374,8 @@ export_btn.addEventListener('click', () => {
   createJSON();
 });
 
-const sliderInputs = document.querySelectorAll('.container input.slider');
-const valueInputs = document.querySelectorAll('.container input.single-value, .container input.multi-value');
+const sliderInputs = document.querySelectorAll('input.slider');
+const valueInputs = document.querySelectorAll('input.single-value, input.multi-value');
 
 sliderInputs.forEach((element, index) => {
   const sliderID = element;
