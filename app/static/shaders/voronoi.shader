@@ -41,9 +41,9 @@ vec4 voronoi() {
     }
 
     float edge = exp(-dmin * 0.02);
-    vec3 color = randColor(punkt) * edge;
+    vec3 color = randColor(point) * edge;
 
-    return vec4(color, 1.0)
+    return vec4(color, 1.0);
 }
 
 void main() {
