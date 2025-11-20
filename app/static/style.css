@@ -96,3 +96,7 @@ canvas {
 .overflow-control::-webkit-scrollbar {
   display: none;
 }
+
+.remove{
+    display: none;
+}

@@ -3,6 +3,15 @@
 const canvas = document.getElementById('glcanvas');
 const gl = canvas.getContext("webgl2");
 const scenesData = fetchSceneValues();
+const sceneAvailableShaders = {
+  scene1: ['steps', 'rgb'], // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 1, zawiera id elementow z html
+  scene2: ['brightness', 'gamma', 'contrast', 'gauss', 'sobel', 'perlin', 'voronoii', 'bloom']  // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 2, zawiera id elementow z html
+}
+
+console.log(sceneAvailableShaders);
+
+updateSceneShaders(sceneAvailableShaders.scene2, sceneAvailableShaders.scene1);
+
 let activeScene = null;
 let renderScene1Requested = true;
 
@@ -88,25 +97,22 @@ async function init() {
   const vertexShaderSource = await loadShaderSource('vertex.shader');
   const fragmentShaderSource = await loadShaderSource('fragment.shader');
   const fragmentAsciiShaderSource = await loadShaderSource('fragment_ascii.shader');
-  const gammaCorrectionShaderSource = await loadShaderSource('gamma_correction.shader');
 
   return {vertexShaderSource,
           fragmentShaderSource,
-          fragmentAsciiShaderSource,
-          gammaCorrectionShaderSource};
+          fragmentAsciiShaderSource};
 }
 
 (async () => {
   const {vertexShaderSource,
          fragmentShaderSource,
-         fragmentAsciiShaderSource,
-         gammaCorrectionShaderSource} = await init();
+         fragmentAsciiShaderSource} = await init();
 
   // Kompiluj shadery
   const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
   const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
   const fragmentAsciiShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentAsciiShaderSource);
-  // const gammaCorrectionShader = createShader(gl, gl., gammaCorrectionShaderSource);
+
   // Stwórz program i ustaw go
   const program = createProgram(gl, vertexShader, fragmentShader);
   const programAscii = createProgram(gl, vertexShader, fragmentAsciiShader);
@@ -149,26 +155,15 @@ async function init() {
     
   }
 
-
   // ============================================================ Podpinanie uniformów:
   const uResolutionLocation = gl.getUniformLocation(program, "u_Resolution");
   const uStepSizeLocation = gl.getUniformLocation(program, "u_StepSize");
+
+  const uBrightnessLocation = gl.getUniformLocation(programAscii, "u_Brightness");
+  const uShadowsLocation = gl.getUniformLocation(programAscii, "u_Shadows");
+  const uMidtonesLocation = gl.getUniformLocation(programAscii, "u_Midtones");
+  const uHighlightsLocation = gl.getUniformLocation(programAscii, "u_Highlights");
   //===================================================================================
-
-  function rgbCreator(red, green, blue){
-    const red_slider = document.getElementById(red);
-    const green_slider = document.getElementById(green);
-    const blue_slider = document.getElementById(blue);
-
-    const r = red_slider.value / 255;
-    const g = green_slider.value / 255;
-    const b = blue_slider.value / 255;
-    const a = 1.0;
-
-    const colors = [r, g, b, a];
-
-    return colors;
-  }
 
   const scenes = {
     scene1: {
@@ -185,8 +180,6 @@ async function init() {
           gl.uniform2f(uResolutionLocation, canvas.width, canvas.height);
           
           const step_slider = document.getElementById("stepsize-slider");
-          console.log(sliderInputs)
-          console.log(valueInputs)
           gl.uniform1f(uStepSizeLocation, step_slider.value);
 
           gl.drawArrays(gl.TRIANGLES,0,6); 
@@ -202,6 +195,14 @@ async function init() {
         gl.viewport(0,0,canvas.width,canvas.height);
         gl.clearColor(0,0,0,1);
         gl.clear(gl.COLOR_BUFFER_BIT);
+
+        const [brightness_val, shadows_val, midtones_val, hightlights_val] = brightness('brightness-slider', 'shadows-slider', 'midtones-slider', 'highlights-slider');
+
+        gl.uniform1f(uBrightnessLocation, parseFloat(brightness_val));
+        gl.uniform1f(uShadowsLocation, parseFloat(shadows_val));
+        gl.uniform1f(uMidtonesLocation, parseFloat(midtones_val));
+        gl.uniform1f(uHighlightsLocation, parseFloat(hightlights_val));
+
         gl.drawArrays(gl.TRIANGLES,0,6);
 
       }
@@ -212,9 +213,11 @@ async function init() {
 
   function toggleScene() {
     if (activeScene === 'scene1') {
+        updateSceneShaders(sceneAvailableShaders.scene2, sceneAvailableShaders.scene1);
         activeScene = 'scene2';
     } else {
         renderScene1Requested = true;
+        updateSceneShaders(sceneAvailableShaders.scene1, sceneAvailableShaders.scene2);
         activeScene = 'scene1';
     }
   }
@@ -235,6 +238,48 @@ async function init() {
   requestAnimationFrame(render);
 
 })();
+
+// ======================================================================= Funkcje obslugi shaderow
+
+function rgbCreator(red, green, blue){
+  const red_slider = document.getElementById(red);
+  const green_slider = document.getElementById(green);
+  const blue_slider = document.getElementById(blue);
+
+  const r = red_slider.value / 255;
+  const g = green_slider.value / 255;
+  const b = blue_slider.value / 255;
+  const a = 1.0;
+
+  const colors = [r, g, b, a];
+
+  return colors;
+}
+
+function brightness(bright, shadow, midtone, highlight){
+  const brighness_value = document.getElementById(bright).value;
+  const shadows_value = document.getElementById(shadow).value;
+  const midtones_value = document.getElementById(midtone).value;
+  const highlights_value = document.getElementById(highlight).value;
+
+  const data = [brighness_value, shadows_value, midtones_value, highlights_value];
+
+  return data;
+}
+
+function gamma(){}
+
+function contrast(){}
+
+function differenceOfGaussian(){}
+
+function sobel(){}
+
+function perlin(){}
+
+function voronoii(){}
+
+function bloom(){}
 
 // ======================================================================= Reszta Skryptow
 
@@ -298,6 +343,16 @@ function setSceneValues(array, scene){
   sliders.forEach(input => {
     input.value = array[scene][input.id]
     input.dispatchEvent(new Event('input'));
+  });
+}
+
+function updateSceneShaders(scene1, scene2){
+  scene2.forEach(id => {
+    document.getElementById(id).classList.add('remove');
+  });
+
+  scene1.forEach(id => {
+    document.getElementById(id).classList.remove('remove');
   });
 }
 

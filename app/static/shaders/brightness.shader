@@ -4,14 +4,14 @@
     in vec2 v_TexCoord;
     out vec4 fragColor;
 
-    uniform sampler2D uTexture;
+    uniform sampler2D u_Texture;
+
     uniform float brightness;
     uniform float shadows;
     uniform float midtones;
     uniform float highlights;
 
-    void main() {
-        vec4 color = texture(uTexture, v_TexCoord);
+    vec4 brightnessControl(vec4 color) {
         color.rgb *= brightness;
 
         float l = dot(color.rgb, vec3(0.299, 0.587, 0.114));
@@ -26,5 +26,9 @@
 
         color.rgb = clamp(color.rgb, 0.0, 1.0);
 
-        fragColor = color;
+        return color;
+    }
+
+    void main() {
+        fragColor = brightnessControl(texture(u_Texture, v_TexCoord));
     }
