@@ -411,76 +411,7 @@ valueInputs.forEach((element, index) => {
   });
 });
 
-// ======= Slider 2
-
-const slider2 = document.getElementById('slider2');
-const value2 = document.getElementById('value2');
-
-slider2.addEventListener('input', () => {
-  inputValue(slider2, value2);
-});
-
-value2.addEventListener('input', () => {
-  restoreDefault(value2);
-
-  sliderValue(slider2, value2);
-  inputValidation(value2);
-});
-
-
-// ======= Slider 3
-
-const slider3 = document.getElementById('slider3');
-const value3 = document.getElementById('value3');
-
-slider3.addEventListener('input', () => { 
-  inputValue(slider3, value3);
-});
-
-value3.addEventListener('input', () => {
-  restoreDefault(value3);
-  sliderValue(slider3, value3);
-  inputValidation(value3);
-});
-
-
-// ======= RGB sliders
-
-const red_slider = document.getElementById('red-slider');
-const red_value = document.getElementById('red-value');
-
-red_slider.addEventListener('input', () => { 
-  inputValue(red_slider, red_value);
-});
-
-red_value.addEventListener('input', () => {
-  restoreDefault(red_value);
-  sliderValue(red_slider, red_value);
-  inputValidation(red_value);
-});
-
-const green_slider = document.getElementById('green-slider');
-const green_value = document.getElementById('green-value');
-
-green_slider.addEventListener('input', () => { 
-  inputValue(green_slider, green_value);
-});
-
-green_value.addEventListener('input', () => {
-  restoreDefault(green_value);
-  sliderValue(green_slider, green_value);
-  inputValidation(green_value);
-});
-
-const blue_slider = document.getElementById('blue-slider');
-const blue_value = document.getElementById('blue-value');
-
-blue_slider.addEventListener('input', () => { 
-  inputValue(blue_slider, blue_value);
-});
-
-blue_value.addEventListener('input', () => {
-  restoreDefault(blue_value);
-  sliderValue(blue_slider, blue_value);
-  inputValidation(blue_value);
+const buttonRenderScene1 = document.getElementById('render-scene1-button');
+buttonRenderScene1.addEventListener('click', () => {
+  renderScene1Requested = true;  
 });
