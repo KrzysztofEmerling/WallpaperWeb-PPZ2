@@ -2,7 +2,7 @@
     precision mediump float;
 
     in vec2 v_TexCoord;
-    out vec4 fragColor;
+    out vec4 FragColor;
 
     uniform sampler2D u_Texture;
 
@@ -30,5 +30,5 @@
     }
 
     void main() {
-        fragColor = brightnessControl(texture(u_Texture, v_TexCoord));
+        FragColor = brightnessControl(texture(u_Texture, v_TexCoord));
     }

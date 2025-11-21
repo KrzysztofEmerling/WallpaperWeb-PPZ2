@@ -1,14 +1,14 @@
 #version 300 es
 precision mediump float;
 
-uniform sampler2D tex;
-uniform float gamma;
-
-in vec2 TexCoord;
+in vec2 v_TexCoord;
 out vec4 FragColor;
 
+uniform sampler2D u_Texture;
+uniform float gamma;
+
 void main() {
-    vec3 color = texture(tex, TexCoord).rgb;
+    vec3 color = texture(u_Texture, v_TexCoord).rgb;
 
     color = pow(color, vec3(1.0 / gamma));
 

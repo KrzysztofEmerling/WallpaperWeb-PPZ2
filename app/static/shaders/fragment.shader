@@ -1,10 +1,10 @@
 #version 300 es
 precision highp float;
 
+out vec4 FragColor;
+
 uniform vec2 u_Resolution;
 uniform float u_StepSize;
-
-out vec4 fragColor;
 
 float sdSphere(vec3 p, float r) {
     return length(p) - r;
@@ -13,18 +13,19 @@ float sdSphere(vec3 p, float r) {
 float sdCylinder(vec3 p, float r, float h) {
     return max(sqrt(p.x * p.x + p.z * p.z) - r, abs(p.y) - (h / 2.0));
 }
+
 // Zwraca najmniejszą odległość do obiektów w scenie (matemtyczna reprezentacja sceny)
 float sceneSDF(vec3 p) {
     float nebula = sdCylinder(p - vec3(0.4, -1.0, 12.0), 6.0, 0.125);
-
-    return nebula; 
-    
+    return nebula;
 }
+
 float getbHoleMass(float r)
 {
     // Mass = (c**2 * r) / (2 * G) gdzie G = 6.67 * 10**-11, c = 3 * 10 ** 8 pomniejszony o 10000000000000000000000000
     return(r * 90.0) / (1.334);
 }
+
 // Przybliżenie normalnej przez różniczkowanie
 vec3 estimateNormal(vec3 p) {
     const vec2 e = vec2(0.001, 0.0);
@@ -34,6 +35,7 @@ vec3 estimateNormal(vec3 p) {
         sceneSDF(p + e.yyx) - sceneSDF(p - e.yyx)
     ));
 }
+
 vec3 shade(vec3 p) {
     vec3 normal = estimateNormal(p);
     vec3 lightDir = normalize(vec3(-0.5, 1.0, -0.3));
@@ -84,7 +86,6 @@ void main() {
     vec3 rd = normalize(vec3(uv.x, uv.y, 1.0)); 
 
     vec3 col = raymarch(ro, rd, vec3(0.4, -1.0, 12.0), 0.6);;
-    
 
-    fragColor = vec4(col, 1.0);
+    FragColor = vec4(col, 1.0);
 }

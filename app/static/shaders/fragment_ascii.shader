@@ -10,7 +10,7 @@
   uniform float u_Highlights;
   uniform vec2 u_TexelSize;
 
-  out vec4 fragColor;
+  out vec4 FragColor;
 
   vec4 brightnessControl(vec4 color) {
     color.rgb *= u_Brightness;
@@ -81,5 +81,5 @@ vec4 sobel(vec4 color) {
 }
 
   void main() {
-    fragColor = sobel(brightnessControl(texture(u_Texture, v_TexCoord)));
+    FragColor = sobel(brightnessControl(texture(u_Texture, v_TexCoord)));
   }
