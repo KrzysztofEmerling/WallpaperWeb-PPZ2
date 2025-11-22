@@ -2,21 +2,21 @@
 precision mediump float;
 
 in vec2 v_TexCoord;
-out vec4 fragColor;
+out vec4 FragColor;
 
-uniform sampler2D uTexture;
-uniform int kernel_size;
+uniform sampler2D u_Texture;
+uniform int KernelSize;
 uniform vec2 u_TexelSize;
 
 float gaussianWeight[6] = float[](
     0.06136, 0.24477, 0.38774, 0.24477, 0.06136, 0.0
 );
 
-void main() {
-    vec3 original = texture(uTexture, v_TexCoord).rgb;
+vec4 gaussian(vec4 color) {
+    vec3 original = texture(u_Texture, v_TexCoord).rgb;
     vec3 blur = vec3(0.0);
 
-    int k = kernel_size;
+    int k = KernelSize;
 
     for (int x = -k; x <= k; x++) {
         for (int y = -k; y <= k; y++) {
@@ -27,11 +27,15 @@ void main() {
 
             float w = gaussianWeight[abs(x)] * gaussianWeight[abs(y)];
 
-            blur += texture(uTexture, coord).rgb * w;
+            blur += texture(u_Texture, coord).rgb * w;
         }
     }
     vec3 result = original - blur;
     result = result * 0.5 + 0.5;
 
-    fragColor = vec4(result, 1.0);
+    return vec4(result, 1.0);
+}
+
+void main() {
+    FragColor = gaussian(texture(u_Texture, v_TexCoord));
 }

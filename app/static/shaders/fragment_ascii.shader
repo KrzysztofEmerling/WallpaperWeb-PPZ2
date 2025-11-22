@@ -9,6 +9,7 @@
   uniform float u_Shadows;
   uniform float u_Midtones;
   uniform float u_Highlights;
+  uniform int KernelSize;
   uniform vec2 u_TexelSize;
 
   vec4 brightnessControl(vec4 color) {
@@ -98,6 +99,8 @@ vec4 brightness(vec4 color) {
 
     return color;
 }
+
+// ============================ DO SHADERA GAUSSIAN ============================
 
   void main() {
     FragColor = brightness(sobel(brightnessControl(texture(u_Texture, v_TexCoord))));
