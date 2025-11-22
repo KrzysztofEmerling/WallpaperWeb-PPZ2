@@ -7,10 +7,13 @@ out vec4 FragColor;
 uniform sampler2D u_Texture;
 uniform float gamma;
 
-void main() {
+vec4 gamma_corr(vec4 color) {
     vec3 color = texture(u_Texture, v_TexCoord).rgb;
-
     color = pow(color, vec3(1.0 / gamma));
 
-    FragColor = vec4(color, 1.0);
+    return vec4(color, 1.0);
+}
+
+void main() {
+    FragColor = gamma_corr(texture(u_Texture, v_TexCoord));
 }
