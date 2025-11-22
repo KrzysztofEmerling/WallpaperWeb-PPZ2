@@ -2,6 +2,7 @@
   precision mediump float;
 
   in vec2 v_TexCoord;
+  out vec4 FragColor;
   uniform sampler2D u_Texture;
 
   uniform float u_Brightness;
@@ -9,8 +10,6 @@
   uniform float u_Midtones;
   uniform float u_Highlights;
   uniform vec2 u_TexelSize;
-
-  out vec4 FragColor;
 
   vec4 brightnessControl(vec4 color) {
     color.rgb *= u_Brightness;
@@ -30,7 +29,8 @@
     return color;
   }
 
-  //Funkcja pomocnicza: edge reflection - odbija pixele (rysuje ich odbicie lustrzane) przy krawedziach eliminujac tym artefakty
+// ============================= DO SHADERA SOBEL =============================
+// Funkcja pomocnicza: edge reflection - odbija pixele (rysuje ich odbicie lustrzane) przy krawedziach eliminujac tym artefakty
 vec2 mirrorUV(vec2 uv) {
     uv = abs(uv);             // odbicie wartości < 0
     uv = 1.0 - abs(uv - 1.0); // odbicie wartości > 1
@@ -79,6 +79,8 @@ vec4 sobel(vec4 color) {
 
     return vec4(result, 1.0);
 }
+
+// =========================== DO SHADERA BRIGHTNESS ===========================
 
   void main() {
     FragColor = sobel(brightnessControl(texture(u_Texture, v_TexCoord)));

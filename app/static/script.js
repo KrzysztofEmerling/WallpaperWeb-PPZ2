@@ -163,6 +163,7 @@ async function init() {
   const uShadowsLocation = gl.getUniformLocation(programAscii, "u_Shadows");
   const uMidtonesLocation = gl.getUniformLocation(programAscii, "u_Midtones");
   const uHighlightsLocation = gl.getUniformLocation(programAscii, "u_Highlights");
+
   const uSobelResolutionLocation = gl.getUniformLocation(programAscii, "u_TexelSize");
   //===================================================================================
 
