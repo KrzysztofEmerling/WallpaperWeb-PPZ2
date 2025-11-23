@@ -8,9 +8,7 @@ uniform sampler2D u_Texture;
 uniform float gamma;
 
 vec4 gamma_corr(vec4 color) {
-    vec3 color = texture(u_Texture, v_TexCoord).rgb;
-    color = pow(color, vec3(1.0 / gamma));
-
+    color.rgb = pow(color.rgb, vec3(1.0 / gamma));
     return vec4(color, 1.0);
 }
 

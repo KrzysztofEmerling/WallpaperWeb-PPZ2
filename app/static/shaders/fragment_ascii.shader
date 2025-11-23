@@ -9,6 +9,7 @@
   uniform float u_Shadows;
   uniform float u_Midtones;
   uniform float u_Highlights;
+  uniform float gamma;
   uniform int KernelSize;
   uniform vec2 u_TexelSize;
 
