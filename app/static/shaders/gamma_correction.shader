@@ -9,7 +9,7 @@ uniform float gamma;
 
 vec4 gamma_corr(vec4 color) {
     color.rgb = pow(color.rgb, vec3(1.0 / gamma));
-    return vec4(color, 1.0);
+    return color;
 }
 
 void main() {

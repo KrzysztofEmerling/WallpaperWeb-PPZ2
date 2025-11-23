@@ -130,7 +130,19 @@ vec4 gaussian(vec4 color) {
     return vec4(result, 1.0);
 }
 
+// ======================== DO SHADERA GAMMA CORRECTION ========================
+vec4 gamma_corr(vec4 color) {
+    color.rgb = pow(color.rgb, vec3(1.0 / gamma));
+    return color;
+}
+
 
   void main() {
-    FragColor = gaussian(brightness(sobel(brightnessControl(texture(u_Texture, v_TexCoord)))));
+    FragColor = gamma_corr(gaussian(brightness(sobel(brightnessControl(texture(u_Texture, v_TexCoord))))));
+    // FragColor = texture(u_Texture, v_TexCoord);
+    // FragColor = brightnessControl(texture(u_Texture, v_TexCoord));
+    // FragColor = sobel(texture(u_Texture, v_TexCoord));
+    // FragColor = brightness(texture(u_Texture, v_TexCoord));
+    // FragColor = gaussian(texture(u_Texture, v_TexCoord));
+    // FragColor = gamma_corr(texture(u_Texture, v_TexCoord));
   }
