@@ -91,12 +91,7 @@ vec4 gaussian() {
 
 // =========================== DO SHADERA LINESASCII ===========================
 vec4 linesASCII(vec4 color) {
-    // Powiekszenie 16 razy (sprawdzić czy działa poprawnie!!!!!!! :-)
-    float scaleVar = 16.0;
-    vec2 centered = (v_TexCoord - 0.5) / scaleVar + 0.5;
-
-    // Sample the texture
-    color = texture(u_Texture, centered);
+    
     return FragColor;
 }
 
