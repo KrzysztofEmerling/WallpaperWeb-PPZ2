@@ -1,3 +1,5 @@
+import { poissonDiskSampling } from "./poisson.js";
+
 // ======================================================================= WebGL
 
 const canvas = document.getElementById('glcanvas');
@@ -7,8 +9,6 @@ const sceneAvailableShaders = {
   scene1: ['steps', 'rgb'], // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 1, zawiera id elementow z html
   scene2: ['brightness', 'gamma', 'contrast', 'gauss', 'sobel', 'perlin', 'voronoii', 'bloom']  // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 2, zawiera id elementow z html
 }
-
-console.log(sceneAvailableShaders);
 
 updateSceneShaders(sceneAvailableShaders.scene2, sceneAvailableShaders.scene1);
 
