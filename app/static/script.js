@@ -14,6 +14,7 @@ updateSceneShaders(sceneAvailableShaders.scene2, sceneAvailableShaders.scene1);
 
 let activeScene = null;
 let renderScene1Requested = true;
+let renderScene2Requested = true;
 
 // ======= render stats
 const fpsCounter = document.getElementById('fps');
@@ -53,6 +54,7 @@ function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+    renderScene2Requested = true;
 }
 
 window.addEventListener('resize', resizeCanvas);
@@ -118,8 +120,6 @@ async function init() {
   const programAscii = createProgram(gl, vertexShader, fragmentAsciiShader);
   gl.useProgram(program);
 
-  const points = starsCreator("rg-seed-slider", "rg-md-slider", "rg-k-slider");
-  console.log(points);
   // Ustaw bufor współrzędnych prostokąta obejmującego cały canvas
   const positionBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -163,6 +163,9 @@ async function init() {
   const uStepSizeLocation = gl.getUniformLocation(program, "u_StepSize");
   const uArraySizeLocation = gl.getUniformLocation(programAscii, "u_ArraySize");
   const uArrayLocation = gl.getUniformLocation(programAscii, "u_Array");
+
+const uResolution1Location = gl.getUniformLocation(programAscii, "u_Resolution");
+
   /*
   const uBrightnessLocation = gl.getUniformLocation(programAscii, "u_Brightness");
   const uShadowsLocation = gl.getUniformLocation(programAscii, "u_Shadows");
@@ -198,25 +201,21 @@ async function init() {
       program: programAscii,
       render: function(time) {
         updateStats();
-        gl.useProgram(this.program);
-        gl.viewport(0,0,canvas.width,canvas.height);
-        gl.clearColor(0,0,0,1); //czarne tło
-        gl.clear(gl.COLOR_BUFFER_BIT);
-        gl.uniform1fv(uArrayLocation, points);
-        gl.uniform1i(uArraySizeLocation, points.length);
+        if(renderScene2Requested){
+          gl.useProgram(this.program);
+          gl.viewport(0,0,canvas.width,canvas.height);
+          gl.clearColor(0,0,0,1); //czarne tło
+          gl.clear(gl.COLOR_BUFFER_BIT);
 
-        /*
-        const [brightness_val, shadows_val, midtones_val, hightlights_val] = brightness('brightness-slider', 'shadows-slider', 'midtones-slider', 'highlights-slider');
+          const points = starsCreator("rg-seed-slider", "rg-md-slider", "rg-k-slider");
 
-        gl.uniform1f(uBrightnessLocation, parseFloat(brightness_val));
-        gl.uniform1f(uShadowsLocation, parseFloat(shadows_val));
-        gl.uniform1f(uMidtonesLocation, parseFloat(midtones_val));
-        gl.uniform1f(uHighlightsLocation, parseFloat(hightlights_val));
-
-        */
-        
-        gl.drawArrays(gl.TRIANGLES,0,6);
-
+          gl.uniform1fv(uArrayLocation, points);
+          gl.uniform1i(uArraySizeLocation, points.length);
+          gl.uniform2f(uResolution1Location, canvas.width, canvas.height);
+          
+          gl.drawArrays(gl.TRIANGLES,0,6);
+          renderScene2Requested = false;
+        }
       }
     }
   };
@@ -225,6 +224,7 @@ async function init() {
 
   function toggleScene() {
     if (activeScene === 'scene1') {
+        renderScene2Requested = true;
         updateSceneShaders(sceneAvailableShaders.scene2, sceneAvailableShaders.scene1);
         activeScene = 'scene2';
     } else {
@@ -474,6 +474,7 @@ sliderInputs.forEach((element, index) => {
 
   sliderID.addEventListener('input', () => {
     inputValue(sliderID, valueID);
+    renderScene2Requested = true;
   });
 });
 
@@ -485,6 +486,7 @@ valueInputs.forEach((element, index) => {
     restoreDefault(valueID);
     sliderValue(sliderID, valueID);
     inputValidation(valueID);
+    renderScene2Requested = true;
   });
 });
 

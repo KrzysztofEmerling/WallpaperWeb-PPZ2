@@ -1,6 +1,16 @@
-export function poissonDiskSampling(width, height, seed = 0, minDistance = 20, k = 30){
+export function poissonDiskSampling(width, height, seed = 123, minDistance = 50, k = 30){
 
   // =========== funkcje pomocnicze
+
+  function mulberry32(seed) {
+    return function() {
+      seed |= 0;
+      seed = (seed + 0x6D2B79F5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t ^ (t + Math.imul(t ^ (t >>> 7), t | 61))) >>> 0;
+      return t / 4294967296;
+    }
+  }
 
   function createGrid(width, height, cellSize){
     const gw = Math.ceil(width / cellSize); // wzor z algorytmu bridsona: r/sqrt(n)
@@ -46,7 +56,7 @@ export function poissonDiskSampling(width, height, seed = 0, minDistance = 20, k
 
   // ==============================
 
-  let rand = Math.random();
+  const rand = mulberry32(seed);
   const cellSize = minDistance / Math.sqrt(2);
 
   const [gridWidth, gridHeight, grid] = createGrid(width, height, cellSize);
@@ -54,17 +64,22 @@ export function poissonDiskSampling(width, height, seed = 0, minDistance = 20, k
   const approvedSamples = [];
   const toCheckSamples = [];
 
-  addSample(rand * width, rand * height);
+  const centerX = width / 2;
+  const centerY = height / 2;
+  const offset = 2;
+
+  addSample(centerX + (rand() - 0.5) * offset, centerY + (rand() - 0.5) * offset);
+
 
   while (toCheckSamples.length > 0){
-    const index = Math.floor(Math.random() * toCheckSamples.length);
-    const baseSample = approvedSamples[index];
-    const [baseSampleX, baseSampleY] = baseSample;
+    const index = Math.floor(rand() * toCheckSamples.length);
+    const baseSampleIndex = toCheckSamples[index];
+    const [baseSampleX, baseSampleY] = approvedSamples[baseSampleIndex];
     let accepted = false;
 
     for (let attempt = 0; attempt < k; attempt++){
-      const angle = Math.random() * Math.PI * 2;
-      const radius = minDistance * (1 + Math.random());
+      const angle = rand() * Math.PI * 2;
+      const radius = minDistance * (1 + rand());
 
       const currentX = baseSampleX + radius * Math.cos(angle);
       const currentY = baseSampleY + radius * Math.sin(angle);
@@ -76,13 +91,11 @@ export function poissonDiskSampling(width, height, seed = 0, minDistance = 20, k
       ){
         addSample(currentX, currentY);
         accepted = true;
-        rand = Math.random();
         break;
       }
     }
     if (!accepted){
-      const indexToRemove = toCheckSamples.indexOf(index);
-      toCheckSamples.splice(indexToRemove, 1);
+      toCheckSamples.splice(index, 1);
     }
   }
 
