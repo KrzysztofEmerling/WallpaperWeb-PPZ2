@@ -7,7 +7,7 @@ const gl = canvas.getContext("webgl2");
 const scenesData = fetchSceneValues();
 const sceneAvailableShaders = {
   scene1: ['steps', 'rgb'], // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 1, zawiera id elementow z html
-  scene2: ['brightness', 'gamma', 'contrast', 'gauss', 'sobel', 'perlin', 'voronoii', 'bloom']  // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 2, zawiera id elementow z html
+  scene2: ['brightness', 'gamma', 'contrast', 'gauss', 'sobel', 'perlin', 'voronoii', 'bloom', 'rozklad-gwiazd']  // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 2, zawiera id elementow z html
 }
 
 updateSceneShaders(sceneAvailableShaders.scene2, sceneAvailableShaders.scene1);
@@ -164,7 +164,7 @@ async function init() {
   const uArraySizeLocation = gl.getUniformLocation(programAscii, "u_ArraySize");
   const uArrayLocation = gl.getUniformLocation(programAscii, "u_Array");
 
-const uResolution1Location = gl.getUniformLocation(programAscii, "u_Resolution");
+  const uResolution1Location = gl.getUniformLocation(programAscii, "u_Resolution");
 
   /*
   const uBrightnessLocation = gl.getUniformLocation(programAscii, "u_Brightness");

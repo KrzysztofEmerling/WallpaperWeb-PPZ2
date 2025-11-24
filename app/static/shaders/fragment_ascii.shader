@@ -3,14 +3,8 @@
 
   in vec2 v_TexCoord;
   
-  //uniform sampler2D u_Texture;
-
-  //uniform float u_Brightness;
-  //uniform float u_Shadows;
-  //uniform float u_Midtones;
-  //uniform float u_Highlights;
   uniform int u_ArraySize;
-  uniform float u_Array[999];
+  uniform float u_Array[1022];
 
   uniform vec2 u_Resolution;
 

@@ -66,10 +66,10 @@ export function poissonDiskSampling(width, height, seed = 123, minDistance = 50,
 
   const centerX = width / 2;
   const centerY = height / 2;
-  const offset = 2;
+  const offset = 50;
 
   addSample(centerX + (rand() - 0.5) * offset, centerY + (rand() - 0.5) * offset);
-
+  
 
   while (toCheckSamples.length > 0){
     const index = Math.floor(rand() * toCheckSamples.length);
