@@ -51,8 +51,6 @@ export function poissonDiskSampling(width, height, seed = 0, minDistance = 20, k
 
   const [gridWidth, gridHeight, grid] = createGrid(width, height, cellSize);
 
-  console.log(grid);
-
   const approvedSamples = [];
   const toCheckSamples = [];
 

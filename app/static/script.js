@@ -118,7 +118,8 @@ async function init() {
   const programAscii = createProgram(gl, vertexShader, fragmentAsciiShader);
   gl.useProgram(program);
 
-
+  const points = starsCreator("rg-seed-slider", "rg-md-slider", "rg-k-slider");
+  console.log(points);
   // Ustaw bufor współrzędnych prostokąta obejmującego cały canvas
   const positionBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -137,6 +138,7 @@ async function init() {
   gl.enableVertexAttribArray(positionLocation);
   gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
+  /*
   const image = new Image();
   image.src = 'static/images/image.png';
   image.onload = () => {
@@ -154,15 +156,20 @@ async function init() {
     scenes.scene2.render(0);
     
   }
+*/
 
   // ============================================================ Podpinanie uniformów:
   const uResolutionLocation = gl.getUniformLocation(program, "u_Resolution");
   const uStepSizeLocation = gl.getUniformLocation(program, "u_StepSize");
-
+  const uArraySizeLocation = gl.getUniformLocation(programAscii, "u_ArraySize");
+  const uArrayLocation = gl.getUniformLocation(programAscii, "u_Array");
+  /*
   const uBrightnessLocation = gl.getUniformLocation(programAscii, "u_Brightness");
   const uShadowsLocation = gl.getUniformLocation(programAscii, "u_Shadows");
   const uMidtonesLocation = gl.getUniformLocation(programAscii, "u_Midtones");
   const uHighlightsLocation = gl.getUniformLocation(programAscii, "u_Highlights");
+  */
+ 
   //===================================================================================
 
   const scenes = {
@@ -193,9 +200,12 @@ async function init() {
         updateStats();
         gl.useProgram(this.program);
         gl.viewport(0,0,canvas.width,canvas.height);
-        gl.clearColor(0,0,0,1);
+        gl.clearColor(0,0,0,1); //czarne tło
         gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.uniform1fv(uArrayLocation, points);
+        gl.uniform1i(uArraySizeLocation, points.length);
 
+        /*
         const [brightness_val, shadows_val, midtones_val, hightlights_val] = brightness('brightness-slider', 'shadows-slider', 'midtones-slider', 'highlights-slider');
 
         gl.uniform1f(uBrightnessLocation, parseFloat(brightness_val));
@@ -203,6 +213,8 @@ async function init() {
         gl.uniform1f(uMidtonesLocation, parseFloat(midtones_val));
         gl.uniform1f(uHighlightsLocation, parseFloat(hightlights_val));
 
+        */
+        
         gl.drawArrays(gl.TRIANGLES,0,6);
 
       }
@@ -254,6 +266,16 @@ function rgbCreator(red, green, blue){
   const colors = [r, g, b, a];
 
   return colors;
+}
+
+function starsCreator(seed, minDistance, K){
+  const seed_slider = document.getElementById(seed);
+  const minDistance_slider = document.getElementById(minDistance);
+  const K_slider = document.getElementById(K);
+
+  const result = poissonDiskSampling(canvas.width, canvas.height, seed_slider.value, minDistance_slider.value, K_slider.value);
+
+  return result;
 }
 
 function brightness(bright, shadow, midtone, highlight){

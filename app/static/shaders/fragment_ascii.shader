@@ -2,33 +2,23 @@
   precision mediump float;
 
   in vec2 v_TexCoord;
-  uniform sampler2D u_Texture;
+  
+  //uniform sampler2D u_Texture;
 
-  uniform float u_Brightness;
-  uniform float u_Shadows;
-  uniform float u_Midtones;
-  uniform float u_Highlights;
+  //uniform float u_Brightness;
+  //uniform float u_Shadows;
+  //uniform float u_Midtones;
+  //uniform float u_Highlights;
+  uniform int u_ArraySize;
+  uniform float u_Array[256];
 
   out vec4 fragColor;
 
-  vec4 brightnessControl(vec4 color) {
-    color.rgb *= u_Brightness;
-
-    float l = dot(color.rgb, vec3(0.299, 0.587, 0.114));
-
-    float shadowMask     = 1.0 - smoothstep(0.0, 0.35, l);
-    float midtoneMask    = smoothstep(0.20, 0.75, l) * (1.0 - smoothstep(0.75, 1.0, l));
-    float highlightMask  = smoothstep(0.65, 1.0, l);
-
-    color.rgb += shadowMask * (u_Shadows - 1.0);
-    color.rgb += midtoneMask * (u_Midtones - 1.0);
-    color.rgb += highlightMask * (u_Highlights - 1.0);
-
-    color.rgb = clamp(color.rgb, 0.0, 1.0);
-
-    return color;
-  }
-
   void main() {
-    fragColor = brightnessControl(texture(u_Texture, v_TexCoord));
+    vec3 color = vec3(0.0, 0.0, 0.0);
+    for(int i = 0 ; i < u_ArraySize ; i += 2){
+      color += step(length(v_TexCoord - vec2(u_Array[i], u_Array[i+1])), 1.1);
+    }
+    color = clamp(color, 0.0, 1.0);
+    fragColor = vec4(color, 1.0);
   }

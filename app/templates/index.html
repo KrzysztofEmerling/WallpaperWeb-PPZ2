@@ -389,6 +389,44 @@
                         </div> 
                     </li>
 
+                    <li class="mb-1" id="rozklad-gwiazd"> 
+                        <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#rg-collapse" aria-expanded="true">
+                            Rozkład gwiazd
+                        </button>
+
+                        <div class="collapse ps-3 pt-2" id="rg-collapse">
+                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+
+                                <li> <!-- Jeden znacznik li to jest jedna podkategoria -->
+                                    <span class="text-white text-nowrap hidden">Seed</span>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="100" value="50" id="rg-seed-slider">
+                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="100" value="50" id="rg-seed-value">
+                                    </div>
+                                </li> 
+
+                                <li>
+                                    <span class="text-white text-nowrap hidden">Minimal Distance</span>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="100" value="50" id="rg-md-slider">
+                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="100" value="50" id="rg-md-value">
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <span class="text-white text-nowrap hidden">K</span>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="100" value="50" id="rg-k-slider">
+                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="100" value="50" id="rg-k-value">
+                                    </div>
+                                </li>
+
+                                <!-- W tym miejscu dodac kolejne elementy listy tak jak wyzej -->
+
+                            </ul> 
+                        </div>
+                    </li>
+
                 </ul>
             </div>
         </div>
