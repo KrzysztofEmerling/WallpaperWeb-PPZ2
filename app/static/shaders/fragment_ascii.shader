@@ -12,6 +12,8 @@
   uniform float gamma;
   uniform int KernelSize;
 
+  uniform vec2 u_TexelSize;
+
 
 // =========================== DO SHADERA BRIGHTNESS ===========================
 vec4 brightness(vec4 color) {
