@@ -8,6 +8,7 @@
   uniform vec2 u_TexelSize;
 
 
+// ============================= DO SHADERA SOBEL =============================
   //Funkcja pomocnicza: edge reflection - odbija pixele (rysuje ich odbicie lustrzane) przy krawedziach eliminujac tym artefakty
 vec2 mirrorUV(vec2 uv) {
     uv = abs(uv);             // odbicie wartości < 0
@@ -58,12 +59,42 @@ vec4 sobel(vec4 color) {
     return vec4(result, 1.0);
 }
 
+// ============================ DO SHADERA GAUSSIAN ============================
+float gaussianWeight[6] = float[](
+    0.06136, 0.24477, 0.38774, 0.24477, 0.06136, 0.0
+);
 
-  vec4 linesASCII(vec4 color) {
-    
-  }
+vec4 gaussian() {
+    vec3 original = sobel(texture(u_Texture, v_TexCoord)).rgb;
+    vec3 blur = vec3(0.0);
 
-  void main() {
-    vec4 sobelled = sobel(texture(u_Texture, v_TexCoord));
-    FragColor = linesASCII(sobelled);
-  }
+    int k = KernelSize;
+
+    for (int x = -k; x <= k; x++) {
+        for (int y = -k; y <= k; y++) {
+            vec2 offset = vec2(float(x), float(y)) * u_TexelSize;
+            vec2 coord = v_TexCoord + offset;
+            coord = clamp(coord, 0.0, 1.0);
+            coord = 1.0 - abs(1.0 - coord * 2.0); 
+
+            float w = gaussianWeight[abs(x)] * gaussianWeight[abs(y)];
+
+            blur += sobel(texture(u_Texture, coord)).rgb * w;
+        }
+    }
+    vec3 result = original - blur;
+    result = result * 0.5 + 0.5;
+
+    return vec4(result, 1.0);
+}
+
+
+// =========================== DO SHADERA LINESASCII ===========================
+vec4 linesASCII(vec4 color) {
+
+}
+
+void main() {
+    FragColor = gaussian();
+    FragColor = linesASCII(FragColor);
+}
