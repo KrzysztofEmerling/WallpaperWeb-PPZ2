@@ -1,34 +1,67 @@
-vec4 bloom(
-    sampler2D tex,
-    vec2 uv,
-    vec2 resolution,
-    float threshold,
-    float intensity
-) {
-    const int SAMPLES = 5;
-    const float weights[SAMPLES] = float[](
-        0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216
-    );
+#version 300 es
+precision highp float;
+precision highp int;
 
-    vec4 originalColor = texture(tex, uv);
-    vec4 brightColor = max(originalColor - threshold, 0.0);
+in vec2 v_TexCoord;
+out vec4 fragColor;
 
-    vec2 texelSize = 1.0 / resolution;
+uniform sampler2D uTexture;
+uniform int kernelSize;
+uniform float threshold;
+uniform float bloomIntensity;
 
-    vec4 blurredBloom = brightColor * weights[0];
+float luminance(vec3 c) {
+    return dot(c, vec3(0.299, 0.587, 0.114));
+}
 
-    for(int i = 1; i < SAMPLES; ++i) {
-        float offset = float(i);
+vec3 sampleWithBlackBorder(sampler2D tex, vec2 uv) {
+    if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) {
+        return vec3(0.0);
+    } else {
+        return texture(tex, uv).rgb;
+    }
+}
 
-        blurredBloom += texture(tex, uv + vec2(texelSize.x * offset, 0.0)) * weights[i];
-        blurredBloom += texture(tex, uv - vec2(texelSize.x * offset, 0.0)) * weights[i];
+void main() {
+    vec3 baseColor = texture(uTexture, v_TexCoord).rgb;
 
-        blurredBloom += texture(tex, uv + vec2(0.0, texelSize.y * offset)) * weights[i];
-        blurredBloom += texture(tex, uv - vec2(0.0, texelSize.y * offset)) * weights[i];
+    int k = kernelSize;
+    if (k < 2) k = 2;
+    if (k > 30) k = 30;
+
+    vec2 texel = 1.0 / vec2(textureSize(uTexture, 0));
+    float thr = threshold;
+    if (thr <= 0.0) thr = 0.7;
+    float intensity = bloomIntensity;
+    if (intensity <= 0.0) intensity = 1.0;
+
+    int half = k / 2;
+    vec3 sum = vec3(0.0);
+    int count = 0;
+
+    for (int j = 0; j < 30; ++j) {
+        if (j >= k) break;
+        int y = j - half;
+        for (int i = 0; i < 30; ++i) {
+            if (i >= k) break;
+            int x = i - half;
+
+            vec2 offset = vec2(float(x), float(y)) * texel;
+            vec2 uv = v_TexCoord + offset;
+
+            vec3 sample = sampleWithBlackBorder(uTexture, uv);
+            float l = luminance(sample);
+            float brightFactor = max((l - thr) / (1.0 - thr), 0.0);
+            vec3 brightSample = sample * brightFactor;
+
+            sum += brightSample;
+            count++;
+        }
     }
 
-    vec3 finalColor = originalColor.rgb + blurredBloom.rgb * intensity;
-    finalColor = finalColor / (finalColor + 1.0); // tonemapping
+    vec3 blur = (count > 0) ? (sum / float(count)) : vec3(0.0);
+    vec3 finalColor = baseColor + blur * intensity;
+    finalColor = clamp(finalColor, 0.0, 1.0);
 
-    return vec4(finalColor, 1.0);
-} 
+    fragColor = vec4(finalColor, 1.0);
+}
