@@ -1,4 +1,5 @@
 #version 300 es
+// Gaussian idzie na koniec, pobiera inny input
 precision mediump float;
 
 in vec2 v_TexCoord;
@@ -12,7 +13,7 @@ float gaussianWeight[6] = float[](
     0.06136, 0.24477, 0.38774, 0.24477, 0.06136, 0.0
 );
 
-vec4 gaussian(vec4 color) {
+vec4 gaussian() {
     vec3 original = texture(u_Texture, v_TexCoord).rgb;
     vec3 blur = vec3(0.0);
 
@@ -37,5 +38,5 @@ vec4 gaussian(vec4 color) {
 }
 
 void main() {
-    FragColor = gaussian(texture(u_Texture, v_TexCoord));
+    FragColor = gaussian();
 }

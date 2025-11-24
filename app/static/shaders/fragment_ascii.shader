@@ -11,7 +11,6 @@
   uniform float u_Highlights;
   uniform float gamma;
   uniform int KernelSize;
-  uniform vec2 u_TexelSize;
 
 
 // =========================== DO SHADERA BRIGHTNESS ===========================
@@ -33,13 +32,27 @@ vec4 brightness(vec4 color) {
     return color;
 }
 
+// ======================== DO SHADERA GAMMA CORRECTION ========================
+vec4 gamma_corr(vec4 color) {
+    color.rgb = pow(color.rgb, vec3(1.0 / gamma));
+    return color;
+}
+
+// ============================== POSTPROCESSING ==============================
+vec4 postProcessing(vec4 color)
+{
+// return złożenia wszystkich poza blur;
+    color = gamma_corr(brightness(color));
+    return color;
+}
+
 // ============================ DO SHADERA GAUSSIAN ============================
 float gaussianWeight[6] = float[](
     0.06136, 0.24477, 0.38774, 0.24477, 0.06136, 0.0
 );
 
-vec4 gaussian(vec4 color) {
-    vec3 original = texture(u_Texture, v_TexCoord).rgb;
+vec4 gaussian() {
+    vec3 original = postProcessing(texture(u_Texture, v_TexCoord)).rgb;
     vec3 blur = vec3(0.0);
 
     int k = KernelSize;
@@ -53,7 +66,7 @@ vec4 gaussian(vec4 color) {
 
             float w = gaussianWeight[abs(x)] * gaussianWeight[abs(y)];
 
-            blur += texture(u_Texture, coord).rgb * w;
+            blur += postProcessing(texture(u_Texture, coord)).rgb * w;
         }
     }
     vec3 result = original - blur;
@@ -62,17 +75,10 @@ vec4 gaussian(vec4 color) {
     return vec4(result, 1.0);
 }
 
-// ======================== DO SHADERA GAMMA CORRECTION ========================
-vec4 gamma_corr(vec4 color) {
-    color.rgb = pow(color.rgb, vec3(1.0 / gamma));
-    return color;
-}
-
 
   void main() {
-    // FragColor = gamma_corr(gaussian(brightness(texture(u_Texture, v_TexCoord))));
     // FragColor = texture(u_Texture, v_TexCoord);
     // FragColor = brightness(texture(u_Texture, v_TexCoord));
-    FragColor = gaussian(texture(u_Texture, v_TexCoord));
     // FragColor = gamma_corr(texture(u_Texture, v_TexCoord));
+    FragColor = gaussian();
   }

@@ -164,7 +164,7 @@ async function init() {
   const uMidtonesLocation = gl.getUniformLocation(programAscii, "u_Midtones");
   const uHighlightsLocation = gl.getUniformLocation(programAscii, "u_Highlights");
 
-  const uSobelResolutionLocation = gl.getUniformLocation(programAscii, "u_TexelSize");
+  const uGammaCorrectionLocation = gl.getUniformLocation(programAscii, "gamma");
   //===================================================================================
 
   const scenes = {
@@ -204,7 +204,7 @@ async function init() {
         gl.uniform1f(uShadowsLocation, parseFloat(shadows_val));
         gl.uniform1f(uMidtonesLocation, parseFloat(midtones_val));
         gl.uniform1f(uHighlightsLocation, parseFloat(hightlights_val));
-        gl.uniform2f(uSobelResolutionLocation, (1.0/canvas.width), (1.0/canvas.height));
+        gl.uniform1f(uGammaCorrectionLocation, 1.1);
 
         gl.drawArrays(gl.TRIANGLES,0,6);
 
