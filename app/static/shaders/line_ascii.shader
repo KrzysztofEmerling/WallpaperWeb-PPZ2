@@ -92,8 +92,9 @@ vec4 gaussian() {
 // =========================== DO SHADERA LINESASCII ===========================
 vec4 linesASCII(vec4 color) {
     int blockSize = 16;
+    int pixelsInBlock = blockSize * blockSize; //256
 
-    // Find the top-left pixel of the block in UV space
+    // Znajdź lewy górny piksel bloku w UV space
     vec2 blockOriginUV = floor(v_TexCoord / (u_TexelSize * float(blockSize))) * u_TexelSize * float(blockSize);
 
     vec4 sumColor = vec4(0.0);
@@ -101,12 +102,28 @@ vec4 linesASCII(vec4 color) {
     for(int y = 0; y < blockSize; ++y) {
         for(int x = 0; x < blockSize; ++x) {
             vec2 offset = vec2(float(x), float(y)) * u_TexelSize;
-            sumColor += texture(u_Texture, blockOriginUV + offset);
+            vec4 tempColor = texture(u_Texture, blockOriginUV + offset);
+
+            // Nie jest mega restrykcyjny - mozna później dopasować
+            float threshold = 0.1;
+
+            // Jeśli nie jest czarny
+            if (length(tempColor.rgb) > threshold) {
+                sumColor += tempColor; 
+            } else {
+                // Jeśli jest czarny to nie dodajemy go do sumy i nie wyciągamy średniej
+                pixelsInBlock -= 1;
+            }
         }
     }
 
-    FragColor = sumColor / float(blockSize * blockSize); // avg
-    return FragColor;
+    if(pixelsInBlock >= 1) {
+        FragColor = sumColor / float(pixelsInBlock); // avg
+        return FragColor;
+    } else {
+        // Jeśli cały blok jest czarny
+        return vec4(0.0);
+    }
 }
 
 void main() {
