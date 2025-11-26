@@ -10,13 +10,15 @@
   uniform float u_Midtones;
   uniform float u_Highlights;
   uniform float gamma;
-  uniform int KernelSize;
+
+  const int MAX_KERNEL_SIZE = 10;
+  uniform int u_KernelSize;
+  uniform float u_GaussianWeight[MAX_KERNEL_SIZE + 1];
 
   uniform vec2 u_TexelSize;
 
-
-// =========================== DO SHADERA BRIGHTNESS ===========================
-vec4 brightness(vec4 color) {
+  // =========================== DO SHADERA BRIGHTNESS ===========================
+  vec4 brightness(vec4 color) {
     color.rgb *= u_Brightness;
 
     float l = dot(color.rgb, vec3(0.299, 0.587, 0.114));
@@ -32,55 +34,47 @@ vec4 brightness(vec4 color) {
     color.rgb = clamp(color.rgb, 0.0, 1.0);
 
     return color;
-}
+  }
 
-// ======================== DO SHADERA GAMMA CORRECTION ========================
-vec4 gamma_corr(vec4 color) {
+  // ======================== DO SHADERA GAMMA CORRECTION ========================
+  vec4 gamma_corr(vec4 color) {
     color.rgb = pow(color.rgb, vec3(1.0 / gamma));
     return color;
-}
+  }
 
-// ============================== POSTPROCESSING ==============================
-vec4 postProcessing(vec4 color)
-{
-// return złożenia wszystkich poza blur;
-    color = gamma_corr(brightness(color));
-    return color;
-}
+  // ============================ DO SHADERA GAUSSIAN ============================
 
-// ============================ DO SHADERA GAUSSIAN ============================
-float gaussianWeight[6] = float[](
-    0.06136, 0.24477, 0.38774, 0.24477, 0.06136, 0.0
-);
-
-vec4 gaussian() {
-    vec3 original = postProcessing(texture(u_Texture, v_TexCoord)).rgb;
+  vec4 gaussian() {
     vec3 blur = vec3(0.0);
+    float ws = 0.0;
 
-    int k = KernelSize;
+    int k = u_KernelSize;
 
-    for (int x = -k; x <= k; x++) {
-        for (int y = -k; y <= k; y++) {
-            vec2 offset = vec2(float(x), float(y)) * u_TexelSize;
-            vec2 coord = v_TexCoord + offset;
-            coord = clamp(coord, 0.0, 1.0);
-            coord = 1.0 - abs(1.0 - coord * 2.0); 
+    for (int x = -MAX_KERNEL_SIZE; x <= MAX_KERNEL_SIZE; x++) {
+      if(abs(x) > u_KernelSize) continue;
+      float wx = u_GaussianWeight[abs(x)];
 
-            float w = gaussianWeight[abs(x)] * gaussianWeight[abs(y)];
+      for (int y = -MAX_KERNEL_SIZE; y <= MAX_KERNEL_SIZE; y++) {
+        if(abs(y) > u_KernelSize) continue;
+        float wy = u_GaussianWeight[abs(y)];
+        float w = wx * wy;
 
-            blur += postProcessing(texture(u_Texture, coord)).rgb * w;
-        }
+        vec2 offset = vec2(float(x), float(y)) * u_TexelSize;
+        vec2 coord = clamp(v_TexCoord + offset, 0.0, 1.0);
+
+        blur += texture(u_Texture, coord).rgb * w;
+        ws += w;
+      }
     }
-    vec3 result = original - blur;
-    result = result * 0.5 + 0.5;
 
-    return vec4(result, 1.0);
-}
+    blur /= ws;
 
+    return vec4(blur, 1.0);
+  }
 
   void main() {
     // FragColor = texture(u_Texture, v_TexCoord);
     // FragColor = brightness(texture(u_Texture, v_TexCoord));
     // FragColor = gamma_corr(texture(u_Texture, v_TexCoord));
-    FragColor = gaussian();
+    FragColor = gamma_corr(brightness(gaussian()));
   }

@@ -42,6 +42,22 @@ function updateStats(){
   }
 }
 
+// ======= Tymczasowa obsluga gaussa
+
+const kernelSize = 6;
+const sigma = 3.0;
+
+function gaussian(x, sigma){
+  return Math.exp(-(x*x)/(2*sigma*sigma));
+}
+
+let weights = [];
+for(let i = 0; i <= kernelSize; i++){
+  weights.push(gaussian(i, sigma));
+}
+
+console.log(weights)
+
 // =======
 
 
@@ -165,6 +181,9 @@ async function init() {
   const uHighlightsLocation = gl.getUniformLocation(programAscii, "u_Highlights");
 
   const uGammaCorrectionLocation = gl.getUniformLocation(programAscii, "gamma");
+  const uKernelSizeLocation = gl.getUniformLocation(programAscii, "u_KernelSize");
+  const uGaussianWeightLocation = gl.getUniformLocation(programAscii, "u_GaussianWeight");
+  const uTexelSizeLocation = gl.getUniformLocation(programAscii, "u_TexelSize");
   //===================================================================================
 
   const scenes = {
@@ -204,7 +223,13 @@ async function init() {
         gl.uniform1f(uShadowsLocation, parseFloat(shadows_val));
         gl.uniform1f(uMidtonesLocation, parseFloat(midtones_val));
         gl.uniform1f(uHighlightsLocation, parseFloat(hightlights_val));
-        gl.uniform1f(uGammaCorrectionLocation, 1.8);
+
+        gl.uniform1f(uGammaCorrectionLocation, 1.0);
+
+        gl.uniform2f(uTexelSizeLocation, (1.0/canvas.width), (1.0/canvas.height));
+
+        gl.uniform1fv(uGaussianWeightLocation, weights); 
+        gl.uniform1i(uKernelSizeLocation, kernelSize);
 
         gl.drawArrays(gl.TRIANGLES,0,6);
 
