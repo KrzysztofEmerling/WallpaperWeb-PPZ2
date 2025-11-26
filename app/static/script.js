@@ -1,11 +1,13 @@
-// ======================================================================= WebGL
+// =================================== WebGL ===================================
 
 const canvas = document.getElementById('glcanvas');
 const gl = canvas.getContext("webgl2");
 const scenesData = fetchSceneValues();
 const sceneAvailableShaders = {
-  scene1: ['steps', 'rgb'], // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 1, zawiera id elementow z html
-  scene2: ['brightness', 'gamma', 'contrast', 'gauss', 'sobel', 'perlin', 'voronoii', 'bloom']  // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 2, zawiera id elementow z html
+  // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 1, zawiera id elementow z html
+  scene1: ['steps', 'rgb'],
+  // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 2, zawiera id elementow z html
+  scene2: ['brightness', 'gamma', 'contrast', 'gauss', 'sobel', 'perlin', 'voronoii', 'bloom']
 }
 
 console.log(sceneAvailableShaders);
@@ -171,7 +173,7 @@ async function init() {
     
   }
 
-  // ============================================================ Podpinanie uniformów:
+  // ========================== Podpinanie uniformów ==========================
   const uResolutionLocation = gl.getUniformLocation(program, "u_Resolution");
   const uStepSizeLocation = gl.getUniformLocation(program, "u_StepSize");
 
@@ -184,7 +186,7 @@ async function init() {
   const uKernelSizeLocation = gl.getUniformLocation(programAscii, "u_KernelSize");
   const uGaussianWeightLocation = gl.getUniformLocation(programAscii, "u_GaussianWeight");
   const uTexelSizeLocation = gl.getUniformLocation(programAscii, "u_TexelSize");
-  //===================================================================================
+  //============================================================================
 
   const scenes = {
     scene1: {
@@ -267,7 +269,7 @@ async function init() {
 
 })();
 
-// ======================================================================= Funkcje obslugi shaderow
+// ========================= Funkcje obslugi shaderow =========================
 
 function rgbCreator(red, green, blue){
   const red_slider = document.getElementById(red);
@@ -291,7 +293,6 @@ function brightness(bright, shadow, midtone, highlight){
   const highlights_value = document.getElementById(highlight).value;
 
   const data = [brighness_value, shadows_value, midtones_value, highlights_value];
-
   return data;
 }
 
@@ -309,7 +310,7 @@ function voronoii(){}
 
 function bloom(){}
 
-// ======================================================================= Reszta Skryptow
+// ============================== Reszta Skryptow ==============================
 
 function sliderValue(slider, input){
   const min = slider.min;
@@ -455,7 +456,7 @@ function loadJSON() {
 }
 
 
-// ======================================================================= Podpiecia funkcji pod elementy HTML
+// ==================== Podpiecia funkcji pod elementy HTML ====================
 
 const import_btn = document.getElementById('import-btn'); //dostajemy się do elementu
 
@@ -463,7 +464,7 @@ import_btn.addEventListener('click', () => {
   loadJSON();
 });
 
-// ======= Pobieranie pliku JSON
+// =========================== Pobieranie pliku JSON ===========================
 
 const export_btn = document.getElementById('export-btn');
 
