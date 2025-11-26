@@ -65,7 +65,7 @@ float gaussianWeight[6] = float[](
 );
 
 vec4 gaussian() {
-    vec3 original = sobel(texture(u_Texture, v_TexCoord)).rgb;
+    vec3 original = texture(u_Texture, v_TexCoord).rgb;
     vec3 blur = vec3(0.0);
 
     int k = KernelSize;
@@ -79,7 +79,7 @@ vec4 gaussian() {
 
             float w = gaussianWeight[abs(x)] * gaussianWeight[abs(y)];
 
-            blur += sobel(texture(u_Texture, coord)).rgb * w;
+            blur += texture(u_Texture, coord).rgb * w;
         }
     }
     vec3 result = original - blur;
@@ -87,46 +87,43 @@ vec4 gaussian() {
 
     return vec4(result, 1.0);
 }
+// 
 
 
 // =========================== DO SHADERA LINESASCII ===========================
-vec4 linesASCII(vec4 color) {
+// Wybieranie największej wartości z bloku ))))))))
+// Dudadkowa funkcja - (pobierasz koordy - zwracasz informacje o liniach) 
+// dodanie koordów (origin i offset) - zwraca kolor w punkcie sobela * diffofgauss
+// Nasza funkcja skaluje linie w dół bez przerywania
+float getColorScore(vec4 color) {
+    return color.r + color.g + color.b;
+}
+
+vec4 linesASCII() {
     int blockSize = 16;
-    int pixelsInBlock = blockSize * blockSize; //256
 
     // Znajdź lewy górny piksel bloku w UV space
     vec2 blockOriginUV = floor(v_TexCoord / (u_TexelSize * float(blockSize))) * u_TexelSize * float(blockSize);
 
-    vec4 sumColor = vec4(0.0);
+    vec4 biggestColor = vec4(0.0);
+    float biggestColorScore = 0.0;
 
     for(int y = 0; y < blockSize; ++y) {
         for(int x = 0; x < blockSize; ++x) {
             vec2 offset = vec2(float(x), float(y)) * u_TexelSize;
+            //vvvvvv TUTAJ UŻYJ FUNKCJI vvvvvv
             vec4 tempColor = texture(u_Texture, blockOriginUV + offset);
 
-            // Nie jest mega restrykcyjny - mozna później dopasować
-            float threshold = 0.1;
-
-            // Jeśli nie jest czarny
-            if (length(tempColor.rgb) > threshold) {
-                sumColor += tempColor; 
-            } else {
-                // Jeśli jest czarny to nie dodajemy go do sumy i nie wyciągamy średniej
-                pixelsInBlock -= 1;
+            float tempColorScore = getColorScore(tempColor);
+            if(tempColorScore > biggestColorScore) {
+                biggestColor = tempColor;
+                biggestColorScore = tempColorScore
             }
         }
-    }
-
-    if(pixelsInBlock >= 1) {
-        FragColor = sumColor / float(pixelsInBlock); // avg
-        return FragColor;
-    } else {
-        // Jeśli cały blok jest czarny
-        return vec4(0.0);
     }
 }
 
 void main() {
     FragColor = gaussian();
-    FragColor = linesASCII(FragColor);
+    FragColor = linesASCII();
 }
