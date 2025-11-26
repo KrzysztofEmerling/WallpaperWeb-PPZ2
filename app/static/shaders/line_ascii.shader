@@ -91,18 +91,21 @@ vec4 gaussian() {
 
 // =========================== DO SHADERA LINESASCII ===========================
 vec4 linesASCII(vec4 color) {
-    vec2 blockSizeUV = u_TexelSize * 16.0; // Size of one block
+    int blockSize = 16;
 
-    vec2 blockIndex = floor(v_TexCoord / blockSizeUV);
+    // Find the top-left pixel of the block in UV space
+    vec2 blockOriginUV = floor(v_TexCoord / (u_TexelSize * float(blockSize))) * u_TexelSize * float(blockSize);
 
-    // Block coordinates
-    vec2 blockOriginUV = blockIndex * blockSizeUV;
-    vec2 blockCenterUV = blockOriginUV + blockSizeUV * 0.5;
+    vec4 sumColor = vec4(0.0);
 
-    // Sample the center pixel (representing block)
-    vec4 blockColor = texture(u_Texture, blockCenterUV);
+    for(int y = 0; y < blockSize; ++y) {
+        for(int x = 0; x < blockSize; ++x) {
+            vec2 offset = vec2(float(x), float(y)) * u_TexelSize;
+            sumColor += texture(u_Texture, blockOriginUV + offset);
+        }
+    }
 
-    FragColor = blockColor;
+    FragColor = sumColor / float(blockSize * blockSize); // avg
     return FragColor;
 }
 
