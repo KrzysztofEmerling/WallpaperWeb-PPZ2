@@ -91,7 +91,18 @@ vec4 gaussian() {
 
 // =========================== DO SHADERA LINESASCII ===========================
 vec4 linesASCII(vec4 color) {
-    
+    vec2 blockSizeUV = u_TexelSize * 16.0; // Size of one block
+
+    vec2 blockIndex = floor(v_TexCoord / blockSizeUV);
+
+    // Block coordinates
+    vec2 blockOriginUV = blockIndex * blockSizeUV;
+    vec2 blockCenterUV = blockOriginUV + blockSizeUV * 0.5;
+
+    // Sample the center pixel (representing block)
+    vec4 blockColor = texture(u_Texture, blockCenterUV);
+
+    FragColor = blockColor;
     return FragColor;
 }
 
