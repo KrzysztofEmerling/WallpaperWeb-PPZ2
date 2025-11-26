@@ -94,13 +94,16 @@ async function loadShaderSource(name) {
 }
 
 async function init() {
-  const vertexShaderSource = await loadShaderSource('vertex.shader');
-  const fragmentShaderSource = await loadShaderSource('fragment.shader');
+  const vertexShaderSource        = await loadShaderSource('vertex.shader');
+  const fragmentShaderSource      = await loadShaderSource('fragment.shader');
   const fragmentAsciiShaderSource = await loadShaderSource('fragment_ascii.shader');
 
-  return {vertexShaderSource,
-          fragmentShaderSource,
-          fragmentAsciiShaderSource};
+  // ZWRACAMY OBIEKT – tu musi być return { ... }
+  return {
+      vertexShaderSource,
+      fragmentShaderSource,
+      fragmentAsciiShaderSource
+  };
 }
 
 (async () => {
@@ -163,6 +166,10 @@ async function init() {
   const uShadowsLocation = gl.getUniformLocation(programAscii, "u_Shadows");
   const uMidtonesLocation = gl.getUniformLocation(programAscii, "u_Midtones");
   const uHighlightsLocation = gl.getUniformLocation(programAscii, "u_Highlights");
+
+  const uPerlinScaleLocation = gl.getUniformLocation(programAscii, "u_PerlinScale");
+  const uPerlinTimeLocation  = gl.getUniformLocation(programAscii, "u_PerlinTime");
+  
   //===================================================================================
 
   const scenes = {
@@ -187,26 +194,44 @@ async function init() {
         }
       }
     },
-    scene2: {
-      program: programAscii,
-      render: function(time) {
-        updateStats();
-        gl.useProgram(this.program);
-        gl.viewport(0,0,canvas.width,canvas.height);
-        gl.clearColor(0,0,0,1);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-
-        const [brightness_val, shadows_val, midtones_val, hightlights_val] = brightness('brightness-slider', 'shadows-slider', 'midtones-slider', 'highlights-slider');
-
-        gl.uniform1f(uBrightnessLocation, parseFloat(brightness_val));
-        gl.uniform1f(uShadowsLocation, parseFloat(shadows_val));
-        gl.uniform1f(uMidtonesLocation, parseFloat(midtones_val));
-        gl.uniform1f(uHighlightsLocation, parseFloat(hightlights_val));
-
-        gl.drawArrays(gl.TRIANGLES,0,6);
-
+    
+    
+      scene2: {
+        program: programAscii,
+        render: function(time) {
+          updateStats();
+          gl.useProgram(this.program);
+          gl.viewport(0, 0, canvas.width, canvas.height);
+          gl.clearColor(0, 0, 0, 1);
+          gl.clear(gl.COLOR_BUFFER_BIT);
+    
+          // ==== BRIGHTNESS (jak u Ciebie) ====
+          const [brightness_val, shadows_val, midtones_val, highlights_val] =
+            brightness('brightness-slider', 'shadows-slider', 'midtones-slider', 'highlights-slider');
+    
+          gl.uniform1f(uBrightnessLocation, parseFloat(brightness_val));
+          gl.uniform1f(uShadowsLocation,    parseFloat(shadows_val));
+          gl.uniform1f(uMidtonesLocation,   parseFloat(midtones_val));
+          gl.uniform1f(uHighlightsLocation, parseFloat(highlights_val));
+    
+          // ==== PERLIN – TO MA BYĆ WŁAŚNIE TUTAJ, W ŚRODKU render() ====
+          const [perlinWidth, perlinHeight, perlinTime] =
+            perlin('perlin-width-slider', 'perlin-height-slider', 'perlin-time-slider');
+    
+          const scaleX  = Math.max(0.01, perlinWidth  / 20.0);
+          const scaleY  = Math.max(0.01, perlinHeight / 20.0);
+          const timeVal = perlinTime * 0.05;
+    
+          gl.uniform2f(uPerlinScaleLocation, scaleX, scaleY);
+          gl.uniform1f(uPerlinTimeLocation,  timeVal);
+          // ====================================
+    
+          gl.drawArrays(gl.TRIANGLES, 0, 6);
+        
       }
     }
+    
+    
   };
 
   activeScene = 'scene2';
@@ -275,7 +300,14 @@ function differenceOfGaussian(){}
 
 function sobel(){}
 
-function perlin(){}
+function perlin(widthSliderId, heightSliderId, timeSliderId) {
+  const width  = parseFloat(document.getElementById(widthSliderId).value);
+  const height = parseFloat(document.getElementById(heightSliderId).value);
+  const time   = parseFloat(document.getElementById(timeSliderId).value);
+
+  return [width, height, time];
+}
+
 
 function voronoii(){}
 
