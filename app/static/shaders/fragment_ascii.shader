@@ -3,7 +3,9 @@
 
   in vec2 v_TexCoord;
   out vec4 FragColor;
+
   uniform sampler2D u_Texture;
+  uniform vec2 u_TexelSize;
 
   uniform float u_Brightness;
   uniform float u_Shadows;
@@ -12,11 +14,10 @@
   uniform float u_Gamma;
   uniform float u_Contrast;
 
-  const int MAX_KERNEL_SIZE = 10;
   uniform int u_KernelSize;
+  const int MAX_KERNEL_SIZE = 10;
   uniform float u_GaussianWeight[MAX_KERNEL_SIZE + 1];
 
-  uniform vec2 u_TexelSize;
 
   // =========================== DO SHADERA BRIGHTNESS ===========================
   vec4 brightness(vec4 color) {

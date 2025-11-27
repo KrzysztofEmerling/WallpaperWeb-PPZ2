@@ -310,7 +310,10 @@ function contrast(contrast_handler){
   return [contrast_value];
 }
 
-function differenceOfGaussian(){}
+function differenceOfGaussian(kernelSize_handler){
+  const kernelSize_value = document.getElementById(kernelSize_handler).value;
+  return [kernelSize_value];
+}
 
 function bloom(){}
 
