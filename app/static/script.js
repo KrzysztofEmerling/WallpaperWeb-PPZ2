@@ -158,6 +158,7 @@ async function init() {
   // ============================================================ Podpinanie uniformów:
   const uResolutionLocation = gl.getUniformLocation(program, "u_Resolution");
   const uStepSizeLocation = gl.getUniformLocation(program, "u_StepSize");
+  const uHaloColorLocation = gl.getUniformLocation(program, "u_HaloColor");
 
   const uBrightnessLocation = gl.getUniformLocation(programAscii, "u_Brightness");
   const uShadowsLocation = gl.getUniformLocation(programAscii, "u_Shadows");
@@ -182,6 +183,8 @@ async function init() {
           const step_slider = document.getElementById("stepsize-slider");
           gl.uniform1f(uStepSizeLocation, step_slider.value);
 
+          [r,g,b,a] = rgbCreator('red-slider','green-slider','blue-slider')
+          gl.uniform3f(uHaloColorLocation, r,g,b);
           gl.drawArrays(gl.TRIANGLES,0,6); 
           renderScene1Requested = false; 
         }
