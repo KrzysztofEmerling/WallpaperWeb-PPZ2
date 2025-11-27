@@ -24,6 +24,34 @@ float sceneSDF(vec3 p) {
 float getbHoleMass(float r) { // Mass = (c**2 * r) / (2 * G) gdzie G = 6.67 * 10**-11, c = 3 * 10 ** 8 pomniejszony o 10000000000000000000000000 
     return(r * 90.0) / (1.334);
 } 
+
+
+vec2 cubemap(vec3 rd) {
+    d = normalize(d);
+
+    vec3 ad = abs(d);
+    vec2 uv;
+
+    if (ad.x >= ad.y && ad.x >= ad.z) {
+        // X face
+        if (d.x > 0.0) { uv = vec2(-d.z, -d.y) / ad.x; }
+        else           { uv = vec2( d.z, -d.y) / ad.x; }
+    }
+    else if (ad.y >= ad.x && ad.y >= ad.z) {
+        // Y face
+        if (d.y > 0.0) { uv = vec2( d.x,  d.z) / ad.y; }
+        else           { uv = vec2( d.x, -d.z) / ad.y; }
+    }
+    else {
+        // Z face
+        if (d.z > 0.0) { uv = vec2( d.x, -d.y) / ad.z; }
+        else           { uv = vec2(-d.x, -d.y) / ad.z; }
+    }
+
+    uv = uv * 0.5 + 0.5;   // map to [0..1]
+    return uv;
+}
+
 vec3 raymarch(vec3 ro, vec3 rd, vec3 bHoleCenter, float SchwarzschildRadious) { 
 
     float bHoleMass = getbHoleMass(SchwarzschildRadious);
