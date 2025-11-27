@@ -44,7 +44,7 @@
   }
 
   // =========================== DO SHADERA CONTRAST ===========================
-  vec4 applyContrast(vec4 color) {
+  vec4 contrast(vec4 color) {
     float scaling = 1.0 + u_Contrast;
 
     vec3 tempVec = vec3(color.rgb);
@@ -90,5 +90,5 @@
     // FragColor = texture(u_Texture, v_TexCoord);
     // FragColor = brightness(texture(u_Texture, v_TexCoord));
     // FragColor = gamma_corr(texture(u_Texture, v_TexCoord));
-    FragColor = (gamma_corr(brightness(gaussian())));
+    FragColor = contrast(gamma_corr(brightness(gaussian())));
   }

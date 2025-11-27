@@ -182,10 +182,11 @@ async function init() {
   const uMidtonesLocation   = gl.getUniformLocation(programAscii, "u_Midtones");
   const uHighlightsLocation = gl.getUniformLocation(programAscii, "u_Highlights");
 
-  const uGammaLocation           = gl.getUniformLocation(programAscii, "u_Gamma");
-  const uKernelSizeLocation      = gl.getUniformLocation(programAscii, "u_KernelSize");
-  const uGaussianWeightLocation  = gl.getUniformLocation(programAscii, "u_GaussianWeight");
-  const uTexelSizeLocation       = gl.getUniformLocation(programAscii, "u_TexelSize");
+  const uGammaLocation          = gl.getUniformLocation(programAscii, "u_Gamma");
+  const uContrastLocation       = gl.getUniformLocation(programAscii, "u_Contrast")
+  const uKernelSizeLocation     = gl.getUniformLocation(programAscii, "u_KernelSize");
+  const uGaussianWeightLocation = gl.getUniformLocation(programAscii, "u_GaussianWeight");
+  const uTexelSizeLocation      = gl.getUniformLocation(programAscii, "u_TexelSize");
   //============================================================================
 
   const scenes = {
@@ -225,8 +226,11 @@ async function init() {
         gl.uniform1f(uMidtonesLocation, parseFloat(midtones_val));
         gl.uniform1f(uHighlightsLocation, parseFloat(hightlights_val));
 
-        const [gamma_val] = gamma('gamma-slider')
+        const [gamma_val] = gamma('gamma-slider');
         gl.uniform1f(uGammaLocation, parseFloat(gamma_val));
+
+        const [contrast_val] = contrast('contrast-slider');
+        gl.uniform1f(uContrastLocation, parseFloat(contrast_val));
 
         gl.uniform2f(uTexelSizeLocation, (1.0/canvas.width), (1.0/canvas.height));
 
@@ -286,11 +290,11 @@ function rgbCreator(red, green, blue){
   return colors;
 }
 
-function brightness(bright, shadow, midtone, highlight){
-  const brighness_value = document.getElementById(bright).value;
-  const shadows_value = document.getElementById(shadow).value;
-  const midtones_value = document.getElementById(midtone).value;
-  const highlights_value = document.getElementById(highlight).value;
+function brightness(bright_handle, shadow_handle, midtone_handle, highlight_handle){
+  const brighness_value  = document.getElementById(bright_handle).value;
+  const shadows_value    = document.getElementById(shadow_handle).value;
+  const midtones_value   = document.getElementById(midtone_handle).value;
+  const highlights_value = document.getElementById(highlight_handle).value;
 
   const data = [brighness_value, shadows_value, midtones_value, highlights_value];
   return data;
@@ -298,12 +302,13 @@ function brightness(bright, shadow, midtone, highlight){
 
 function gamma(gamma_handle){
   const gamma_value = document.getElementById(gamma_handle).value;
-
-  const data = [gamma_value];
-  return data;
+  return [gamma_value];
 }
 
-function contrast(){}
+function contrast(contrast_handler){
+  const contrast_value = document.getElementById(contrast_handler).value;
+  return [contrast_value];
+}
 
 function differenceOfGaussian(){}
 
@@ -462,7 +467,6 @@ function loadJSON() {
 
 
 // ==================== Podpiecia funkcji pod elementy HTML ====================
-
 const import_btn = document.getElementById('import-btn'); //dostajemy się do elementu
 
 import_btn.addEventListener('click', () => {
@@ -470,7 +474,6 @@ import_btn.addEventListener('click', () => {
 });
 
 // =========================== Pobieranie pliku JSON ===========================
-
 const export_btn = document.getElementById('export-btn');
 
 export_btn.addEventListener('click', () => {

@@ -7,7 +7,7 @@
   uniform float u_Contrast;
 
 
-  vec4 applyContrast(vec4 color) {
+  vec4 contrast(vec4 color) {
     float scaling = 1.0 + u_Contrast;
 
     vec3 tempVec = vec3(color.rgb);
@@ -21,5 +21,5 @@
   }
 
   void main() {
-    FragColor = applyContrast(texture(u_Texture, v_TexCoord));
+    FragColor = contrast(texture(u_Texture, v_TexCoord));
   }
