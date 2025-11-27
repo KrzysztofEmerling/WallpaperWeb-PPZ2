@@ -27,7 +27,7 @@ float getbHoleMass(float r) { // Mass = (c**2 * r) / (2 * G) gdzie G = 6.67 * 10
 
 
 vec2 cubemap(vec3 rd) {
-    d = normalize(d);
+    vec3 d = normalize(rd);
 
     vec3 ad = abs(d);
     vec2 uv;
@@ -86,18 +86,21 @@ vec3 raymarch(vec3 ro, vec3 rd, vec3 bHoleCenter, float SchwarzschildRadious) {
             float stepA = (1.0 - alpha) * 0.00065; //u_Density; //referencyjnie 0.00065;
             color += scatterColor * stepA; 
             alpha += stepA;
-            if (alpha > 0.98) break;
+            if (alpha >= 1.0) return color;
         }
         
         // zakrzywienie promienia vec3 
         float bendingStrength = bHoleMass / (distToCenter * distToCenter + 0.0001);
         rd = normalize(rd + bendingStrength * dirToCenter * 0.000025);
         t += u_StepSize;
-        if (t > MAX_DIST) break; 
+        if (t > MAX_DIST)  {
+                return mix(vec3(cubemap(rd),0.0), color, alpha);
         } 
+        if(i == iter - 1) return mix(vec3(cubemap(rd),0.0), color, alpha);
+    } 
         
-    // pierwszy vec3 to kolor tła;
-    return mix(vec3(0.10), color, alpha);
+    // zabezpieczenie
+    return vec3(1.0, 0.0, 1.0);
 } 
 
 void main() { 
