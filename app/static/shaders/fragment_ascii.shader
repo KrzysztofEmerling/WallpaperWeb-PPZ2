@@ -9,7 +9,7 @@
   uniform float u_Shadows;
   uniform float u_Midtones;
   uniform float u_Highlights;
-  uniform float gamma;
+  uniform float u_Gamma;
 
   const int MAX_KERNEL_SIZE = 10;
   uniform int u_KernelSize;
@@ -38,7 +38,7 @@
 
   // ======================== DO SHADERA GAMMA CORRECTION ========================
   vec4 gamma_corr(vec4 color) {
-    color.rgb = pow(color.rgb, vec3(1.0 / gamma));
+    color.rgb = pow(color.rgb, vec3(1.0 / u_Gamma));
     return color;
   }
 

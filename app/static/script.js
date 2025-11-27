@@ -141,12 +141,12 @@ async function init() {
   const positionBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
   const positions = [
-    -1, -1, 
-    1, -1, 
-    -1,  1, 
-    -1,  1, 
-    1, -1, 
-    1,  1,
+    -1, -1,
+     1, -1,
+    -1,  1,
+    -1,  1,
+     1, -1,
+     1,  1,
   ];
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
@@ -175,17 +175,17 @@ async function init() {
 
   // ========================== Podpinanie uniformów ==========================
   const uResolutionLocation = gl.getUniformLocation(program, "u_Resolution");
-  const uStepSizeLocation = gl.getUniformLocation(program, "u_StepSize");
+  const uStepSizeLocation   = gl.getUniformLocation(program, "u_StepSize");
 
   const uBrightnessLocation = gl.getUniformLocation(programAscii, "u_Brightness");
-  const uShadowsLocation = gl.getUniformLocation(programAscii, "u_Shadows");
-  const uMidtonesLocation = gl.getUniformLocation(programAscii, "u_Midtones");
+  const uShadowsLocation    = gl.getUniformLocation(programAscii, "u_Shadows");
+  const uMidtonesLocation   = gl.getUniformLocation(programAscii, "u_Midtones");
   const uHighlightsLocation = gl.getUniformLocation(programAscii, "u_Highlights");
 
-  const uGammaCorrectionLocation = gl.getUniformLocation(programAscii, "gamma");
-  const uKernelSizeLocation = gl.getUniformLocation(programAscii, "u_KernelSize");
-  const uGaussianWeightLocation = gl.getUniformLocation(programAscii, "u_GaussianWeight");
-  const uTexelSizeLocation = gl.getUniformLocation(programAscii, "u_TexelSize");
+  const uGammaLocation           = gl.getUniformLocation(programAscii, "u_Gamma");
+  const uKernelSizeLocation      = gl.getUniformLocation(programAscii, "u_KernelSize");
+  const uGaussianWeightLocation  = gl.getUniformLocation(programAscii, "u_GaussianWeight");
+  const uTexelSizeLocation       = gl.getUniformLocation(programAscii, "u_TexelSize");
   //============================================================================
 
   const scenes = {
@@ -220,21 +220,20 @@ async function init() {
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         const [brightness_val, shadows_val, midtones_val, hightlights_val] = brightness('brightness-slider', 'shadows-slider', 'midtones-slider', 'highlights-slider');
-
         gl.uniform1f(uBrightnessLocation, parseFloat(brightness_val));
         gl.uniform1f(uShadowsLocation, parseFloat(shadows_val));
         gl.uniform1f(uMidtonesLocation, parseFloat(midtones_val));
         gl.uniform1f(uHighlightsLocation, parseFloat(hightlights_val));
 
-        gl.uniform1f(uGammaCorrectionLocation, 1.0);
+        const [gamma_val] = gamma('gamma-slider')
+        gl.uniform1f(uGammaLocation, parseFloat(gamma_val));
 
         gl.uniform2f(uTexelSizeLocation, (1.0/canvas.width), (1.0/canvas.height));
 
-        gl.uniform1fv(uGaussianWeightLocation, weights); 
+        gl.uniform1fv(uGaussianWeightLocation, weights);
         gl.uniform1i(uKernelSizeLocation, kernelSize);
 
         gl.drawArrays(gl.TRIANGLES,0,6);
-
       }
     }
   };
@@ -269,7 +268,8 @@ async function init() {
 
 })();
 
-// ========================= Funkcje obslugi shaderow =========================
+// ========================= Funkcje obsługi shaderów =========================
+// (Pobieranie wartości z HTMLa)
 
 function rgbCreator(red, green, blue){
   const red_slider = document.getElementById(red);
@@ -296,7 +296,12 @@ function brightness(bright, shadow, midtone, highlight){
   return data;
 }
 
-function gamma(){}
+function gamma(gamma_handle){
+  const gamma_value = document.getElementById(gamma_handle).value;
+
+  const data = [gamma_value];
+  return data;
+}
 
 function contrast(){}
 
