@@ -87,12 +87,11 @@ vec4 gaussian() {
 
     return vec4(result, 1.0);
 }
-// 
+
 
 
 // =========================== DO SHADERA LINESASCII ===========================
-// Wybieranie największej wartości z bloku ))))))))
-// Dudadkowa funkcja - (pobierasz koordy - zwracasz informacje o liniach) 
+// Dudadkowa funkcja - (pobierasz koordy - zwracasz informacje o liniach)
 // dodanie koordów (origin i offset) - zwraca kolor w punkcie sobela * diffofgauss
 // Nasza funkcja skaluje linie w dół bez przerywania
 float getColorScore(vec4 color) {
@@ -117,7 +116,7 @@ vec4 linesASCII() {
             float tempColorScore = getColorScore(tempColor);
             if(tempColorScore > biggestColorScore) {
                 biggestColor = tempColor;
-                biggestColorScore = tempColorScore
+                biggestColorScore = tempColorScore;
             }
         }
     }
