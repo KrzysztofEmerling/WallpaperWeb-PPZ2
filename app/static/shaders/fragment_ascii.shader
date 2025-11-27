@@ -10,6 +10,7 @@
   uniform float u_Midtones;
   uniform float u_Highlights;
   uniform float u_Gamma;
+  uniform float u_Contrast;
 
   const int MAX_KERNEL_SIZE = 10;
   uniform int u_KernelSize;
@@ -42,8 +43,21 @@
     return color;
   }
 
-  // ============================ DO SHADERA GAUSSIAN ============================
+  // =========================== DO SHADERA CONTRAST ===========================
+  vec4 applyContrast(vec4 color) {
+    float scaling = 1.0 + u_Contrast;
 
+    vec3 tempVec = vec3(color.rgb);
+    // zmiana kontrastu out = (in - 0.5) * k + 0.5
+    tempVec = (tempVec - 0.5) * scaling + 0.5;
+
+    //żadna składowa koloru nie wyjdzie poza przedział [0, 1]
+    tempVec = clamp(tempVec, 0.0, 1.0);
+
+    return vec4(tempVec, color.a);
+  }
+
+  // ============================ DO SHADERA GAUSSIAN ============================
   vec4 gaussian() {
     vec3 blur = vec3(0.0);
     float ws = 0.0;
@@ -76,5 +90,5 @@
     // FragColor = texture(u_Texture, v_TexCoord);
     // FragColor = brightness(texture(u_Texture, v_TexCoord));
     // FragColor = gamma_corr(texture(u_Texture, v_TexCoord));
-    FragColor = gamma_corr(brightness(gaussian()));
+    FragColor = (gamma_corr(brightness(gaussian())));
   }
