@@ -307,13 +307,13 @@ function contrast(){}
 
 function differenceOfGaussian(){}
 
+function bloom(){}
+
 function sobel(){}
 
 function perlin(){}
 
 function voronoii(){}
-
-function bloom(){}
 
 // ============================== Reszta Skryptow ==============================
 
