@@ -1,11 +1,13 @@
-// ======================================================================= WebGL
+// =================================== WebGL ===================================
 
 const canvas = document.getElementById('glcanvas');
 const gl = canvas.getContext("webgl2");
 const scenesData = fetchSceneValues();
 const sceneAvailableShaders = {
-  scene1: ['steps', 'rgb'], // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 1, zawiera id elementow z html
-  scene2: ['brightness', 'gamma', 'contrast', 'gauss', 'sobel', 'perlin', 'voronoii', 'bloom']  // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 2, zawiera id elementow z html
+  // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 1, zawiera id elementow z html
+  scene1: ['steps', 'rgb'],
+  // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 2, zawiera id elementow z html
+  scene2: ['brightness', 'gamma', 'contrast', 'gauss', 'sobel', 'perlin', 'voronoii', 'bloom']
 }
 
 console.log(sceneAvailableShaders);
@@ -41,6 +43,22 @@ function updateStats(){
     frametimeCounter.textContent = frametime.toFixed(1);
   }
 }
+
+// ======= Tymczasowa obsluga gaussa
+
+const kernelSize = 6;
+const sigma = 3.0;
+
+function gaussian(x, sigma){
+  return Math.exp(-(x*x)/(2*sigma*sigma));
+}
+
+let weights = [];
+for(let i = 0; i <= kernelSize; i++){
+  weights.push(gaussian(i, sigma));
+}
+
+console.log(weights)
 
 // =======
 
@@ -123,12 +141,12 @@ async function init() {
   const positionBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
   const positions = [
-    -1, -1, 
-    1, -1, 
-    -1,  1, 
-    -1,  1, 
-    1, -1, 
-    1,  1,
+    -1, -1,
+     1, -1,
+    -1,  1,
+    -1,  1,
+     1, -1,
+     1,  1,
   ];
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
@@ -155,16 +173,23 @@ async function init() {
     
   }
 
-  // ============================================================ Podpinanie uniformów:
+  // ========================== Podpinanie uniformów ==========================
   const uResolutionLocation = gl.getUniformLocation(program, "u_Resolution");
   const uStepSizeLocation = gl.getUniformLocation(program, "u_StepSize");
   const uHaloColorLocation = gl.getUniformLocation(program, "u_HaloColor");
 
   const uBrightnessLocation = gl.getUniformLocation(programAscii, "u_Brightness");
-  const uShadowsLocation = gl.getUniformLocation(programAscii, "u_Shadows");
-  const uMidtonesLocation = gl.getUniformLocation(programAscii, "u_Midtones");
+  const uShadowsLocation    = gl.getUniformLocation(programAscii, "u_Shadows");
+  const uMidtonesLocation   = gl.getUniformLocation(programAscii, "u_Midtones");
   const uHighlightsLocation = gl.getUniformLocation(programAscii, "u_Highlights");
-  //===================================================================================
+
+  const uGammaLocation          = gl.getUniformLocation(programAscii, "u_Gamma");
+  const uContrastLocation       = gl.getUniformLocation(programAscii, "u_Contrast")
+  const uKernelSizeLocation     = gl.getUniformLocation(programAscii, "u_KernelSize");
+  const uGaussianWeightLocation = gl.getUniformLocation(programAscii, "u_GaussianWeight");
+  const uTexelSizeLocation      = gl.getUniformLocation(programAscii, "u_TexelSize");
+  const uBloomIntensityLocation = gl.getUniformLocation(programAscii, "u_BloomIntensity");
+  //============================================================================
 
   const scenes = {
     scene1: {
@@ -200,14 +225,26 @@ async function init() {
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         const [brightness_val, shadows_val, midtones_val, hightlights_val] = brightness('brightness-slider', 'shadows-slider', 'midtones-slider', 'highlights-slider');
-
         gl.uniform1f(uBrightnessLocation, parseFloat(brightness_val));
         gl.uniform1f(uShadowsLocation, parseFloat(shadows_val));
         gl.uniform1f(uMidtonesLocation, parseFloat(midtones_val));
         gl.uniform1f(uHighlightsLocation, parseFloat(hightlights_val));
 
-        gl.drawArrays(gl.TRIANGLES,0,6);
+        const [gamma_val] = gamma('gamma-slider');
+        gl.uniform1f(uGammaLocation, parseFloat(gamma_val));
 
+        const [contrast_val] = contrast('contrast-slider');
+        gl.uniform1f(uContrastLocation, parseFloat(contrast_val));
+
+        const [bloomintensity_val] = bloom('bloom-slider');
+        gl.uniform1f(uBloomIntensityLocation, parseFloat(bloomintensity_val));
+
+        gl.uniform2f(uTexelSizeLocation, (1.0/canvas.width), (1.0/canvas.height));
+
+        gl.uniform1fv(uGaussianWeightLocation, weights);
+        gl.uniform1i(uKernelSizeLocation, kernelSize);
+
+        gl.drawArrays(gl.TRIANGLES,0,6);
       }
     }
   };
@@ -242,7 +279,8 @@ async function init() {
 
 })();
 
-// ======================================================================= Funkcje obslugi shaderow
+// ========================= Funkcje obsługi shaderów =========================
+// (Pobieranie wartości z HTMLa)
 
 function rgbCreator(red, green, blue){
   const red_slider = document.getElementById(red);
@@ -259,22 +297,35 @@ function rgbCreator(red, green, blue){
   return colors;
 }
 
-function brightness(bright, shadow, midtone, highlight){
-  const brighness_value = document.getElementById(bright).value;
-  const shadows_value = document.getElementById(shadow).value;
-  const midtones_value = document.getElementById(midtone).value;
-  const highlights_value = document.getElementById(highlight).value;
+function brightness(bright_handle, shadow_handle, midtone_handle, highlight_handle){
+  const brighness_value  = document.getElementById(bright_handle).value;
+  const shadows_value    = document.getElementById(shadow_handle).value;
+  const midtones_value   = document.getElementById(midtone_handle).value;
+  const highlights_value = document.getElementById(highlight_handle).value;
 
   const data = [brighness_value, shadows_value, midtones_value, highlights_value];
-
   return data;
 }
 
-function gamma(){}
+function gamma(gamma_handle){
+  const gamma_value = document.getElementById(gamma_handle).value;
+  return [gamma_value];
+}
 
-function contrast(){}
+function contrast(contrast_handler){
+  const contrast_value = document.getElementById(contrast_handler).value;
+  return [contrast_value];
+}
 
-function differenceOfGaussian(){}
+function differenceOfGaussian(kernelSize_handler){
+  const kernelSize_value = document.getElementById(kernelSize_handler).value;
+  return [kernelSize_value];
+}
+
+function bloom(bloomIntensity_handler){
+  const bloomIntensity_value = document.getElementById(bloomIntensity_handler).value;
+  return [bloomIntensity_value];
+}
 
 function sobel(){}
 
@@ -282,9 +333,7 @@ function perlin(){}
 
 function voronoii(){}
 
-function bloom(){}
-
-// ======================================================================= Reszta Skryptow
+// ============================== Reszta Skryptów ==============================
 
 function sliderValue(slider, input){
   const min = slider.min;
@@ -430,16 +479,14 @@ function loadJSON() {
 }
 
 
-// ======================================================================= Podpiecia funkcji pod elementy HTML
-
+// ==================== Podpiecia funkcji pod elementy HTML ====================
 const import_btn = document.getElementById('import-btn'); //dostajemy się do elementu
 
 import_btn.addEventListener('click', () => {
   loadJSON();
 });
 
-// ======= Pobieranie pliku JSON
-
+// =========================== Pobieranie pliku JSON ===========================
 const export_btn = document.getElementById('export-btn');
 
 export_btn.addEventListener('click', () => {
