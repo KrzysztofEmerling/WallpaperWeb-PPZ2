@@ -2,6 +2,7 @@
   precision mediump float;
 
   in vec2 v_TexCoord;
+  out vec4 FragColor;
   uniform sampler2D u_Texture;
 
   uniform float u_Brightness;
@@ -9,7 +10,6 @@
   uniform float u_Midtones;
   uniform float u_Highlights;
 
-  out vec4 fragColor;
 
   vec4 brightnessControl(vec4 color) {
     color.rgb *= u_Brightness;
@@ -30,5 +30,5 @@
   }
 
   void main() {
-    fragColor = brightnessControl(texture(u_Texture, v_TexCoord));
+    FragColor = brightnessControl(texture(u_Texture, v_TexCoord));
   }
