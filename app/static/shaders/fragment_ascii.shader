@@ -101,8 +101,8 @@
     }
   }
 
-  vec4 bloom() {
-    vec3 baseColor = texture(u_Texture, v_TexCoord).rgb;
+  vec4 bloom(vec4 color) {
+    vec3 baseColor = vec3(color.rgb);
 
     // Fixed kernel size. Whatevs.
     int kernelSize = 8;
@@ -146,11 +146,10 @@
     vec3 blur = (count > 0) ? (sum / float(count)) : vec3(0.0);
     vec3 finalColor = baseColor + blur * intensity;
 
-    return vec4(clamp(finalColor, 0.0, 1.0), 1.0);
+    return vec4(clamp(finalColor, 0.0, 1.0), color.a);
   }
 
   void main() {
-    // Szary ekran!
-    // FragColor = bloom(contrast(gamma_corr(brightness(gaussian()))));
-    FragColor = contrast(gamma_corr(brightness(gaussian())));
+    // FragColor = contrast(gamma_corr(brightness(gaussian())));
+    FragColor = bloom(contrast(gamma_corr(brightness(gaussian()))));
   }
