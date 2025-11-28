@@ -6,9 +6,9 @@ in vec2 v_TexCoord;
 out vec4 FragColor;
 
 uniform sampler2D u_Texture;
-uniform int u_KernelSize;
 uniform float u_BloomIntensity;
-uniform float threshold;
+// uniform float u_Kernel;
+// uniform float threshold;
 
 
 float luminance(vec3 c) {
@@ -26,17 +26,19 @@ vec3 blackborder(sampler2D tex, vec2 uv) {
 vec4 bloom() {
     vec3 baseColor = texture(u_Texture, v_TexCoord).rgb;
 
-    int kernelSize = u_KernelSize;
+    // Fixed kernel size. Whatevs.
+    int kernelSize = 8;
 
     // Można później usunąć jeśli inputy w HTMLu będą w sztywnych granicach
-    if (kernelSize < 2) kernelSize = 2;
-    if (kernelSize > 30) kernelSize = 30;
+    // if (kernelSize < 2) kernelSize = 2;
+    // if (kernelSize > 30) kernelSize = 30;
 
     vec2 texel = 1.0 / vec2(textureSize(u_Texture, 0));
-    float thr = threshold;
-    if (thr <= 0.0) thr = 0.7;
+    // Also fixed value
+    float thr = 0.7;
+    // if (thr <= 0.0) thr = 0.7;
     float intensity = u_BloomIntensity;
-    if (intensity <= 0.0) intensity = 1.0;
+    // if (intensity <= 0.0) intensity = 1.0;
 
     int halfSize = kernelSize / 2;
     vec3 sum = vec3(0.0);

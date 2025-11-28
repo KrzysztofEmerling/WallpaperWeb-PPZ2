@@ -187,6 +187,7 @@ async function init() {
   const uKernelSizeLocation     = gl.getUniformLocation(programAscii, "u_KernelSize");
   const uGaussianWeightLocation = gl.getUniformLocation(programAscii, "u_GaussianWeight");
   const uTexelSizeLocation      = gl.getUniformLocation(programAscii, "u_TexelSize");
+  const uBloomIntensityLocation = gl.getUniformLocation(programAscii, "u_BloomIntensity");
   //============================================================================
 
   const scenes = {
@@ -231,6 +232,9 @@ async function init() {
 
         const [contrast_val] = contrast('contrast-slider');
         gl.uniform1f(uContrastLocation, parseFloat(contrast_val));
+
+        const [bloomintensity_val] = bloom('bloom-slider');
+        gl.uniform1f(uBloomIntensityLocation, parseFloat(bloomintensity_val));
 
         gl.uniform2f(uTexelSizeLocation, (1.0/canvas.width), (1.0/canvas.height));
 
@@ -315,7 +319,10 @@ function differenceOfGaussian(kernelSize_handler){
   return [kernelSize_value];
 }
 
-function bloom(){}
+function bloom(bloomIntensity_handler){
+  const bloomIntensity_value = document.getElementById(bloomIntensity_handler).value;
+  return [bloomIntensity_value];
+}
 
 function sobel(){}
 
@@ -323,7 +330,7 @@ function perlin(){}
 
 function voronoii(){}
 
-// ============================== Reszta Skryptow ==============================
+// ============================== Reszta Skryptów ==============================
 
 function sliderValue(slider, input){
   const min = slider.min;
