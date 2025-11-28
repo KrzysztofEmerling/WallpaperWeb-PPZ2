@@ -3,13 +3,12 @@ precision highp float;
 precision highp int;
 
 in vec2 v_TexCoord;
-out vec4 FragColor;
+out vec4 fragColor;
 
-uniform sampler2D u_Texture;
-uniform float u_BloomIntensity;
-// uniform float u_Kernel;
-// uniform float threshold;
-
+uniform sampler2D uTexture;
+uniform int kernelSize;
+uniform float threshold;
+uniform float bloomIntensity;
 
 float luminance(vec3 c) {
     return dot(c, vec3(0.299, 0.587, 0.114));
@@ -23,38 +22,34 @@ vec3 blackborder(sampler2D tex, vec2 uv) {
     }
 }
 
-vec4 bloom(vec4 color) {
-    vec3 baseColor = vec3(color.rgb);
+vec4 Bloom() {
+    vec3 baseColor = texture(uTexture, v_TexCoord).rgb;
 
-    // Fixed kernel size. Whatevs.
-    int kernelSize = 8;
+    int k = kernelSize;
+    if (k < 2) k = 2;
+    if (k > 30) k = 30;
 
-    // Można później usunąć jeśli inputy w HTMLu będą w sztywnych granicach
-    // if (kernelSize < 2) kernelSize = 2;
-    // if (kernelSize > 30) kernelSize = 30;
+    vec2 texel = 1.0 / vec2(textureSize(uTexture, 0));
+    float thr = threshold;
+    if (thr <= 0.0) thr = 0.7;
+    float intensity = bloomIntensity;
+    if (intensity <= 0.0) intensity = 1.0;
 
-    vec2 texel = 1.0 / vec2(textureSize(u_Texture, 0));
-    // Also fixed value
-    float thr = 0.7;
-    // if (thr <= 0.0) thr = 0.7;
-    float intensity = u_BloomIntensity;
-    // if (intensity <= 0.0) intensity = 1.0;
-
-    int halfSize = kernelSize / 2;
+    int halfSize = k / 2;
     vec3 sum = vec3(0.0);
     int count = 0;
 
     for (int j = 0; j < 30; ++j) {
-        if (j >= kernelSize) break;
+        if (j >= k) break;
         int y = j - halfSize;
         for (int i = 0; i < 30; ++i) {
-            if (i >= kernelSize) break;
+            if (i >= k) break;
             int x = i - halfSize;
 
             vec2 offset = vec2(float(x), float(y)) * texel;
             vec2 uv = v_TexCoord + offset;
             
-            vec3 texSample = blackborder(u_Texture, uv);
+            vec3 texSample = blackborder(uTexture, uv);
             
             float l = luminance(texSample);
             float brightFactor = max((l - thr) / (1.0 - thr), 0.0);
@@ -67,10 +62,10 @@ vec4 bloom(vec4 color) {
 
     vec3 blur = (count > 0) ? (sum / float(count)) : vec3(0.0);
     vec3 finalColor = baseColor + blur * intensity;
-
-    return vec4(clamp(finalColor, 0.0, 1.0), color.a);
+    
+    return vec4(clamp(finalColor, 0.0, 1.0), 1.0);
 }
 
 void main() {
-    FragColor = bloom(texture(u_Texture, v_TexCoord).rgb);
+    fragColor = Bloom();
 }

@@ -2,24 +2,21 @@
   precision mediump float;
 
   in vec2 v_TexCoord;
-  out vec4 FragColor;
-
+  uniform float u_Time;
+  uniform vec4 u_Color;
   uniform float u_Contrast;
 
+  out vec4 fragColor;
 
-  vec4 contrast(vec4 color) {
-    float scaling = 1.0 + u_Contrast;
-
-    vec3 tempVec = vec3(color.rgb);
-    // zmiana kontrastu out = (in - 0.5) * k + 0.5
-    tempVec = (tempVec - 0.5) * scaling + 0.5;
-
-    //żadna składowa koloru nie wyjdzie poza przedział [0, 1]
-    tempVec = clamp(tempVec, 0.0, 1.0);
-
-    return vec4(tempVec, color.a);
+  vec3 applyContrast(vec3 value, float contrast) {
+    float k = 1.0 + contrast;
+    value = (value - 0.5) * k + 0.5;  // zmiana kontrastu out = (in - 0.5) * k + 0.5
+    return clamp(color, 0.0, 1.0);  //żadna składowa koloru nie wyjdzie poza przedział[0, 1]
   }
 
   void main() {
-    FragColor = contrast(texture(u_Texture, v_TexCoord));
+
+    color = applyContrast(color, u_Contrast)
+
+    fragColor = vec4(color, u_Color.a);
   }
