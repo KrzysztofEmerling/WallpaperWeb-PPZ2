@@ -91,8 +91,9 @@ vec4 gaussian() {
 
 
 // =========================== DO SHADERA LINESASCII ===========================
-// Dudadkowa funkcja - (pobierasz koordy - zwracasz informacje o liniach)
-// dodanie koordów (origin i offset) - zwraca kolor w punkcie sobela * diffofgauss
+// Dodadkowa funkcja - (pobierasz koordy - zwracasz informacje o liniach)
+// dodanie koordów (origin i offset) - zwraca kolor w punkcie sobela * diffofgauss (czyli kolor tła - gaussian)
+// Wynik z sobela * wynik z dog
 // Nasza funkcja skaluje linie w dół bez przerywania
 float getColorScore(vec4 color) {
     return color.r + color.g + color.b;
