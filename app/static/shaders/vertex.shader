@@ -4,5 +4,5 @@
 
   void main() {
   gl_Position = vec4(a_position, 0.0, 1.0);
-  v_TexCoord = a_position * 0.5 + 0.5; //transpozycja do wspołrzędnych <0;1> z <-1;1>
+  v_TexCoord = a_position * 0.5 + 0.5; //transpozycja do wspołżędnych <0;1> z <-1;1>
   }
