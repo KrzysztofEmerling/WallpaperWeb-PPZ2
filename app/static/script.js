@@ -112,13 +112,16 @@ async function loadShaderSource(name) {
 }
 
 async function init() {
-  const vertexShaderSource = await loadShaderSource('vertex.shader');
-  const fragmentShaderSource = await loadShaderSource('fragment.shader');
+  const vertexShaderSource        = await loadShaderSource('vertex.shader');
+  const fragmentShaderSource      = await loadShaderSource('fragment.shader');
   const fragmentAsciiShaderSource = await loadShaderSource('fragment_ascii.shader');
 
-  return {vertexShaderSource,
-          fragmentShaderSource,
-          fragmentAsciiShaderSource};
+  // ZWRACAMY OBIEKT – tu musi być return { ... }
+  return {
+      vertexShaderSource,
+      fragmentShaderSource,
+      fragmentAsciiShaderSource
+  };
 }
 
 (async () => {
@@ -183,6 +186,7 @@ async function init() {
   const uMidtonesLocation   = gl.getUniformLocation(programAscii, "u_Midtones");
   const uHighlightsLocation = gl.getUniformLocation(programAscii, "u_Highlights");
 
+  //===================================================================================
   const uGammaLocation          = gl.getUniformLocation(programAscii, "u_Gamma");
   const uContrastLocation       = gl.getUniformLocation(programAscii, "u_Contrast")
   const uKernelSizeLocation     = gl.getUniformLocation(programAscii, "u_KernelSize");
@@ -329,7 +333,14 @@ function bloom(bloomIntensity_handler){
 
 function sobel(){}
 
-function perlin(){}
+function perlin(widthSliderId, heightSliderId, timeSliderId) {
+  const width  = parseFloat(document.getElementById(widthSliderId).value);
+  const height = parseFloat(document.getElementById(heightSliderId).value);
+  const time   = parseFloat(document.getElementById(timeSliderId).value);
+
+  return [width, height, time];
+}
+
 
 function voronoii(){}
 
