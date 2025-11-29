@@ -16,7 +16,7 @@ vec2 mirrorUV(vec2 uv) {
     return uv;
 }
 
-vec4 sobel() {
+vec4 sobelSpecific(vec2 uv) {
     //2 macierze Sobela dla prostopadłych do siebie kątów
     float k0[9] = float[9](
         -1.0, 0.0, 1.0,
@@ -35,7 +35,7 @@ vec4 sobel() {
     int idx = 0;
     for(int y=-1; y<=1; y++){
         for(int x=-1; x<=1; x++){ // petla w petli, iteracja po x, y czyli wspolrzednych pixela
-            vec2 offset = v_TexCoord + vec2(float(x), float(y)) * u_TexelSize; // pobiera sasiednie probki dla naszej probki
+            vec2 offset = uv + vec2(float(x), float(y)) * u_TexelSize; // pobiera sasiednie probki dla naszej probki
             offset = mirrorUV(offset); // uzupelnienie krawedzi
             sampleTex[idx++] = texture(u_Texture, offset).rgb; // funkcja texture wbudowana w GLSL, texture().rgb wyciaga wartosci rgb, usuwajac tym samym kanal alfa
         }
@@ -91,10 +91,16 @@ vec4 gaussian() {
 
 
 // =========================== DO SHADERA LINESASCII ===========================
+// Linie to kolory lol
 // Dodadkowa funkcja - (pobierasz koordy - zwracasz informacje o liniach)
 // dodanie koordów (origin i offset) - zwraca kolor w punkcie sobela * diffofgauss (czyli kolor tła - gaussian)
 // Wynik z sobela * wynik z dog
 // Nasza funkcja skaluje linie w dół bez przerywania
+
+vec4 lineInfo(vec2 coords) {
+    return vec4(0,0,0,0);
+}
+
 float getColorScore(vec4 color) {
     return color.r + color.g + color.b;
 }
@@ -111,8 +117,10 @@ vec4 linesASCII() {
     for(int y = 0; y < blockSize; ++y) {
         for(int x = 0; x < blockSize; ++x) {
             vec2 offset = vec2(float(x), float(y)) * u_TexelSize;
+            // ivec2 pixelCoords = ivec2(gl_FragCoord.xy); //Kordy obecnego piksela
             //vvvvvv TUTAJ UŻYJ FUNKCJI vvvvvv
-            vec4 tempColor = texture(u_Texture, blockOriginUV + offset);
+            vec4 tempColor = lineInfo(u_Texture, blockOriginUV + offset);
+            // vec4 tempColor = texture(u_Texture, blockOriginUV + offset);
 
             float tempColorScore = getColorScore(tempColor);
             if(tempColorScore > biggestColorScore) {
@@ -124,6 +132,5 @@ vec4 linesASCII() {
 }
 
 void main() {
-    FragColor = gaussian();
     FragColor = linesASCII();
 }
