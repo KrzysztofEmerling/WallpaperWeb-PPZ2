@@ -177,7 +177,7 @@ vec2 mirrorUV(vec2 uv) {
   return uv;
 }
 
-vec4 sobel(vec4 color) {
+vec4 sobel() {
   float k0[9] = float[9](
       -1.0, 0.0, 1.0,
       -2.0, 0.0, 2.0,
@@ -221,6 +221,6 @@ void main() {
 
   vec4 baseImage = bloom(contrast(gamma_corr(brightness(poisson(gaussian())))));
   
-  FragColor = baseImage + sobel(baseImage) * u_SobelStatus;
+  FragColor = baseImage + sobel() * u_SobelStatus;
   
 }
