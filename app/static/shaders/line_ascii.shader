@@ -64,8 +64,8 @@ float gaussianWeight[6] = float[](
     0.06136, 0.24477, 0.38774, 0.24477, 0.06136, 0.0
 );
 
-vec4 gaussian() {
-    vec3 original = texture(u_Texture, v_TexCoord).rgb;
+vec4 gaussianSpecific(vec2 uv) {
+    vec3 original = texture(u_Texture, uv).rgb;
     vec3 blur = vec3(0.0);
 
     int k = KernelSize;
@@ -73,7 +73,7 @@ vec4 gaussian() {
     for (int x = -k; x <= k; x++) {
         for (int y = -k; y <= k; y++) {
             vec2 offset = vec2(float(x), float(y)) * u_TexelSize;
-            vec2 coord = v_TexCoord + offset;
+            vec2 coord = uv + offset;
             coord = clamp(coord, 0.0, 1.0);
             coord = 1.0 - abs(1.0 - coord * 2.0); 
 
@@ -91,16 +91,18 @@ vec4 gaussian() {
 
 
 // =========================== DO SHADERA LINESASCII ===========================
-// Linie to kolory lol
-// Dodadkowa funkcja - (pobierasz koordy - zwracasz informacje o liniach)
-// dodanie koordów (origin i offset) - zwraca kolor w punkcie sobela * diffofgauss (czyli kolor tła - gaussian)
-// Wynik z sobela * wynik z dog
-// Nasza funkcja skaluje linie w dół bez przerywania
 
+// Pobiera koordy piksela i zwraca kolor powstały po przemnożeniu koloru tego
+// piksela po zastosowaniu na nim shadera sobel z kolorem po zastosowaniu diffofgaussian.
+// Nasza funkcja skaluje linie w dół bez przerywania
 vec4 lineInfo(vec2 coords) {
-    return vec4(0,0,0,0);
+    vec4 pixSobel = sobelSpecific(coords);
+    vec4 pixGauss = gaussianSpecific(coords);
+
+    return pixSobel*pixGauss;
 }
 
+// Do szukania piksela z największą ilością koloru (wartością RGB)
 float getColorScore(vec4 color) {
     return color.r + color.g + color.b;
 }
@@ -117,10 +119,9 @@ vec4 linesASCII() {
     for(int y = 0; y < blockSize; ++y) {
         for(int x = 0; x < blockSize; ++x) {
             vec2 offset = vec2(float(x), float(y)) * u_TexelSize;
-            // ivec2 pixelCoords = ivec2(gl_FragCoord.xy); //Kordy obecnego piksela
-            //vvvvvv TUTAJ UŻYJ FUNKCJI vvvvvv
-            vec4 tempColor = lineInfo(u_Texture, blockOriginUV + offset);
+
             // vec4 tempColor = texture(u_Texture, blockOriginUV + offset);
+            vec4 tempColor = lineInfo(u_Texture, blockOriginUV + offset);
 
             float tempColorScore = getColorScore(tempColor);
             if(tempColorScore > biggestColorScore) {
