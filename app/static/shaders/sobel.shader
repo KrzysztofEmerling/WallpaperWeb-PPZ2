@@ -13,7 +13,7 @@ vec2 mirrorUV(vec2 uv) {
     return uv;
 }
 
-vec4 sobel(vec4 color) {
+vec4 sobel() {
     //2 macierze Sobela dla prostopadłych do siebie kątów
     float k0[9] = float[9](
         -1.0, 0.0, 1.0,
@@ -58,5 +58,5 @@ vec4 sobel(vec4 color) {
 
 void main()
 {
-    FragColor = sobel(texture(u_Texture, v_TexCoord));
+    FragColor = sobel();
 }
