@@ -1,5 +1,6 @@
-// =================================== WebGL ===================================
+import { poissonDiskSampling } from "./poisson.js";
 
+// =================================== WebGL ===================================
 
 const canvas = document.getElementById('glcanvas');
 const gl = canvas.getContext("webgl2");
@@ -8,7 +9,7 @@ const sceneAvailableShaders = {
   // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 1, zawiera id elementow z html
   scene1: ['steps', 'rgb'],
   // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 2, zawiera id elementow z html
-  scene2: ['brightness', 'gamma', 'contrast', 'gauss', 'sobel', 'perlin', 'voronoii', 'bloom']
+  scene2: ['brightness', 'gamma', 'contrast', 'gauss', 'sobel', 'bloom', 'sky-creator']
 }
 
 updateSceneShaders(sceneAvailableShaders.scene2, sceneAvailableShaders.scene1);
@@ -43,25 +44,6 @@ function updateStats(){
     frametimeCounter.textContent = frametime.toFixed(1);
   }
 }
-
-// ======= Tymczasowa obsluga gaussa
-
-const kernelSize = 6;
-const sigma = 3.0;
-
-function gaussian(x, sigma){
-  return Math.exp(-(x*x)/(2*sigma*sigma));
-}
-
-let weights = [];
-for(let i = 0; i <= kernelSize; i++){
-  weights.push(gaussian(i, sigma));
-}
-
-console.log(weights)
-
-// =======
-
 
 if (!gl) {
     alert('Unable to initialize WebGL. Your browser may not support it.');
@@ -177,26 +159,24 @@ async function init() {
     
   }
 
-  // ========================== Podpinanie uniformów ==========================
-  const uResolutionLocation = gl.getUniformLocation(program, "u_Resolution");
-  const uStepSizeLocation = gl.getUniformLocation(program, "u_StepSize");
-  const uArraySizeLocation = gl.getUniformLocation(programAscii, "u_ArraySize");
-  const uArrayLocation = gl.getUniformLocation(programAscii, "u_Array");
-  const uHaloColorLocation = gl.getUniformLocation(program, "u_HaloColor");
-  const uResolution1Location = gl.getUniformLocation(programAscii, "u_Resolution");
+  // ========================== Podpinanie uniformów ===========================
+  const uResolutionLocation       = gl.getUniformLocation(program, "u_Resolution");
+  const uStepSizeLocation         = gl.getUniformLocation(program, "u_StepSize");
+  const uHaloColorLocation        = gl.getUniformLocation(program, "u_HaloColor");
 
-  const uBrightnessLocation = gl.getUniformLocation(programAscii, "u_Brightness");
-  const uShadowsLocation    = gl.getUniformLocation(programAscii, "u_Shadows");
-  const uMidtonesLocation   = gl.getUniformLocation(programAscii, "u_Midtones");
-  const uHighlightsLocation = gl.getUniformLocation(programAscii, "u_Highlights");
-
-  //===================================================================================
-  const uGammaLocation          = gl.getUniformLocation(programAscii, "u_Gamma");
-  const uContrastLocation       = gl.getUniformLocation(programAscii, "u_Contrast")
-  const uKernelSizeLocation     = gl.getUniformLocation(programAscii, "u_KernelSize");
-  const uGaussianWeightLocation = gl.getUniformLocation(programAscii, "u_GaussianWeight");
-  const uTexelSizeLocation      = gl.getUniformLocation(programAscii, "u_TexelSize");
-  const uBloomIntensityLocation = gl.getUniformLocation(programAscii, "u_BloomIntensity");
+  const uArraySizeLocation        = gl.getUniformLocation(programAscii, "u_ArraySize");
+  const uArrayLocation            = gl.getUniformLocation(programAscii, "u_Array");
+  const uResolution1Location      = gl.getUniformLocation(programAscii, "u_Resolution");
+  // ===========================================================================
+  const uBrightnessLocation       = gl.getUniformLocation(programAscii, "u_Brightness");
+  const uSobelStatusLocation      = gl.getUniformLocation(programAscii, "u_SobelStatus");
+  const uGammaLocation            = gl.getUniformLocation(programAscii, "u_Gamma");
+  const uContrastLocation         = gl.getUniformLocation(programAscii, "u_Contrast")
+  const uGaussKernelSizeLocation  = gl.getUniformLocation(programAscii, "u_GaussKernelSize");
+  const uGaussWeightsLocation     = gl.getUniformLocation(programAscii, "u_GaussWeights");
+  const uTexelSizeLocation        = gl.getUniformLocation(programAscii, "u_TexelSize");
+  const uBloomIntensityLocation   = gl.getUniformLocation(programAscii, "u_BloomIntensity");
+  const uBloomKernelSizeLocation  = gl.getUniformLocation(programAscii, "u_BloomKernelSize");
   //============================================================================
 
   const scenes = {
@@ -216,7 +196,7 @@ async function init() {
           const step_slider = document.getElementById("stepsize-slider");
           gl.uniform1f(uStepSizeLocation, step_slider.value);
 
-          [r,g,b,a] = rgbCreator('red-slider','green-slider','blue-slider')
+          const [r,g,b,a] = rgbCreator('red-slider','green-slider','blue-slider');
           gl.uniform3f(uHaloColorLocation, r,g,b);
           gl.drawArrays(gl.TRIANGLES,0,6); 
           renderScene1Requested = false; 
@@ -232,26 +212,52 @@ async function init() {
           gl.viewport(0,0,canvas.width,canvas.height);
           gl.clearColor(0,0,0,1); //czarne tło
           gl.clear(gl.COLOR_BUFFER_BIT);
-          const [brightness_val, shadows_val, midtones_val, hightlights_val] = brightness('brightness-slider', 'shadows-slider', 'midtones-slider', 'highlights-slider');
-          gl.uniform1f(uBrightnessLocation, parseFloat(brightness_val));
-          gl.uniform1f(uShadowsLocation, parseFloat(shadows_val));
-          gl.uniform1f(uMidtonesLocation, parseFloat(midtones_val));
-          gl.uniform1f(uHighlightsLocation, parseFloat(hightlights_val));
+
+          gl.uniform2f(uTexelSizeLocation, (1.0/canvas.width), (1.0/canvas.height));
+
+          // =================== BRIGHTNESS SHADER ===================
+
+          const [brightness_val, shadows_val, midtones_val, highlights_val] = brightness('brightness-slider', 'shadows-slider', 'midtones-slider', 'highlights-slider');
+
+          gl.uniform4f(uBrightnessLocation, brightness_val, shadows_val, midtones_val, highlights_val);
+
+          // ===================== GAMMA SHADER ======================
 
           const [gamma_val] = gamma('gamma-slider');
           gl.uniform1f(uGammaLocation, parseFloat(gamma_val));
 
+          // ==================== CONTRAST SHADER ====================
+
           const [contrast_val] = contrast('contrast-slider');
           gl.uniform1f(uContrastLocation, parseFloat(contrast_val));
 
-          const [bloomintensity_val] = bloom('bloom-slider');
-          gl.uniform1f(uBloomIntensityLocation, parseFloat(bloomintensity_val));
+          // ===================== BLOOM SHADER ======================
 
-          gl.uniform2f(uTexelSizeLocation, (1.0/canvas.width), (1.0/canvas.height));
+          const [bloomIntensity_val, bloomKernelSize_val] = bloom('bloom-intensity-slider', 'bloom-kernel-slider');
+          gl.uniform1f(uBloomIntensityLocation, parseFloat(bloomIntensity_val));
+          gl.uniform1i(uBloomKernelSizeLocation, bloomKernelSize_val);
 
-          gl.uniform1fv(uGaussianWeightLocation, weights);
-          gl.uniform1i(uKernelSizeLocation, kernelSize);
+          // ==================== GAUSSIAN SHADER ====================
 
+          const [weights, gaussKernelSize] = gaussianBlur('gauss-kernel-slider', 'gauss-intensity-slider');
+          gl.uniform1fv(uGaussWeightsLocation, weights);
+          gl.uniform1i(uGaussKernelSizeLocation, gaussKernelSize);
+
+          // ====================== SOBEL SHADER =====================
+
+          const sobel_status = sobel('switch-sobel');
+          gl.uniform1f(uSobelStatusLocation, sobel_status);
+
+          // ===================== STARS GENERATOR ===================
+
+          const points = starsCreator("sg-seed-slider", "sg-md-slider", "sg-k-slider");
+
+          gl.uniform1fv(uArrayLocation, points);
+          gl.uniform1i(uArraySizeLocation, points.length);
+          gl.uniform2f(uResolution1Location, canvas.width, canvas.height);
+
+          // =========================================================
+          
           gl.drawArrays(gl.TRIANGLES,0,6);
         }
       }
@@ -318,10 +324,10 @@ function starsCreator(seed, minDistance, K){
 }
 
 function brightness(bright_handle, shadow_handle, midtone_handle, highlight_handle){
-  const brighness_value  = document.getElementById(bright_handle).value;
-  const shadows_value    = document.getElementById(shadow_handle).value;
-  const midtones_value   = document.getElementById(midtone_handle).value;
-  const highlights_value = document.getElementById(highlight_handle).value;
+  const brighness_value  = parseFloat(document.getElementById(bright_handle).value);
+  const shadows_value    = parseFloat(document.getElementById(shadow_handle).value);
+  const midtones_value   = parseFloat(document.getElementById(midtone_handle).value);
+  const highlights_value = parseFloat(document.getElementById(highlight_handle).value);
 
   const data = [brighness_value, shadows_value, midtones_value, highlights_value];
   return data;
@@ -337,17 +343,32 @@ function contrast(contrast_handler){
   return [contrast_value];
 }
 
-function differenceOfGaussian(kernelSize_handler){
-  const kernelSize_value = document.getElementById(kernelSize_handler).value;
-  return [kernelSize_value];
+function gaussian(x, sigma){
+  return Math.exp(-(x*x)/(2*sigma*sigma));
 }
 
-function bloom(bloomIntensity_handler){
-  const bloomIntensity_value = document.getElementById(bloomIntensity_handler).value;
-  return [bloomIntensity_value];
+function gaussianBlur(kernelSize_handler, intensity_handler){
+  const kernelSize = document.getElementById(kernelSize_handler).value;
+  const sigma = document.getElementById(intensity_handler).value;
+  
+  let weights = [];
+  for(let i = 0; i <= kernelSize; i++){
+    weights.push(gaussian(i, sigma));
+  }
+  
+  return [weights, kernelSize];
 }
 
-function sobel(){}
+function bloom(bloomIntensity_handler, bloomKernelSize_handler){
+  const intensity = document.getElementById(bloomIntensity_handler).value;
+  const kernelSize = document.getElementById(bloomKernelSize_handler).value;
+  return [intensity, kernelSize];
+}
+
+function sobel(sobel_handler){
+  const status = document.getElementById(sobel_handler);
+  return status.checked ? 1.0 : 0.0;
+}
 
 function perlin(widthSliderId, heightSliderId, timeSliderId) {
   const width  = parseFloat(document.getElementById(widthSliderId).value);
@@ -356,9 +377,6 @@ function perlin(widthSliderId, heightSliderId, timeSliderId) {
 
   return [width, height, time];
 }
-
-
-function voronoii(){}
 
 // ============================== Reszta Skryptów ==============================
 
@@ -549,4 +567,3 @@ const buttonRenderScene1 = document.getElementById('render-scene1-button');
 buttonRenderScene1.addEventListener('click', () => {
   renderScene1Requested = true;  
 });
-

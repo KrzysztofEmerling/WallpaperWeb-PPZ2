@@ -47,6 +47,5 @@ vec4 voronoi() {
 }
 
 void main() {
-    
     fragColor = voronoi();
 }
