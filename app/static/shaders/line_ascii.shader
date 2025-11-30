@@ -68,7 +68,7 @@ vec4 gaussianSpecific(vec2 uv) {
     vec3 original = texture(u_Texture, uv).rgb;
     vec3 blur = vec3(0.0);
 
-    int k = KernelSize;
+    int k = 5;
 
     for (int x = -k; x <= k; x++) {
         for (int y = -k; y <= k; y++) {
