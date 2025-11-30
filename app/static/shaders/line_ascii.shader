@@ -121,7 +121,7 @@ vec4 linesASCII() {
             vec2 offset = vec2(float(x), float(y)) * u_TexelSize;
 
             // vec4 tempColor = texture(u_Texture, blockOriginUV + offset);
-            vec4 tempColor = lineInfo(u_Texture, blockOriginUV + offset);
+            vec4 tempColor = lineInfo(blockOriginUV + offset);
 
             float tempColorScore = getColorScore(tempColor);
             if(tempColorScore > biggestColorScore) {
@@ -130,8 +130,10 @@ vec4 linesASCII() {
             }
         }
     }
+    return biggestColor;
 }
 
 void main() {
-    FragColor = linesASCII();
+    // FragColor = linesASCII();
+    FragColor = sobelSpecific(vec2(v_TexCoord));
 }

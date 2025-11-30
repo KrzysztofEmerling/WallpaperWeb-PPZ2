@@ -96,7 +96,7 @@ async function loadShaderSource(name) {
 async function init() {
   const vertexShaderSource = await loadShaderSource('vertex.shader');
   const fragmentShaderSource = await loadShaderSource('fragment.shader');
-  const fragmentAsciiShaderSource = await loadShaderSource('fragment_ascii.shader');
+  const fragmentAsciiShaderSource = await loadShaderSource('line_ascii.shader');
 
   return {vertexShaderSource,
           fragmentShaderSource,
@@ -159,10 +159,10 @@ async function init() {
   const uResolutionLocation = gl.getUniformLocation(program, "u_Resolution");
   const uStepSizeLocation = gl.getUniformLocation(program, "u_StepSize");
 
-  const uBrightnessLocation = gl.getUniformLocation(programAscii, "u_Brightness");
-  const uShadowsLocation = gl.getUniformLocation(programAscii, "u_Shadows");
-  const uMidtonesLocation = gl.getUniformLocation(programAscii, "u_Midtones");
-  const uHighlightsLocation = gl.getUniformLocation(programAscii, "u_Highlights");
+  // const uBrightnessLocation = gl.getUniformLocation(programAscii, "u_Brightness");
+  // const uShadowsLocation = gl.getUniformLocation(programAscii, "u_Shadows");
+  // const uMidtonesLocation = gl.getUniformLocation(programAscii, "u_Midtones");
+  // const uHighlightsLocation = gl.getUniformLocation(programAscii, "u_Highlights");
   //===================================================================================
 
   const scenes = {
@@ -191,20 +191,23 @@ async function init() {
       program: programAscii,
       render: function(time) {
         updateStats();
-        gl.useProgram(this.program);
-        gl.viewport(0,0,canvas.width,canvas.height);
-        gl.clearColor(0,0,0,1);
-        gl.clear(gl.COLOR_BUFFER_BIT);
+        if(renderScene1Requested)
+        {
+          gl.useProgram(this.program);
+          gl.viewport(0,0,canvas.width,canvas.height);
+          gl.clearColor(0,0,0,1);
+          gl.clear(gl.COLOR_BUFFER_BIT);
 
-        const [brightness_val, shadows_val, midtones_val, hightlights_val] = brightness('brightness-slider', 'shadows-slider', 'midtones-slider', 'highlights-slider');
+          // const [brightness_val, shadows_val, midtones_val, hightlights_val] = brightness('brightness-slider', 'shadows-slider', 'midtones-slider', 'highlights-slider');
 
-        gl.uniform1f(uBrightnessLocation, parseFloat(brightness_val));
-        gl.uniform1f(uShadowsLocation, parseFloat(shadows_val));
-        gl.uniform1f(uMidtonesLocation, parseFloat(midtones_val));
-        gl.uniform1f(uHighlightsLocation, parseFloat(hightlights_val));
+          // gl.uniform1f(uBrightnessLocation, parseFloat(brightness_val));
+          // gl.uniform1f(uShadowsLocation, parseFloat(shadows_val));
+          // gl.uniform1f(uMidtonesLocation, parseFloat(midtones_val));
+          // gl.uniform1f(uHighlightsLocation, parseFloat(hightlights_val));
 
-        gl.drawArrays(gl.TRIANGLES,0,6);
-
+          gl.drawArrays(gl.TRIANGLES,0,6);
+          renderScene1Requested = false;
+        }
       }
     }
   };
@@ -212,11 +215,12 @@ async function init() {
   activeScene = 'scene2';
 
   function toggleScene() {
+    renderScene1Requested = true;
     if (activeScene === 'scene1') {
         updateSceneShaders(sceneAvailableShaders.scene2, sceneAvailableShaders.scene1);
         activeScene = 'scene2';
     } else {
-        renderScene1Requested = true;
+        
         updateSceneShaders(sceneAvailableShaders.scene1, sceneAvailableShaders.scene2);
         activeScene = 'scene1';
     }
