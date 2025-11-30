@@ -64,6 +64,7 @@ float gaussianWeight[6] = float[](
     0.06136, 0.24477, 0.38774, 0.24477, 0.06136, 0.0
 );
 
+
 vec4 gaussianSpecific(vec2 uv) {
     vec3 original = texture(u_Texture, uv).rgb;
     vec3 blur = vec3(0.0);
@@ -82,8 +83,10 @@ vec4 gaussianSpecific(vec2 uv) {
             blur += texture(u_Texture, coord).rgb * w;
         }
     }
-    vec3 result = original - blur;
-    result = result * 0.5 + 0.5;
+
+    float luminance = dot(original, vec3(0.299, 0.587, 0.114));  // konwersja na luminancję
+    float blurLum = dot(blur, vec3(0.299, 0.587, 0.114));
+    vec3 result = vec3(luminance - blurLum) * 0.5 + 0.5; 
 
     return vec4(result, 1.0);
 }
@@ -135,5 +138,9 @@ vec4 linesASCII() {
 
 void main() {
     // FragColor = linesASCII();
-    FragColor = sobelSpecific(vec2(v_TexCoord));
+    // FragColor = vec4(vec2(v_TexCoord), 0.0, 1.0);
+    // FragColor = sobelSpecific(vec2(v_TexCoord)); // czarny obraz, nie wiem co się dzieje
+    FragColor = gaussianSpecific(vec2(v_TexCoord)); // działa
+    
+
 }
