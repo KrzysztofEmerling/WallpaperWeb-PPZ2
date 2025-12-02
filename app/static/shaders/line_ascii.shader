@@ -71,7 +71,7 @@ float gaussianWeight[6] = float[](
 );
 
 
-vec4 gaussianSpecific(vec2 uv) {
+vec4 dogSpecific(vec2 uv) {
     vec3 original = texture(u_Texture, uv).rgb;
     vec3 blur = vec3(0.0);
 
@@ -90,8 +90,6 @@ vec4 gaussianSpecific(vec2 uv) {
 
     float luminance = dot(original, vec3(0.299, 0.587, 0.114));  // konwersja na luminancję
     float blurLum = dot(blur, vec3(0.299, 0.587, 0.114));
-    // vec3 result = vec3(luminance - blurLum) * 0.5 + 0.5;
-    // vec3 result = step(vec3(luminance - blurLum) * 0.5 + 0.5, 0.6);
     vec3 result = vec3(step(0.09, (luminance-blurLum) * 0.5 + 0.5));
 
 
@@ -106,11 +104,10 @@ vec4 gaussianSpecific(vec2 uv) {
 // piksela po zastosowaniu na nim shadera sobel z kolorem po zastosowaniu diffofgaussian.
 // Nasza funkcja skaluje linie w dół bez przerywania
 vec4 lineInfo(vec2 coords) {
-    // coords = vec2(coords.x * u_Resolution.x, coords.y * u_Resolution.y);
     vec4 pixSobel = sobelSpecific(coords);
-    vec4 pixGauss = gaussianSpecific(coords);
+    vec4 pixDog = dogSpecific(coords);
 
-    return pixSobel*pixGauss;
+    return pixSobel*pixDog;
 }
 
 // Do szukania piksela z największą ilością koloru (wartością RGB)
@@ -124,28 +121,16 @@ vec4 linesASCII() {
     // Znajdź lewy górny piksel bloku w UV space
     vec2 blockOriginUV = floor(v_TexCoord / (u_TexelSize * float(blockSize))) * u_TexelSize * float(blockSize);
 
-    // vec4 biggestColor = vec4(0.0);
-    // float biggestColorScore = 0.0;
     vec3 rgbCounter = vec3(0.0);
 
     for(int y = 0; y < blockSize; ++y) {
         for(int x = 0; x < blockSize; ++x) {
             vec2 offset = vec2(float(x), float(y)) * u_TexelSize;
 
-            // vec4 tempColor = texture(u_Texture, blockOriginUV + offset);
             vec4 tempColor = lineInfo(blockOriginUV + offset);
             rgbCounter += vec3(step(tempColor.r, 0.5),
                                step(tempColor.g, 0.5),
                                step(tempColor.b, 0.5));
-
-            // float tempColorScore = getColorScore(tempColor);
-            // // logika pod mixa :-)
-            // float flagg = step(tempColorScore, biggestColorScore);
-
-            // if(tempColorScore > biggestColorScore) {
-            //     biggestColor = tempColor;
-            //     biggestColorScore = tempColorScore;
-            // }
         }
     }
 
@@ -159,7 +144,7 @@ vec4 linesASCII() {
 void main() {
     FragColor = linesASCII();
     // FragColor = vec4(vec2(v_TexCoord), 0.0, 1.0);
-    // FragColor = sobelSpecific(vec2(v_TexCoord)); // czarny obraz, nie wiem co się dzieje
+    // FragColor = sobelSpecific(vec2(v_TexCoord)); // działa :-)
     // FragColor = gaussianSpecific(vec2(v_TexCoord)); // działa
     // FragColor = gaussianSpecific(vec2(v_TexCoord)) * sobelSpecific(vec2(v_TexCoord)); // działa
 }
