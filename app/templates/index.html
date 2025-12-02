@@ -27,7 +27,7 @@
                 
                     <div class="collapse ps-4 pt-2" id="scene-collapse">
                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                            <div class="form-check form-switch">
+                            <div class="form-check form-switch align-items-center">
                                 <input class="form-check-input hidden" type="checkbox" role="switch" id="switch-scene">
 
                                 <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap' id="render-scene1-button">Render Scene</button>
@@ -220,7 +220,7 @@
 
                     <li class="mb-1" id="gamma"> 
                         <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#gamma-collapse" aria-expanded="true">
-                            Gamma correction
+                            Gamma
                         </button>
 
                         <div class="collapse ps-3 pt-2" id="gamma-collapse">
@@ -228,8 +228,8 @@
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li>
                                     <div class="d-flex justify-content-between align-items-center gap-4">
-                                        <input type="range" class="form-range hidden flex-fill slider" min="0" max="100" value="50" id="gamma-slider">
-                                        <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="0" max="100" value="50"id="gamma-value">
+                                        <input type="range" class="form-range hidden flex-fill slider" min="0" max="4" value="1" step="0.01" id="gamma-slider">
+                                        <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="0" max="4" value="1" step="0.01" id="gamma-value">
                                     </div>
                                 </li> 
                             </ul> 
@@ -247,8 +247,8 @@
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li>
                                     <div class="d-flex justify-content-between align-items-center gap-4">
-                                        <input type="range" class="form-range hidden flex-fill slider" min="0" max="100" value="50" id="contrast-slider">
-                                        <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="0" max="100" value="50"id="contrast-value">
+                                        <input type="range" class="form-range hidden flex-fill slider" min="0" max="3" value="0" step="0.01" id="contrast-slider">
+                                        <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="0" max="3" value="0" step="0.01" id="contrast-value">
                                     </div>
                                 </li> 
                             </ul> 
@@ -258,16 +258,25 @@
 
                     <li class="mb-1" id="gauss"> 
                         <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#gauss-collapse" aria-expanded="true">
-                            Difference of Gaussians
+                            Gaussian blur
                         </button>
 
                         <div class="collapse ps-3 pt-2" id="gauss-collapse">
 
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li>
+                                    <span class="text-white text-nowrap hidden">Kernel Size</span>
                                     <div class="d-flex justify-content-between align-items-center gap-4">
-                                        <input type="range" class="form-range hidden flex-fill slider" min="0" max="100" value="50" id="gauss-slider">
-                                        <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="0" max="100" value="50"id="gauss-value">
+                                        <input type="range" class="form-range hidden flex-fill slider" min="1" max="7" value="3" id="gauss-kernel-slider">
+                                        <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="1" max="7" value="3" id="gauss-kernel-value">
+                                    </div>
+                                </li> 
+
+                                <li>
+                                    <span class="text-white text-nowrap hidden">Blur intensity</span>
+                                    <div class="d-flex justify-content-between align-items-center gap-4">
+                                        <input type="range" class="form-range hidden flex-fill slider" min="0.01" max="10" value="0.01" step="0.01" id="gauss-intensity-slider">
+                                        <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="0.01" max="10" value="0.01" step="0.01" id="gauss-intensity-value">
                                     </div>
                                 </li> 
                             </ul> 
@@ -284,90 +293,14 @@
 
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li>
-                                    <div class="d-flex justify-content-between align-items-center gap-4">
-                                        <input type="range" class="form-range hidden flex-fill slider" min="0" max="100" value="50" id="sobel-slider">
-                                        <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="0" max="100" value="50"id="sobel-value">
+                                    <div class="form-check form-switch align-items-center gap-4">
+                                        <span class="text-white text-nowrap hidden">Turn OFF/ON</span>
+                                        <input class="form-check-input hidden" type="checkbox" role="switch" id="switch-sobel">
                                     </div>
                                 </li> 
                             </ul> 
 
                         </div> 
-                    </li>
-
-                    <li class="mb-1" id="perlin"> 
-                        <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#perlin-collapse" aria-expanded="true">
-                            Perlin
-                        </button>
-
-                        <div class="collapse ps-3 pt-2" id="perlin-collapse">
-                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-
-                                <li> <!-- Jeden znacznik li to jest jedna podkategoria -->
-                                    <span class="text-white text-nowrap hidden">Width</span>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="100" value="50" id="perlin-width-slider">
-                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="100" value="50" id="perlin-width-value">
-                                    </div>
-                                </li> 
-
-                                <li>
-                                    <span class="text-white text-nowrap hidden">Height</span>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="100" value="50" id="perlin-height-slider">
-                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="100" value="50" id="perlin-height-value">
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <span class="text-white text-nowrap hidden">Time</span>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="100" value="50" id="perlin-time-slider">
-                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="100" value="50" id="time-value">
-                                    </div>
-                                </li>
-
-                                <!-- W tym miejscu dodac kolejne elementy listy tak jak wyzej -->
-
-                            </ul> 
-                        </div>
-                    </li>
-
-                    <li class="mb-1" id="voronoii"> 
-                        <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#voronoii-collapse" aria-expanded="true">
-                            Voronoii
-                        </button>
-
-                        <div class="collapse ps-3 pt-2" id="voronoii-collapse">
-                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-
-                                <li> <!-- Jeden znacznik li to jest jedna podkategoria -->
-                                    <span class="text-white text-nowrap hidden">Width</span>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="100" value="50" id="voronoii-width-slider">
-                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="100" value="50" id="voronoii-width-value">
-                                    </div>
-                                </li> 
-
-                                <li>
-                                    <span class="text-white text-nowrap hidden">Height</span>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="100" value="50" id="voronoii-height-slider">
-                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="100" value="50" id="voronoii-height-value">
-                                    </div>
-                                </li>
-
-                                <li>
-                                    <span class="text-white text-nowrap hidden">Time</span>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="100" value="50" id="voronoii-time-slider">
-                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="100" value="50" id="voronoii-time-value">
-                                    </div>
-                                </li>
-
-                                <!-- W tym miejscu dodac kolejne elementy listy tak jak wyzej -->
-
-                            </ul> 
-                        </div>
                     </li>
 
                     <li class="mb-1" id="bloom"> 
@@ -379,14 +312,61 @@
 
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li>
+                                    <span class="text-white text-nowrap hidden">Kernel Size</span>
                                     <div class="d-flex justify-content-between align-items-center gap-4">
-                                        <input type="range" class="form-range hidden flex-fill slider" min="0" max="100" value="50" id="bloom-slider">
-                                        <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="0" max="100" value="50"id="bloom-value">
+                                        <input type="range" class="form-range hidden flex-fill slider" min="1" max="10" value="3" id="bloom-kernel-slider">
+                                        <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="1" max="10" value="3" id="bloom-kernel-value">
+                                    </div>
+                                </li> 
+
+                                <li>
+                                    <span class="text-white text-nowrap hidden">Intensity</span>
+                                    <div class="d-flex justify-content-between align-items-center gap-4">
+                                        <input type="range" class="form-range hidden flex-fill slider" min="0" max="5" value="0" step="0.01" id="bloom-intensity-slider">
+                                        <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="0" max="5" value="0" step="0.01" id="bloom-intensity-value">
                                     </div>
                                 </li> 
                             </ul> 
 
                         </div> 
+                    </li>
+
+                    <li class="mb-1" id="sky-creator"> 
+                        <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#sg-collapse" aria-expanded="true">
+                            Sky generator
+                        </button>
+
+                        <div class="collapse ps-3 pt-2" id="sg-collapse">
+                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+
+                                <li> <!-- Jeden znacznik li to jest jedna podkategoria -->
+                                    <span class="text-white text-nowrap hidden">Seed</span>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden pe-4 slider" min="1" max="1000" value="500" id="sg-seed-slider">
+                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="1" max="1000" value="500" id="sg-seed-value">
+                                    </div>
+                                </li> 
+
+                                <li>
+                                    <span class="text-white text-nowrap hidden">Minimal Distance</span>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden pe-4 slider" min="50" max="200" value="100" id="sg-md-slider">
+                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="50" max="200" value="100" id="sg-md-value">
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <span class="text-white text-nowrap hidden">K</span>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden pe-4 slider" min="5" max="100" value="50" id="sg-k-slider">
+                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="5" max="100" value="50" id="sg-k-value">
+                                    </div>
+                                </li>
+
+                                <!-- W tym miejscu dodac kolejne elementy listy tak jak wyzej -->
+
+                            </ul> 
+                        </div>
                     </li>
 
                 </ul>
@@ -401,7 +381,7 @@
 
     </div>
 
-    <script src="../static/script.js"></script>
+    <script type="module" src="../static/script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     
 </body>
