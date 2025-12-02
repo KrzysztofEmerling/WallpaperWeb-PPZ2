@@ -16,7 +16,7 @@ updateSceneShaders(sceneAvailableShaders.scene2, sceneAvailableShaders.scene1);
 
 let activeScene = null;
 let renderScene1Requested = true;
-let renderScene2Requested = true;
+let renderScene2Requested = false;
 
 // ======= render stats
 const fpsCounter = document.getElementById('fps');
@@ -156,7 +156,7 @@ async function init() {
     const uTextureLocation = gl.getUniformLocation(program, "u_Texture");
     gl.uniform1i(uTextureLocation, 0);
     scenes.scene2.render(0);
-    
+    renderScene2Requested = true;
   }
 
   // ========================== Podpinanie uniformów ===========================
@@ -257,8 +257,9 @@ async function init() {
           gl.uniform2f(uResolution1Location, canvas.width, canvas.height);
 
           // =========================================================
-          
+
           gl.drawArrays(gl.TRIANGLES,0,6);
+          renderScene2Requested = false;
         }
       }
     }
@@ -268,8 +269,8 @@ async function init() {
 
   function toggleScene() {
     renderScene1Requested = true;
+    renderScene2Requested = true;
     if (activeScene === 'scene1') {
-        renderScene2Requested = true;
         updateSceneShaders(sceneAvailableShaders.scene2, sceneAvailableShaders.scene1);
         activeScene = 'scene2';
     } else {
@@ -566,5 +567,5 @@ valueInputs.forEach((element, index) => {
 
 const buttonRenderScene1 = document.getElementById('render-scene1-button');
 buttonRenderScene1.addEventListener('click', () => {
-  renderScene1Requested = true;  
+  renderScene1Requested = true;
 });
