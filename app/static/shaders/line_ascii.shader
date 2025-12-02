@@ -35,9 +35,10 @@ vec4 sobelSpecific(vec2 uv) {
     int idx = 0;
     for(int y=-1; y<=1; y++){
         for(int x=-1; x<=1; x++){ // petla w petli, iteracja po x, y czyli wspolrzednych pixela
-            vec2 offset = uv + vec2(float(x), float(y)) * u_TexelSize; // pobiera sasiednie probki dla naszej probki
-            offset = mirrorUV(offset); // uzupelnienie krawedzi
-            sampleTex[idx++] = texture(u_Texture, offset).rgb; // funkcja texture wbudowana w GLSL, texture().rgb wyciaga wartosci rgb, usuwajac tym samym kanal alfa
+            vec2 offset = vec2(float(x), float(y)) * u_TexelSize; // pobiera sasiednie probki dla naszej probki
+            vec2 coords = uv + offset;
+            coords = mirrorUV(coords); // uzupelnienie krawedzi
+            sampleTex[idx++] = texture(u_Texture, coords).rgb; // funkcja texture wbudowana w GLSL, texture().rgb wyciaga wartosci rgb, usuwajac tym samym kanal alfa
         }
     }
 
@@ -76,7 +77,7 @@ vec4 gaussianSpecific(vec2 uv) {
             vec2 offset = vec2(float(x), float(y)) * u_TexelSize;
             vec2 coord = uv + offset;
             coord = clamp(coord, 0.0, 1.0);
-            coord = 1.0 - abs(1.0 - coord * 2.0); 
+            coord = 1.0 - abs(1.0 - coord * 2.0);
 
             float w = gaussianWeight[abs(x)] * gaussianWeight[abs(y)];
 
@@ -137,10 +138,8 @@ vec4 linesASCII() {
 }
 
 void main() {
-    // FragColor = linesASCII();
+    FragColor = linesASCII();
     // FragColor = vec4(vec2(v_TexCoord), 0.0, 1.0);
     // FragColor = sobelSpecific(vec2(v_TexCoord)); // czarny obraz, nie wiem co się dzieje
-    FragColor = gaussianSpecific(vec2(v_TexCoord)); // działa
-    
-
+    // FragColor = gaussianSpecific(vec2(v_TexCoord)); // działa
 }
