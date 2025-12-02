@@ -222,5 +222,5 @@ void main() {
   vec4 baseImage = bloom(contrast(gamma_corr(brightness(poisson(gaussian())))));
   
   FragColor = baseImage + sobel() * u_SobelStatus;
-  
+
 }
