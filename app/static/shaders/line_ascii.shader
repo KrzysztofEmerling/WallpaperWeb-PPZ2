@@ -97,7 +97,6 @@ vec4 dogSpecific(vec2 uv) {
 }
 
 
-
 // =========================== DO SHADERA LINESASCII ===========================
 
 // Pobiera koordy piksela i zwraca kolor powstały po przemnożeniu koloru tego
