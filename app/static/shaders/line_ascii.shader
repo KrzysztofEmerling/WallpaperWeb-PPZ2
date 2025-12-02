@@ -5,6 +5,7 @@
   out vec4 FragColor;
 
   uniform sampler2D u_Texture;
+  uniform vec2 u_Resolution;
   uniform vec2 u_TexelSize;
 
 
@@ -100,6 +101,7 @@ vec4 gaussianSpecific(vec2 uv) {
 // piksela po zastosowaniu na nim shadera sobel z kolorem po zastosowaniu diffofgaussian.
 // Nasza funkcja skaluje linie w dół bez przerywania
 vec4 lineInfo(vec2 coords) {
+    coords = vec2(coords.x * u_Resolution.x, coords.y * u_Resolution.y);
     vec4 pixSobel = sobelSpecific(coords);
     vec4 pixGauss = gaussianSpecific(coords);
 

@@ -157,6 +157,7 @@ async function init() {
 
   // ============================================================ Podpinanie uniformów:
   const uResolutionLocation = gl.getUniformLocation(program, "u_Resolution");
+  const uResolution1Location = gl.getUniformLocation(programAscii, "u_Resolution");
   const uStepSizeLocation = gl.getUniformLocation(program, "u_StepSize");
 
   // const uBrightnessLocation = gl.getUniformLocation(programAscii, "u_Brightness");
@@ -197,6 +198,8 @@ async function init() {
           gl.viewport(0,0,canvas.width,canvas.height);
           gl.clearColor(0,0,0,1);
           gl.clear(gl.COLOR_BUFFER_BIT);
+
+          gl.uniform2f(uResolution1Location, canvas.width, canvas.height);
 
           // const [brightness_val, shadows_val, midtones_val, hightlights_val] = brightness('brightness-slider', 'shadows-slider', 'midtones-slider', 'highlights-slider');
 
