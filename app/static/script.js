@@ -19,6 +19,8 @@ let activeScene = null;
 let renderScene1Requested = true;
 let renderScene2Requested = false;
 let sourceTexture = null;
+let sourceTexture1 = null;
+let sourceTexture2 = null;
 
 // ======= render stats
 const fpsCounter = document.getElementById('fps');
@@ -109,16 +111,33 @@ async function init() {
   };
 }
 
-function createTextureFromImage(gl, image){
-  const texture = gl.createTexture();
-  gl.bindTexture(gl.TEXTURE_2D, texture);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+// function createTextureFromImage(gl, image){
+//   const texture = gl.createTexture();
+//   gl.bindTexture(gl.TEXTURE_2D, texture);
+//   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+//   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+//   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+//   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+//   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 
-  return texture;
+//   return texture;
+// }
+function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
+    const texture = gl.createTexture();
+
+    gl.activeTexture(gl.TEXTURE0 + textureSlot);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+    const uLocation = gl.getUniformLocation(program, uniformName);
+    gl.uniform1i(uLocation, textureSlot);
+
+    return texture;
 }
 
 (async () => {
@@ -155,29 +174,20 @@ function createTextureFromImage(gl, image){
   gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
   const image = new Image();
+
   image.src = 'static/images/image.png';
   image.onload = () => {
-    gl.activeTexture(gl.TEXTURE0);
-    sourceTexture = createTextureFromImage(gl, image);
-    const uTextureLocation = gl.getUniformLocation(programAscii, "u_Texture");
-    gl.uniform1i(uTextureLocation, 0);
+    gl.useProgram(programAscii);
+    sourceTexture = createTextureFromImage(gl, programAscii, image, 0, "u_Texture");
     scenes.scene2.render(0);
     renderScene2Requested = true;
   }
 
-  const charAtlas = createAtlas("@#$%^&*()_+!.,<>");
-
-  gl.activeTexture(gl.TEXTURE1);
-  sourceTexture = createTextureFromImage(gl, charAtlas.image);
-  const uCharAtlasLocation = gl.getUniformLocation(programAscii, "u_CharAtlas");
-  gl.uniform1i(uCharAtlasLocation, 1);
-
+  const charAtlas = createAtlas(" .;+*%#@");
+  gl.useProgram(programAscii);
+  sourceTexture1 = createTextureFromImage(gl, programAscii, charAtlas.image, 1, "u_CharAtlas");
   const lineAtlas = createAtlas("-/\\|");
-
-  gl.activeTexture(gl.TEXTURE2);
-  sourceTexture = createTextureFromImage(gl, lineAtlas.image);
-  const uLineAtlasLocation = gl.getUniformLocation(programAscii, "u_LineAtlas");
-  gl.uniform1i(uLineAtlasLocation, 2);
+  sourceTexture2 = createTextureFromImage(gl, programAscii, lineAtlas.image, 2, "u_LineAtlas");
 
   // ========================== Podpinanie uniformów ===========================
   const uResolutionLocation       = gl.getUniformLocation(program, "u_Resolution");
@@ -187,6 +197,7 @@ function createTextureFromImage(gl, image){
   const uArraySizeLocation        = gl.getUniformLocation(programAscii, "u_ArraySize");
   const uArrayLocation            = gl.getUniformLocation(programAscii, "u_Array");
   const uResolution1Location      = gl.getUniformLocation(programAscii, "u_Resolution");
+  const uAtlasSizeLocation        = gl.getUniformLocation(programAscii, "u_AtlasSize");
   // ===========================================================================
   const uBrightnessLocation       = gl.getUniformLocation(programAscii, "u_Brightness");
   const uSobelStatusLocation      = gl.getUniformLocation(programAscii, "u_SobelStatus");
@@ -277,9 +288,7 @@ function createTextureFromImage(gl, image){
           gl.uniform2f(uResolution1Location, canvas.width, canvas.height);
 
           // =========================================================
-
-          gl.uniform1fv
-
+          gl.uniform1i(uAtlasSizeLocation, charAtlas.length);
           gl.drawArrays(gl.TRIANGLES,0,6);
           renderScene2Requested = false;
         }

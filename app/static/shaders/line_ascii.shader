@@ -8,6 +8,10 @@
   uniform vec2 u_Resolution;
   uniform vec2 u_TexelSize;
 
+  uniform int u_AtlasSize;
+  uniform sampler2D u_CharAtlas;
+  uniform sampler2D u_LineAtlas;
+
   uniform int u_GaussKernelSize;
   const int MAX_KERNEL_SIZE = 5;
   uniform float u_GaussWeights[MAX_KERNEL_SIZE + 1];
@@ -116,8 +120,18 @@ float getColorScore(vec4 color) {
     return color.r + color.g + color.b;
 }
 
+vec2 atlasUV(int index, vec2 localUV) {
+    int sideLength = int(ceil(sqrt(float(u_AtlasSize))));
+
+    float fx = float(index % sideLength);    // kolumna
+    float fy = float(index / sideLength);    // wiersz
+
+    return (vec2(fx, fy) + localUV) / float(sideLength);
+}
+
+
 vec4 linesASCII() {
-    int blockSize = 8;
+    int blockSize = 32;
 
     // Znajdź lewy górny piksel bloku w UV space
     vec2 blockOriginUV = floor(v_TexCoord / (u_TexelSize * float(blockSize))) * u_TexelSize * float(blockSize);
@@ -142,19 +156,16 @@ vec4 linesASCII() {
     return vec4(r, g, b, 1.0);
 }
 
-const int MAX_ATLAST_SIZE = 16;
-uniform sampler2D u_CharAtlas;
-uniform sampler2D u_LineAtlas;
 
+//funkcja do konversji obrazu na ascii
 vec4 converter(vec4 color){
     vec3 original = texture(u_Texture, v_TexCoord).rgb;
 
-    int blockSize = 8;
-    vec2 blockOriginUV = floor(v_TexCoord / (u_TexelSize * float(blockSize))) * u_TexelSize * float(blockSize);
+    int blockSize = 12;
+    vec2 blockOriginUV = floor(v_TexCoord / (u_TexelSize * float(blockSize))) * u_TexelSize * float(blockSize); 
+    // return vec4(blockOriginUV, 0.0, 1.0); // działa
 
-    vec4 lines = linesASCII();
-
-    float lum = luminance(original);
+    // vec4 lines = linesASCII();
 
     float meanLum = 0.0;
 
@@ -167,12 +178,14 @@ vec4 converter(vec4 color){
     }
 
     meanLum = meanLum / float(blockSize * blockSize);
-
-    meanLum = floor(meanLum * float(MAX_KERNEL_SIZE));
-
+    meanLum = floor(meanLum * float(u_AtlasSize));
     int index = int(meanLum);
 
-    color = vec4(original * texture(u_CharAtlas, v_TexCoord).rgb, 1.0);
+    vec2 localUV = (v_TexCoord - blockOriginUV) / (u_TexelSize * float(blockSize));
+    //return vec4(localUV, 0.0, 1.0);
+    //return = vec4(vec3(meanLum / float(u_AtlasSize) ), 1.0); // działa
+    //return = vec4(vec3(atlasUV(index, localUV), 0.0), 1.0); // powinno działać
+    color = vec4(original * texture(u_CharAtlas, atlasUV(index, localUV)).rgb, 1.0);
 
     return color;
 }

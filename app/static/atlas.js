@@ -1,10 +1,11 @@
-export function createAtlas(chars, font = "28px arial"){
+export function createAtlas(chars, font = "32px arial"){
   const array = chars.split("");
   const image = document.createElement("canvas");
   const ctx = image.getContext("2d");
+  const length = array.length
 
-  const cols = Math.ceil(Math.sqrt(array.length));
-  const rows = Math.ceil(array.length / cols);
+  const cols = Math.ceil(Math.sqrt(length));
+  const rows = Math.ceil(length / cols);
   const cellSize = 32;
 
   image.width = cols * cellSize;
@@ -39,5 +40,5 @@ export function createAtlas(chars, font = "28px arial"){
     }
   });
 
-  return {image, imageData, cols, rows, cellSize};
+  return {image, imageData, cols, rows, cellSize, length};
 }
