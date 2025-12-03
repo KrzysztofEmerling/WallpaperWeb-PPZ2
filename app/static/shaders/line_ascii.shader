@@ -185,7 +185,8 @@ vec4 converter(vec4 color){
     //return vec4(localUV, 0.0, 1.0);
     //return = vec4(vec3(meanLum / float(u_AtlasSize) ), 1.0); // działa
     //return = vec4(vec3(atlasUV(index, localUV), 0.0), 1.0); // powinno działać
-    color = vec4(original * texture(u_CharAtlas, atlasUV(index, localUV)).rgb, 1.0);
+    vec2 latlasUV = atlasUV(index, localUV);
+    color = vec4(original * texture(u_CharAtlas, vec2(1.0 - latlasUV.x, latlasUV.y)).rgb, 1.0);
 
     return color;
 }
