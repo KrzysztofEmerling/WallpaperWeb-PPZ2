@@ -1,4 +1,5 @@
 import { poissonDiskSampling } from "./poisson.js";
+import { createAtlas } from "./atlas.js";
 
 // =================================== WebGL ===================================
 
@@ -17,6 +18,7 @@ updateSceneShaders(sceneAvailableShaders.scene2, sceneAvailableShaders.scene1);
 let activeScene = null;
 let renderScene1Requested = true;
 let renderScene2Requested = false;
+let sourceTexture = null;
 
 // ======= render stats
 const fpsCounter = document.getElementById('fps');
@@ -97,7 +99,7 @@ async function loadShaderSource(name) {
 async function init() {
   const vertexShaderSource = await loadShaderSource('vertex.shader');
   const fragmentShaderSource = await loadShaderSource('fragment.shader');
-  const fragmentAsciiShaderSource = await loadShaderSource('fragment_ascii.shader');
+  const fragmentAsciiShaderSource = await loadShaderSource('line_ascii.shader');
 
   // ZWRACAMY OBIEKT – tu musi być return { ... }
   return {
@@ -105,6 +107,18 @@ async function init() {
       fragmentShaderSource,
       fragmentAsciiShaderSource
   };
+}
+
+function createTextureFromImage(gl, image){
+  const texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+  return texture;
 }
 
 (async () => {
@@ -140,24 +154,30 @@ async function init() {
   gl.enableVertexAttribArray(positionLocation);
   gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
-  
   const image = new Image();
   image.src = 'static/images/image.png';
   image.onload = () => {
-    const texture = gl.createTexture();
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    const uTextureLocation = gl.getUniformLocation(program, "u_Texture");
+    sourceTexture = createTextureFromImage(gl, image);
+    const uTextureLocation = gl.getUniformLocation(programAscii, "u_Texture");
     gl.uniform1i(uTextureLocation, 0);
     scenes.scene2.render(0);
     renderScene2Requested = true;
   }
+
+  const charAtlas = createAtlas("@#$%^&*()_+!.,<>");
+
+  gl.activeTexture(gl.TEXTURE1);
+  sourceTexture = createTextureFromImage(gl, charAtlas.image);
+  const uCharAtlasLocation = gl.getUniformLocation(programAscii, "u_CharAtlas");
+  gl.uniform1i(uCharAtlasLocation, 1);
+
+  const lineAtlas = createAtlas("-/\\|");
+
+  gl.activeTexture(gl.TEXTURE2);
+  sourceTexture = createTextureFromImage(gl, lineAtlas.image);
+  const uLineAtlasLocation = gl.getUniformLocation(programAscii, "u_LineAtlas");
+  gl.uniform1i(uLineAtlasLocation, 2);
 
   // ========================== Podpinanie uniformów ===========================
   const uResolutionLocation       = gl.getUniformLocation(program, "u_Resolution");
@@ -257,6 +277,8 @@ async function init() {
           gl.uniform2f(uResolution1Location, canvas.width, canvas.height);
 
           // =========================================================
+
+          gl.uniform1fv
 
           gl.drawArrays(gl.TRIANGLES,0,6);
           renderScene2Requested = false;

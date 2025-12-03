@@ -70,6 +70,9 @@ float gaussianWeight[6] = float[](
     0.06136, 0.24477, 0.38774, 0.24477, 0.06136, 0.0
 );
 
+float luminance(vec3 color){
+    return dot(color, vec3(0.299, 0.587, 0.114));
+}
 
 vec4 dogSpecific(vec2 uv) {
     vec3 original = texture(u_Texture, uv).rgb;
@@ -88,10 +91,9 @@ vec4 dogSpecific(vec2 uv) {
         }
     }
 
-    float luminance = dot(original, vec3(0.299, 0.587, 0.114));  // konwersja na luminancję
-    float blurLum = dot(blur, vec3(0.299, 0.587, 0.114));
-    vec3 result = vec3(step(0.09, (luminance-blurLum) * 0.5 + 0.5));
-
+    float lum = luminance(original);  // konwersja na luminancję
+    float blurLum = luminance(blur);
+    vec3 result = vec3(step(0.09, (lum-blurLum) * 0.5 + 0.5));
 
     return vec4(result, 1.0);
 }
@@ -140,8 +142,43 @@ vec4 linesASCII() {
     return vec4(r, g, b, 1.0);
 }
 
+const int MAX_ATLAST_SIZE = 16;
+uniform sampler2D u_CharAtlas;
+uniform sampler2D u_LineAtlas;
+
+vec4 converter(vec4 color){
+    vec3 original = texture(u_Texture, v_TexCoord).rgb;
+
+    int blockSize = 8;
+    vec2 blockOriginUV = floor(v_TexCoord / (u_TexelSize * float(blockSize))) * u_TexelSize * float(blockSize);
+
+    vec4 lines = linesASCII();
+
+    float lum = luminance(original);
+
+    float meanLum = 0.0;
+
+     for(int y = 0; y < blockSize; ++y) {
+        for(int x = 0; x < blockSize; ++x) {
+            vec2 offset = vec2(float(x), float(y)) * u_TexelSize;
+
+            meanLum += luminance(texture(u_Texture, blockOriginUV + offset).rgb);
+        }
+    }
+
+    meanLum = meanLum / float(blockSize * blockSize);
+
+    meanLum = floor(meanLum * float(MAX_KERNEL_SIZE));
+
+    int index = int(meanLum);
+
+    color = vec4(original * texture(u_CharAtlas, v_TexCoord).rgb, 1.0);
+
+    return color;
+}
+
 void main() {
-    FragColor = linesASCII();
+    FragColor = converter(texture(u_Texture, v_TexCoord));
     // FragColor = vec4(vec2(v_TexCoord), 0.0, 1.0);
     // FragColor = sobelSpecific(vec2(v_TexCoord)); // działa :-)
     // FragColor = gaussianSpecific(vec2(v_TexCoord)); // działa
