@@ -14,6 +14,23 @@ const sceneAvailableShaders = {
 
 updateSceneShaders(sceneAvailableShaders.scene2, sceneAvailableShaders.scene1);
 
+// Tekstury dla sceny 2 (ASCII)
+let sourceTexture = null;
+let asciiAtlasTexture = null;
+let lineAtlasTexture = null;
+let lineMapTexture = null;
+
+function createTextureFromImage(gl, image) {
+  const texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  return texture;
+}
+
 let activeScene = null;
 let renderScene1Requested = true;
 let renderScene2Requested = false;
@@ -141,33 +158,198 @@ async function init() {
   gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
   
-  const image = new Image();
-  image.src = 'static/images/image.png';
-  image.onload = () => {
-    const texture = gl.createTexture();
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, texture);
+    // ================== GŁÓWNA TEKSTURA (u_Texture) ==================
+    const image = new Image();
+    image.src = 'static/images/image.png';
+    image.onload = () => {
+      gl.activeTexture(gl.TEXTURE0);
+      sourceTexture = createTextureFromImage(gl, image);
+  
+      // sampler u_Texture dla SCENY 1
+      gl.useProgram(program);
+      const uTextureLocationScene1 = gl.getUniformLocation(program, "u_Texture");
+      if (uTextureLocationScene1) {
+        gl.uniform1i(uTextureLocationScene1, 0);
+      }
+  
+      // sampler u_Texture dla SCENY 2 (ASCII)
+      gl.useProgram(programAscii);
+      const uTextureLocationScene2 = gl.getUniformLocation(programAscii, "u_Texture");
+      if (uTextureLocationScene2) {
+        gl.uniform1i(uTextureLocationScene2, 0);
+      }
+  
+      // pierwsze renderowanie sceny 2
+      scenes.scene2.render(0);
+      renderScene2Requested = true;
+    };
+  
+    // ================== ATLAS ASCII (u_AsciiAtlas) ===================
+    // ================== ATLAS ASCII (u_AsciiAtlas) – generowany z fontu ===================
+(function() {
+  // lista znaków od „najgęstszych” do „najrzadszych”
+  const asciiChars = "@#%*+=-:. ";
+  const numChars = asciiChars.length;
 
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+  // rozmiar siatki atlasu – musi zgadzać się z u_AsciiAtlasGrid (16x8)
+  const gridCols = 16;
+  const gridRows = 8;
+  const cellW = 16;
+  const cellH = 16;
+
+  const atlasWidth = gridCols * cellW;   // 256
+  const atlasHeight = gridRows * cellH;  // 128
+
+  const canvasAtlas = document.createElement("canvas");
+  canvasAtlas.width = atlasWidth;
+  canvasAtlas.height = atlasHeight;
+  const ctx = canvasAtlas.getContext("2d");
+
+  // tło czarne
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, atlasWidth, atlasHeight);
+
+  ctx.fillStyle = "white";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.font = "12px monospace";
+
+  // rysujemy znaki po kolei w komórkach
+  for (let i = 0; i < numChars; i++) {
+    const ch = asciiChars[i];
+    const col = i % gridCols;
+    const row = Math.floor(i / gridCols);
+    const x = col * cellW + cellW * 0.5;
+    const y = row * cellH + cellH * 0.5;
+    ctx.fillText(ch, x, y);
+  }
+
+  // tworzymy teksturę z canvasu
+  gl.activeTexture(gl.TEXTURE1);
+  asciiAtlasTexture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, asciiAtlasTexture);
+  gl.texImage2D(
+    gl.TEXTURE_2D,
+    0,
+    gl.RGBA,
+    gl.RGBA,
+    gl.UNSIGNED_BYTE,
+    canvasAtlas
+  );
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+  gl.useProgram(programAscii);
+  const locSampler = gl.getUniformLocation(programAscii, "u_AsciiAtlas");
+  if (locSampler) gl.uniform1i(locSampler, 1); // TEXTURE1
+
+  // ustawiamy ile znaków faktycznie używamy
+  const uNumAsciiCharsLocation = gl.getUniformLocation(programAscii, "u_NumAsciiChars");
+  if (uNumAsciiCharsLocation) gl.uniform1i(uNumAsciiCharsLocation, numChars);
+})();
+
+  
+    // ================== ATLAS LINII (u_LineAtlas) ====================
+    // ================== ATLAS LINII (u_LineAtlas) – generowany z fontu ===================
+(function() {
+  const lineChars = "-/\\|"; // 4 znaki linii
+  const gridCols = 4;
+  const gridRows = 1;
+  const cellW = 32;
+  const cellH = 32;
+
+  const atlasWidth = gridCols * cellW;   // 128
+  const atlasHeight = gridRows * cellH;  // 32
+
+  const canvasLines = document.createElement("canvas");
+  canvasLines.width = atlasWidth;
+  canvasLines.height = atlasHeight;
+  const ctx = canvasLines.getContext("2d");
+
+  // czarne tło
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, atlasWidth, atlasHeight);
+
+  ctx.fillStyle = "white";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.font = "20px monospace";
+
+  for (let i = 0; i < lineChars.length; i++) {
+    const ch = lineChars[i];
+    const col = i; // 0..3
+    const row = 0;
+    const x = col * cellW + cellW * 0.5;
+    const y = row * cellH + cellH * 0.5;
+    ctx.fillText(ch, x, y);
+  }
+
+  gl.activeTexture(gl.TEXTURE2);
+  lineAtlasTexture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, lineAtlasTexture);
+  gl.texImage2D(
+    gl.TEXTURE_2D,
+    0,
+    gl.RGBA,
+    gl.RGBA,
+    gl.UNSIGNED_BYTE,
+    canvasLines
+  );
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+  gl.useProgram(programAscii);
+  const locSampler = gl.getUniformLocation(programAscii, "u_LineAtlas");
+  if (locSampler) gl.uniform1i(locSampler, 2); // TEXTURE2
+
+  const uLineAtlasGridLocation = gl.getUniformLocation(programAscii, "u_LineAtlasGrid");
+  if (uLineAtlasGridLocation) gl.uniform2i(uLineAtlasGridLocation, gridCols, gridRows);
+})();
+
+  
+    // ================== MAPA LINII (u_LineMap) =======================
+    // Na razie pusta 1x1 (brak linii) – możesz potem podpiąć prawdziwą
+    gl.activeTexture(gl.TEXTURE3);
+    lineMapTexture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, lineMapTexture);
+    gl.texImage2D(
+      gl.TEXTURE_2D,
+      0,
+      gl.RGBA,
+      1,
+      1,
+      0,
+      gl.RGBA,
+      gl.UNSIGNED_BYTE,
+      new Uint8Array([0, 0, 0, 0])
+    );
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    const uTextureLocation = gl.getUniformLocation(program, "u_Texture");
-    gl.uniform1i(uTextureLocation, 0);
-    scenes.scene2.render(0);
-    renderScene2Requested = true;
-  }
+  
+    gl.useProgram(programAscii);
+    {
+      const loc = gl.getUniformLocation(programAscii, "u_LineMap");
+      if (loc) gl.uniform1i(loc, 3);
+    }
+  
 
   // ========================== Podpinanie uniformów ===========================
+  // ---- SCENA 1 (program) ----
   const uResolutionLocation       = gl.getUniformLocation(program, "u_Resolution");
   const uStepSizeLocation         = gl.getUniformLocation(program, "u_StepSize");
   const uHaloColorLocation        = gl.getUniformLocation(program, "u_HaloColor");
 
+  // ---- SCENA 2 (programAscii – ASCII) ----
   const uArraySizeLocation        = gl.getUniformLocation(programAscii, "u_ArraySize");
   const uArrayLocation            = gl.getUniformLocation(programAscii, "u_Array");
   const uResolution1Location      = gl.getUniformLocation(programAscii, "u_Resolution");
-  // ===========================================================================
+
   const uBrightnessLocation       = gl.getUniformLocation(programAscii, "u_Brightness");
   const uSobelStatusLocation      = gl.getUniformLocation(programAscii, "u_SobelStatus");
   const uGammaLocation            = gl.getUniformLocation(programAscii, "u_Gamma");
@@ -177,7 +359,35 @@ async function init() {
   const uTexelSizeLocation        = gl.getUniformLocation(programAscii, "u_TexelSize");
   const uBloomIntensityLocation   = gl.getUniformLocation(programAscii, "u_BloomIntensity");
   const uBloomKernelSizeLocation  = gl.getUniformLocation(programAscii, "u_BloomKernelSize");
+
+  // ---- ASCII specific uniforms (SCENA 2) ----
+  const uCellCountLocation        = gl.getUniformLocation(programAscii, "u_CellCount");
+  const uAsciiAtlasGridLocation   = gl.getUniformLocation(programAscii, "u_AsciiAtlasGrid");
+  const uNumAsciiCharsLocation    = gl.getUniformLocation(programAscii, "u_NumAsciiChars");
+  const uLineAtlasGridLocation    = gl.getUniformLocation(programAscii, "u_LineAtlasGrid");
+  const uBackgroundColorLocation  = gl.getUniformLocation(programAscii, "u_BackgroundColor");
+  const uLineThresholdLocation    = gl.getUniformLocation(programAscii, "u_LinePresenceThreshold");
   //============================================================================
+
+  // // USTAWIENIA STARTOWE DLA SCENY 2 (ASCII)
+  // gl.useProgram(programAscii);
+  // if (uCellCountLocation)       gl.uniform2i(uCellCountLocation, 160, 90);    // ilość znaków (cols, rows)
+  // if (uAsciiAtlasGridLocation)  gl.uniform2i(uAsciiAtlasGridLocation, 16, 8); // rozkład atlasu ASCII
+  // if (uNumAsciiCharsLocation)   gl.uniform1i(uNumAsciiCharsLocation, 128);
+  // if (uLineAtlasGridLocation)   gl.uniform2i(uLineAtlasGridLocation, 4, 1);   // 4 znaki linii w jednym rzędzie
+  // if (uBackgroundColorLocation) gl.uniform4f(uBackgroundColorLocation, 0.0, 0.0, 0.0, 1.0);
+  // if (uLineThresholdLocation)   gl.uniform1f(uLineThresholdLocation, 0.1);
+
+  gl.useProgram(programAscii);
+
+if (uCellCountLocation)       gl.uniform2i(uCellCountLocation, 160, 90);    // ilość znaków
+if (uAsciiAtlasGridLocation)  gl.uniform2i(uAsciiAtlasGridLocation, 16, 8); // musi pasować do gridCols/gridRows z atlasu ASCII
+// uNumAsciiChars ustawiamy w kodzie tworzącym atlas (patrz wyżej)
+if (uLineAtlasGridLocation)   gl.uniform2i(uLineAtlasGridLocation, 4, 1);   // jak w atlasie linii
+if (uBackgroundColorLocation) gl.uniform4f(uBackgroundColorLocation, 0.0, 0.0, 0.0, 1.0);
+if (uLineThresholdLocation)   gl.uniform1f(uLineThresholdLocation, 0.1);
+
+
 
   const scenes = {
     scene1: {
