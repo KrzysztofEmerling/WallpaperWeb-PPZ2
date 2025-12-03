@@ -101,6 +101,7 @@ vec3 raymarch(vec3 ro, vec3 rd, vec3 bHoleCenter, float SchwarzschildRadious) {
         
     // zabezpieczenie
     return vec3(1.0, 0.0, 1.0);
+    
 } 
 
 void main() { 
