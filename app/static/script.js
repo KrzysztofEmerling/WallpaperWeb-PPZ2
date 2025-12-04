@@ -208,6 +208,8 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
   const uTexelSizeLocation        = gl.getUniformLocation(programAscii, "u_TexelSize");
   const uBloomIntensityLocation   = gl.getUniformLocation(programAscii, "u_BloomIntensity");
   const uBloomKernelSizeLocation  = gl.getUniformLocation(programAscii, "u_BloomKernelSize");
+  const uColor1Location           = gl.getUniformLocation(programAscii,"u_Color1");
+  const uColor2Location           = gl.getUniformLocation(programAscii,"u_Color2");
   //============================================================================
 
   const scenes = {
@@ -289,6 +291,11 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
 
           // =========================================================
           gl.uniform1i(uAtlasSizeLocation, charAtlas.length);
+          const [r1,g1,b1,a1] = rgbCreator('color1-red-slider','color1-green-slider','color1-blue-slider');
+          const [r2,g2,b2,a2] = rgbCreator('color2-red-slider','color2-green-slider','color2-blue-slider');
+          console.log(r1)
+          gl.uniform3f(uColor1Location, r1, g1, b1);
+          gl.uniform3f(uColor2Location, r2, g2, b2);
           gl.drawArrays(gl.TRIANGLES,0,6);
           renderScene2Requested = false;
         }

@@ -156,6 +156,14 @@ vec4 linesASCII() {
     return vec4(r, g, b, 1.0);
 }
 
+uniform vec3 u_Color1;
+uniform vec3 u_Color2;
+
+vec3 gradient(vec3 u_Color1, vec3 u_Color2, vec2 uv)
+{
+    float t = (uv.x + uv.y) * 0.5; 
+    return mix(u_Color1, u_Color2, t);         // liniowe złożenie
+}
 
 //funkcja do konversji obrazu na ascii
 vec4 converter(vec4 color){
@@ -186,7 +194,13 @@ vec4 converter(vec4 color){
     //return = vec4(vec3(meanLum / float(u_AtlasSize) ), 1.0); // działa
     //return = vec4(vec3(atlasUV(index, localUV), 0.0), 1.0); // powinno działać
     vec2 latlasUV = atlasUV(index, localUV);
-    color = vec4(original * texture(u_CharAtlas, vec2(1.0 - latlasUV.x, latlasUV.y)).rgb, 1.0);
+    //float flag1 = max(step( u_Color1.r, 0.0), max(step(u_Color1.g, 0.0), step(u_Color1.b,0.0)));
+    //float flag2 = max(step(u_Color2.r,0.0), max(step(u_Color2.g,0.0), step(u_Color2.b,0.0)));
+
+    float flag1 = step(0.0001, u_Color1.r + u_Color1.g + u_Color1.b);
+    float flag2 = step(0.0001, u_Color2.r + u_Color2.g + u_Color2.b);
+    vec3 result = mix(original, gradient(u_Color1,u_Color2, v_TexCoord), max(flag1, flag2));
+    color = vec4(result * texture(u_CharAtlas, vec2(1.0 - latlasUV.x, latlasUV.y)).rgb, 1.0);
 
     return color;
 }
