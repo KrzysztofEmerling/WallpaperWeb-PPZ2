@@ -200,7 +200,7 @@ vec4 converter(vec4 color){
     float flag1 = step(0.0001, u_Color1.r + u_Color1.g + u_Color1.b);
     float flag2 = step(0.0001, u_Color2.r + u_Color2.g + u_Color2.b);
     vec3 result = mix(original, gradient(u_Color1,u_Color2, v_TexCoord), max(flag1, flag2));
-    color = vec4(result * texture(u_CharAtlas, vec2(1.0 - latlasUV.x, latlasUV.y)).rgb, 1.0);
+    color = vec4(result * texture(u_CharAtlas, vec2(latlasUV.x, 1.0 - latlasUV.y)).rgb, 1.0);
 
     return color;
 }
