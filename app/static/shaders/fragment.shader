@@ -3,10 +3,25 @@ precision highp float;
 
 uniform vec2 u_Resolution;
 uniform float u_StepSize;
-// uniform float u_Density;
 uniform vec3 u_HaloColor;
+uniform int u_ArraySize;
+uniform vec2 u_Array[1000]; 
 
 out vec4 fragColor;
+vec3 getBg(vec2 uv) {
+    vec3 color = vec3(0.0);
+    float radius = 0.005; 
+    for (int i = 0; i < u_ArraySize; i++) {
+        float isOutsideLimit = step(float(u_ArraySize), float(i)); 
+        float isValid = 1.0 - isOutsideLimit;
+
+        float dist = distance(uv, u_Array[i]);
+        float star = smoothstep(radius, radius * 0.1, dist);
+        color += vec3(star * isValid);
+    }
+    return min(color, vec3(1.0));
+}
+
 float sdSphere(vec3 p, float r) {
     return length(p) - r;
 } 
@@ -94,10 +109,13 @@ vec3 raymarch(vec3 ro, vec3 rd, vec3 bHoleCenter, float SchwarzschildRadious) {
         rd = normalize(rd + bendingStrength * dirToCenter * 0.000025);
         t += u_StepSize;
         if (t > MAX_DIST)  {
-                return mix(vec3(cubemap(rd),0.0), color, alpha);
+            return mix(getBg(cubemap(rd)), color, alpha);
         } 
-        if(i == iter - 1) return mix(vec3(cubemap(rd),0.0), color, alpha);
-    } 
+        
+        if(i == iter - 1) {
+            return mix(getBg(cubemap(rd)), color, alpha);
+        }
+    }
         
     // zabezpieczenie
     return vec3(1.0, 0.0, 1.0);
