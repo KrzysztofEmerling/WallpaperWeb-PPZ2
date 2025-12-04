@@ -126,7 +126,7 @@ vec2 atlasUV(int index, vec2 localUV) {
     float fx = float(index % sideLength);    // kolumna
     float fy = float(index / sideLength);    // wiersz
 
-    return (vec2(fx, fy) + localUV) / float(sideLength);
+    return (vec2(fx, fy) + vec2(localUV.x, 1.0 - localUV.y)) / float(sideLength);
 }
 
 
@@ -200,7 +200,7 @@ vec4 converter(vec4 color){
     float flag1 = step(0.0001, u_Color1.r + u_Color1.g + u_Color1.b);
     float flag2 = step(0.0001, u_Color2.r + u_Color2.g + u_Color2.b);
     vec3 result = mix(original, gradient(u_Color1,u_Color2, v_TexCoord), max(flag1, flag2));
-    color = vec4(result * texture(u_CharAtlas, vec2(latlasUV.x, 1.0 - latlasUV.y)).rgb, 1.0);
+    color = vec4(result * texture(u_CharAtlas, vec2(latlasUV.x, latlasUV.y)).rgb, 1.0);
 
     return color;
 }
