@@ -5,8 +5,66 @@ uniform vec2 u_Resolution;
 uniform float u_StepSize;
 // uniform float u_Density;
 uniform vec3 u_HaloColor;
-
 out vec4 fragColor;
+
+//Prlin
+float u_PerlinTime = 23.2144;    // time
+vec3 quintic(vec3 t) {
+    t = t * t * t * (t * (t * 6.0 - 15.0) + 10.0);
+    return t;
+}
+
+vec3 perlinFade(vec3 t) {
+    return t * t * t * (t * (t * 6.0 - 15.0) + 10.0);
+}
+
+float perlinHash(vec3 p) {
+    return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453123);
+}
+
+vec3 perlinGradient(vec3 ip) {
+    float rnd  = perlinHash(ip);
+    float a    = rnd * 6.2831853;               
+    float z    = fract(rnd * 17.0) * 2.0 - 1.0;
+    float r    = sqrt(max(0.0, 1.0 - z * z));
+
+    return vec3(r * cos(a), r * sin(a), z);
+}
+
+float perlinGrad(vec3 p, vec3 ip) {
+    vec3 g = perlinGradient(ip);
+    return dot(g, p - ip);
+}
+
+float perlinNoise3D(vec3 p) {
+    vec3 ip = floor(p);
+    vec3 fp = fract(p);
+
+    float v000 = perlinGrad(p, ip + vec3(0.0, 0.0, 0.0));
+    float v100 = perlinGrad(p, ip + vec3(1.0, 0.0, 0.0));
+    float v010 = perlinGrad(p, ip + vec3(0.0, 1.0, 0.0));
+    float v110 = perlinGrad(p, ip + vec3(1.0, 1.0, 0.0));
+    float v001 = perlinGrad(p, ip + vec3(0.0, 0.0, 1.0));
+    float v101 = perlinGrad(p, ip + vec3(1.0, 0.0, 1.0));
+    float v011 = perlinGrad(p, ip + vec3(0.0, 1.0, 1.0));
+    float v111 = perlinGrad(p, ip + vec3(1.0, 1.0, 1.0));
+
+    vec3 u = perlinFade(fp);
+
+    float x00 = mix(v000, v100, u.x);
+    float x10 = mix(v010, v110, u.x);
+    float x01 = mix(v001, v101, u.x);
+    float x11 = mix(v011, v111, u.x);
+
+    float y0  = mix(x00, x10, u.y);
+    float y1  = mix(x01, x11, u.y);
+
+    float n   = mix(y0, y1, u.z);
+
+    return n;
+}
+//end
+
 float sdSphere(vec3 p, float r) {
     return length(p) - r;
 } 
@@ -52,6 +110,10 @@ vec2 cubemap(vec3 rd) {
     return uv;
 }
 
+float falloff(float d, float r) {
+    return clamp((0.5 * d - r) / r, 0.0, 1.0);
+}
+
 vec3 raymarch(vec3 ro, vec3 rd, vec3 bHoleCenter, float SchwarzschildRadious) { 
 
     float bHoleMass = getbHoleMass(SchwarzschildRadious);
@@ -83,7 +145,7 @@ vec3 raymarch(vec3 ro, vec3 rd, vec3 bHoleCenter, float SchwarzschildRadious) {
             float light = localLight + 0.25 * (0.5 + backLight);
 
             vec3 scatterColor = u_HaloColor * light; // referencyjnie vec3(0.8, 0.6, 1.0);
-            float stepA = (1.0 - alpha) * 0.00065; //u_Density; //referencyjnie 0.00065;
+            float stepA = (1.0 - alpha) * (0.001 * mix(1.0, clamp(perlinNoise3D(p), 0.0, 1.0), falloff(distToCenter, SchwarzschildRadious)) + 0.0001); 
             color += scatterColor * stepA; 
             alpha += stepA;
             if (alpha >= 1.0) return color;
