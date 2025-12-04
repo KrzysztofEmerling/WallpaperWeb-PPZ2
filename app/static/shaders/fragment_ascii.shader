@@ -243,7 +243,7 @@ vec3 gradient(vec3 u_Color1, vec3 u_Color2, vec2 uv)
 vec4 converter(vec4 color){
     vec3 original = texture(u_Texture, v_TexCoord).rgb;
 
-    int blockSize = 12;
+    int blockSize = 16;
     vec2 blockOriginUV = floor(v_TexCoord / (u_TexelSize * float(blockSize))) * u_TexelSize * float(blockSize); 
     // return vec4(blockOriginUV, 0.0, 1.0); // działa
 

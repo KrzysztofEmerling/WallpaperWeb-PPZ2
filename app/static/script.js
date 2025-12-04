@@ -183,7 +183,7 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
     renderScene2Requested = true;
   }
 
-  const charAtlas = createAtlas("@#%*+;. ");
+  const charAtlas = createAtlas("@#%*+=-. ");
   gl.useProgram(programAscii);
   sourceTexture1 = createTextureFromImage(gl, programAscii, charAtlas.image, 1, "u_CharAtlas");
   const lineAtlas = createAtlas("-/\\|");
