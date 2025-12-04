@@ -1,4 +1,5 @@
 import { poissonDiskSampling } from "./poisson.js";
+import { createAtlas } from "./atlas.js";
 
 // =================================== WebGL ===================================
 
@@ -17,6 +18,9 @@ updateSceneShaders(sceneAvailableShaders.scene2, sceneAvailableShaders.scene1);
 let activeScene = null;
 let renderScene1Requested = true;
 let renderScene2Requested = false;
+let sourceTexture = null;
+let sourceTexture1 = null;
+let sourceTexture2 = null;
 
 // ======= render stats
 const fpsCounter = document.getElementById('fps');
@@ -97,7 +101,7 @@ async function loadShaderSource(name) {
 async function init() {
   const vertexShaderSource = await loadShaderSource('vertex.shader');
   const fragmentShaderSource = await loadShaderSource('fragment.shader');
-  const fragmentAsciiShaderSource = await loadShaderSource('fragment_ascii.shader');
+  const fragmentAsciiShaderSource = await loadShaderSource('fragment_ascii.shader'); //*
 
   // ZWRACAMY OBIEKT – tu musi być return { ... }
   return {
@@ -105,6 +109,35 @@ async function init() {
       fragmentShaderSource,
       fragmentAsciiShaderSource
   };
+}
+
+// function createTextureFromImage(gl, image){
+//   const texture = gl.createTexture();
+//   gl.bindTexture(gl.TEXTURE_2D, texture);
+//   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+//   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+//   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+//   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+//   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+//   return texture;
+// }
+function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
+    const texture = gl.createTexture();
+
+    gl.activeTexture(gl.TEXTURE0 + textureSlot);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+    const uLocation = gl.getUniformLocation(program, uniformName);
+    gl.uniform1i(uLocation, textureSlot);
+
+    return texture;
 }
 
 (async () => {
@@ -140,24 +173,21 @@ async function init() {
   gl.enableVertexAttribArray(positionLocation);
   gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
-  
   const image = new Image();
+
   image.src = 'static/images/image.png';
   image.onload = () => {
-    const texture = gl.createTexture();
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    const uTextureLocation = gl.getUniformLocation(program, "u_Texture");
-    gl.uniform1i(uTextureLocation, 0);
+    gl.useProgram(programAscii);
+    sourceTexture = createTextureFromImage(gl, programAscii, image, 0, "u_Texture");
     scenes.scene2.render(0);
     renderScene2Requested = true;
   }
+
+  const charAtlas = createAtlas(" .;+*%#@");
+  gl.useProgram(programAscii);
+  sourceTexture1 = createTextureFromImage(gl, programAscii, charAtlas.image, 1, "u_CharAtlas");
+  const lineAtlas = createAtlas("-/\\|");
+  sourceTexture2 = createTextureFromImage(gl, programAscii, lineAtlas.image, 2, "u_LineAtlas");
 
   // ========================== Podpinanie uniformów ===========================
   const uResolutionLocation       = gl.getUniformLocation(program, "u_Resolution");
@@ -167,6 +197,7 @@ async function init() {
   const uArraySizeLocation        = gl.getUniformLocation(programAscii, "u_ArraySize");
   const uArrayLocation            = gl.getUniformLocation(programAscii, "u_Array");
   const uResolution1Location      = gl.getUniformLocation(programAscii, "u_Resolution");
+  const uAtlasSizeLocation        = gl.getUniformLocation(programAscii, "u_AtlasSize");
   // ===========================================================================
   const uBrightnessLocation       = gl.getUniformLocation(programAscii, "u_Brightness");
   const uSobelStatusLocation      = gl.getUniformLocation(programAscii, "u_SobelStatus");
@@ -177,6 +208,9 @@ async function init() {
   const uTexelSizeLocation        = gl.getUniformLocation(programAscii, "u_TexelSize");
   const uBloomIntensityLocation   = gl.getUniformLocation(programAscii, "u_BloomIntensity");
   const uBloomKernelSizeLocation  = gl.getUniformLocation(programAscii, "u_BloomKernelSize");
+  const uColor1Location           = gl.getUniformLocation(programAscii,"u_Color1");
+  const uColor2Location           = gl.getUniformLocation(programAscii,"u_Color2");
+  const uAsciiFlagLocation        = gl.getUniformLocation(programAscii, "u_AsciiFlag"); //*
   //============================================================================
 
   const scenes = {
@@ -257,7 +291,15 @@ async function init() {
           gl.uniform2f(uResolution1Location, canvas.width, canvas.height);
 
           // =========================================================
+          gl.uniform1i(uAtlasSizeLocation, charAtlas.length);
+          const [r1,g1,b1,a1] = rgbCreator('color1-red-slider','color1-green-slider','color1-blue-slider');
+          const [r2,g2,b2,a2] = rgbCreator('color2-red-slider','color2-green-slider','color2-blue-slider');
+          gl.uniform3f(uColor1Location, r1, g1, b1);
+          gl.uniform3f(uColor2Location, r2, g2, b2);
 
+          const asciiFlag = asciiArt('switch-asciiArt');
+          gl.uniform1f(uAsciiFlagLocation, asciiFlag); //*
+          console.log(asciiFlag);
           gl.drawArrays(gl.TRIANGLES,0,6);
           renderScene2Requested = false;
         }
@@ -268,13 +310,13 @@ async function init() {
   activeScene = 'scene2';
 
   function toggleScene() {
-    renderScene1Requested = true;
-    renderScene2Requested = true;
+    
     if (activeScene === 'scene1') {
+        renderScene2Requested = true;
         updateSceneShaders(sceneAvailableShaders.scene2, sceneAvailableShaders.scene1);
         activeScene = 'scene2';
     } else {
-        
+        renderScene1Requested = true;
         updateSceneShaders(sceneAvailableShaders.scene1, sceneAvailableShaders.scene2);
         activeScene = 'scene1';
     }
@@ -378,6 +420,11 @@ function perlin(widthSliderId, heightSliderId, timeSliderId) {
   const time   = parseFloat(document.getElementById(timeSliderId).value);
 
   return [width, height, time];
+}
+
+function asciiArt(asciiArt_handler){
+  const status = document.getElementById(asciiArt_handler);
+  return status.checked ? 1.0 : 0.0;
 }
 
 // ============================== Reszta Skryptów ==============================
@@ -542,6 +589,13 @@ export_btn.addEventListener('click', () => {
 
 const sliderInputs = document.querySelectorAll('input.slider');
 const valueInputs = document.querySelectorAll('input.single-value, input.multi-value');
+const switchInputs = document.querySelectorAll('input.switch');
+
+switchInputs.forEach((element) => {
+  element.addEventListener('click', () => {
+    renderScene2Requested = true;
+  })
+});
 
 sliderInputs.forEach((element, index) => {
   const sliderID = element;

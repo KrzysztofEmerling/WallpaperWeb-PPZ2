@@ -8,6 +8,10 @@
   uniform vec2 u_Resolution;
   uniform vec2 u_TexelSize;
 
+  uniform int u_AtlasSize;
+  uniform sampler2D u_CharAtlas;
+  uniform sampler2D u_LineAtlas;
+
   uniform int u_GaussKernelSize;
   const int MAX_KERNEL_SIZE = 5;
   uniform float u_GaussWeights[MAX_KERNEL_SIZE + 1];
@@ -70,6 +74,9 @@ float gaussianWeight[6] = float[](
     0.06136, 0.24477, 0.38774, 0.24477, 0.06136, 0.0
 );
 
+float luminance(vec3 color){
+    return dot(color, vec3(0.299, 0.587, 0.114));
+}
 
 vec4 dogSpecific(vec2 uv) {
     vec3 original = texture(u_Texture, uv).rgb;
@@ -88,10 +95,9 @@ vec4 dogSpecific(vec2 uv) {
         }
     }
 
-    float luminance = dot(original, vec3(0.299, 0.587, 0.114));  // konwersja na luminancję
-    float blurLum = dot(blur, vec3(0.299, 0.587, 0.114));
-    vec3 result = vec3(step(0.09, (luminance-blurLum) * 0.5 + 0.5));
-
+    float lum = luminance(original);  // konwersja na luminancję
+    float blurLum = luminance(blur);
+    vec3 result = vec3(step(0.09, (lum-blurLum) * 0.5 + 0.5));
 
     return vec4(result, 1.0);
 }
@@ -114,8 +120,18 @@ float getColorScore(vec4 color) {
     return color.r + color.g + color.b;
 }
 
+vec2 atlasUV(int index, vec2 localUV) {
+    int sideLength = int(ceil(sqrt(float(u_AtlasSize))));
+
+    float fx = float(index % sideLength);    // kolumna
+    float fy = float(index / sideLength);    // wiersz
+
+    return (vec2(fx, fy) + localUV) / float(sideLength);
+}
+
+
 vec4 linesASCII() {
-    int blockSize = 8;
+    int blockSize = 32;
 
     // Znajdź lewy górny piksel bloku w UV space
     vec2 blockOriginUV = floor(v_TexCoord / (u_TexelSize * float(blockSize))) * u_TexelSize * float(blockSize);
@@ -140,8 +156,57 @@ vec4 linesASCII() {
     return vec4(r, g, b, 1.0);
 }
 
+uniform vec3 u_Color1;
+uniform vec3 u_Color2;
+
+vec3 gradient(vec3 u_Color1, vec3 u_Color2, vec2 uv)
+{
+    float t = (uv.x + uv.y) * 0.5; 
+    return mix(u_Color1, u_Color2, t);         // liniowe złożenie
+}
+
+//funkcja do konversji obrazu na ascii
+vec4 converter(vec4 color){
+    vec3 original = texture(u_Texture, v_TexCoord).rgb;
+
+    int blockSize = 12;
+    vec2 blockOriginUV = floor(v_TexCoord / (u_TexelSize * float(blockSize))) * u_TexelSize * float(blockSize); 
+    // return vec4(blockOriginUV, 0.0, 1.0); // działa
+
+    // vec4 lines = linesASCII();
+
+    float meanLum = 0.0;
+
+     for(int y = 0; y < blockSize; ++y) {
+        for(int x = 0; x < blockSize; ++x) {
+            vec2 offset = vec2(float(x), float(y)) * u_TexelSize;
+
+            meanLum += luminance(texture(u_Texture, blockOriginUV + offset).rgb);
+        }
+    }
+
+    meanLum = meanLum / float(blockSize * blockSize);
+    meanLum = floor(meanLum * float(u_AtlasSize));
+    int index = int(meanLum);
+
+    vec2 localUV = (v_TexCoord - blockOriginUV) / (u_TexelSize * float(blockSize));
+    //return vec4(localUV, 0.0, 1.0);
+    //return = vec4(vec3(meanLum / float(u_AtlasSize) ), 1.0); // działa
+    //return = vec4(vec3(atlasUV(index, localUV), 0.0), 1.0); // powinno działać
+    vec2 latlasUV = atlasUV(index, localUV);
+    //float flag1 = max(step( u_Color1.r, 0.0), max(step(u_Color1.g, 0.0), step(u_Color1.b,0.0)));
+    //float flag2 = max(step(u_Color2.r,0.0), max(step(u_Color2.g,0.0), step(u_Color2.b,0.0)));
+
+    float flag1 = step(0.0001, u_Color1.r + u_Color1.g + u_Color1.b);
+    float flag2 = step(0.0001, u_Color2.r + u_Color2.g + u_Color2.b);
+    vec3 result = mix(original, gradient(u_Color1,u_Color2, v_TexCoord), max(flag1, flag2));
+    color = vec4(result * texture(u_CharAtlas, vec2(latlasUV.x, 1.0 - latlasUV.y)).rgb, 1.0);
+
+    return color;
+}
+
 void main() {
-    FragColor = linesASCII();
+    FragColor = converter(texture(u_Texture, v_TexCoord));
     // FragColor = vec4(vec2(v_TexCoord), 0.0, 1.0);
     // FragColor = sobelSpecific(vec2(v_TexCoord)); // działa :-)
     // FragColor = gaussianSpecific(vec2(v_TexCoord)); // działa
