@@ -11,7 +11,7 @@ uniform vec2 u_TexelSize;
 // ============================ STARS GENERATOR =============================
 
 uniform int u_ArraySize;
-uniform float u_Array[1000];
+uniform float u_Array[950];
 uniform vec2 u_Resolution;
 
 vec4 poisson(vec4 color){
@@ -215,11 +215,75 @@ vec4 sobel() {
   return vec4(result, 1.0);
 }
 
+// ============================ASCII SHADER ===================================
+
+uniform int u_AtlasSize;
+uniform sampler2D u_CharAtlas;
+uniform sampler2D u_LineAtlas;
+uniform float u_AsciiFlag;
+uniform vec3 u_Color1;
+uniform vec3 u_Color2;
+
+vec2 atlasUV(int index, vec2 localUV) {
+    int sideLength = int(ceil(sqrt(float(u_AtlasSize))));
+
+    float fx = float(index % sideLength);    // kolumna
+    float fy = float(index / sideLength);    // wiersz
+
+    return (vec2(fx, fy) + localUV) / float(sideLength);
+}
+
+vec3 gradient(vec3 u_Color1, vec3 u_Color2, vec2 uv)
+{
+    float t = (uv.x + uv.y) * 0.5; 
+    return mix(u_Color1, u_Color2, t);         // liniowe złożenie
+}
+
+//funkcja do konversji obrazu na ascii
+vec4 converter(vec4 color){
+    vec3 original = texture(u_Texture, v_TexCoord).rgb;
+
+    int blockSize = 12;
+    vec2 blockOriginUV = floor(v_TexCoord / (u_TexelSize * float(blockSize))) * u_TexelSize * float(blockSize); 
+    // return vec4(blockOriginUV, 0.0, 1.0); // działa
+
+    // vec4 lines = linesASCII();
+
+    float meanLum = 0.0;
+
+     for(int y = 0; y < blockSize; ++y) {
+        for(int x = 0; x < blockSize; ++x) {
+            vec2 offset = vec2(float(x), float(y)) * u_TexelSize;
+
+            meanLum += luminance(texture(u_Texture, blockOriginUV + offset).rgb);
+        }
+    }
+
+    meanLum = meanLum / float(blockSize * blockSize);
+    meanLum = floor(meanLum * float(u_AtlasSize));
+    int index = int(meanLum);
+
+    vec2 localUV = (v_TexCoord - blockOriginUV) / (u_TexelSize * float(blockSize));
+    //return vec4(localUV, 0.0, 1.0);
+    //return = vec4(vec3(meanLum / float(u_AtlasSize) ), 1.0); // działa
+    //return = vec4(vec3(atlasUV(index, localUV), 0.0), 1.0); // powinno działać
+    vec2 latlasUV = atlasUV(index, localUV);
+    //float flag1 = max(step( u_Color1.r, 0.0), max(step(u_Color1.g, 0.0), step(u_Color1.b,0.0)));
+    //float flag2 = max(step(u_Color2.r,0.0), max(step(u_Color2.g,0.0), step(u_Color2.b,0.0)));
+
+    float flag1 = step(0.0001, u_Color1.r + u_Color1.g + u_Color1.b);
+    float flag2 = step(0.0001, u_Color2.r + u_Color2.g + u_Color2.b);
+    vec3 result = mix(original, gradient(u_Color1,u_Color2, v_TexCoord), max(flag1, flag2));
+    color = vec4(result * texture(u_CharAtlas, vec2(latlasUV.x, 1.0 - latlasUV.y)).rgb, 1.0);
+    color = mix(vec4(original, 1.0), color, u_AsciiFlag);
+    return color; //wybiera z tektury lub gotowego asciiArt na podstawie tego czy przycisk jest włączony/wyłączony
+}
+
 // ============================ SHADERS RESULT ================================
 
 void main() {
 
-  vec4 baseImage = bloom(contrast(gamma_corr(brightness(poisson(gaussian())))));
+  vec4 baseImage = bloom(contrast(gamma_corr(brightness(poisson(converter(gaussian()))))));
   
   FragColor = baseImage + sobel() * u_SobelStatus;
 

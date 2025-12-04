@@ -101,7 +101,7 @@ async function loadShaderSource(name) {
 async function init() {
   const vertexShaderSource = await loadShaderSource('vertex.shader');
   const fragmentShaderSource = await loadShaderSource('fragment.shader');
-  const fragmentAsciiShaderSource = await loadShaderSource('line_ascii.shader');
+  const fragmentAsciiShaderSource = await loadShaderSource('fragment_ascii.shader'); //*
 
   // ZWRACAMY OBIEKT – tu musi być return { ... }
   return {
@@ -210,6 +210,7 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
   const uBloomKernelSizeLocation  = gl.getUniformLocation(programAscii, "u_BloomKernelSize");
   const uColor1Location           = gl.getUniformLocation(programAscii,"u_Color1");
   const uColor2Location           = gl.getUniformLocation(programAscii,"u_Color2");
+  const uAsciiFlagLocation        = gl.getUniformLocation(programAscii, "u_AsciiFlag"); //*
   //============================================================================
 
   const scenes = {
@@ -293,9 +294,12 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
           gl.uniform1i(uAtlasSizeLocation, charAtlas.length);
           const [r1,g1,b1,a1] = rgbCreator('color1-red-slider','color1-green-slider','color1-blue-slider');
           const [r2,g2,b2,a2] = rgbCreator('color2-red-slider','color2-green-slider','color2-blue-slider');
-          console.log(r1)
           gl.uniform3f(uColor1Location, r1, g1, b1);
           gl.uniform3f(uColor2Location, r2, g2, b2);
+
+          const asciiFlag = asciiArt('switch-asciiArt');
+          gl.uniform1f(uAsciiFlagLocation, asciiFlag); //*
+          console.log(asciiFlag);
           gl.drawArrays(gl.TRIANGLES,0,6);
           renderScene2Requested = false;
         }
@@ -306,13 +310,13 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
   activeScene = 'scene2';
 
   function toggleScene() {
-    renderScene1Requested = true;
-    renderScene2Requested = true;
+    
     if (activeScene === 'scene1') {
+        renderScene2Requested = true;
         updateSceneShaders(sceneAvailableShaders.scene2, sceneAvailableShaders.scene1);
         activeScene = 'scene2';
     } else {
-        
+        renderScene1Requested = true;
         updateSceneShaders(sceneAvailableShaders.scene1, sceneAvailableShaders.scene2);
         activeScene = 'scene1';
     }
@@ -416,6 +420,11 @@ function perlin(widthSliderId, heightSliderId, timeSliderId) {
   const time   = parseFloat(document.getElementById(timeSliderId).value);
 
   return [width, height, time];
+}
+
+function asciiArt(asciiArt_handler){
+  const status = document.getElementById(asciiArt_handler);
+  return status.checked ? 1.0 : 0.0;
 }
 
 // ============================== Reszta Skryptów ==============================
@@ -580,6 +589,13 @@ export_btn.addEventListener('click', () => {
 
 const sliderInputs = document.querySelectorAll('input.slider');
 const valueInputs = document.querySelectorAll('input.single-value, input.multi-value');
+const switchInputs = document.querySelectorAll('input.switch');
+
+switchInputs.forEach((element) => {
+  element.addEventListener('click', () => {
+    renderScene2Requested = true;
+  })
+});
 
 sliderInputs.forEach((element, index) => {
   const sliderID = element;
