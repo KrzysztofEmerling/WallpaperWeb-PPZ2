@@ -52,20 +52,22 @@ vec4 voronoi3d(vec3 p) {
 
     float edge = sqrt(d2) - sqrt(d1); //rzeczywista różnica odległości
     // vec3 col = voronoiColor(id1);
-    vec3 col = vec3(1.0);
+    // vec3 col = vec3(1.0);
 
-    float border = smoothstep(0.045, 0.0, edge);
-    vec3 finalColor = mix(col, vec3(0.0), border);
+    // float border = smoothstep(0.045, 0.0, edge);
+    // vec3 finalColor = mix(col, vec3(0.0), border);
+    vec3 finalColor = vec3(edge);
 
     return vec4(finalColor, 1.0);
 }
 
 void main() {
 
-    vec2 uv = v_TexCoord.xy / u_Resolution.xy;
+    vec2 uv = v_TexCoord.xy * u_Resolution.xy; // poprawiony błąd
 
     float z = u_Time * 0.3;
-    vec3 pos = vec3(uv * 12.0, z);
+    vec3 pos = vec3(uv * 0.01, z);
 
-    fragColor = voronoi3d(pos);
+    fragColor = voronoi3d(pos); // nie wiem czy nie jest zastosowana metryka nieeuklidesowa jeśli tak zmienić na euklidesową
+    // fragColor = vec4(vec3(1.0), 2.0) - voronoi3d(pos);
 }
