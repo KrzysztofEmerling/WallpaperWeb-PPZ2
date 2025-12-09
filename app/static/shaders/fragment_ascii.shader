@@ -7,14 +7,6 @@ out vec4 FragColor;
 
 uniform sampler2D u_Texture;
 uniform vec2 u_TexelSize;
-
-// ============================ STARS RENDER =============================
-
-uniform sampler2D u_SkyTexture;
-
-vec4 stars(vec4 color){
-  return color + texture(u_SkyTexture, v_TexCoord);
-}
   
 // ============================ BRIGHTNESS SHADER ===========================
 
@@ -231,7 +223,7 @@ vec3 gradient(vec3 u_Color1, vec3 u_Color2, vec2 uv)
 
 //funkcja do konversji obrazu na ascii
 vec4 converter(vec4 color){
-    vec3 original = texture(u_Texture, v_TexCoord).rgb;
+    vec3 original = color.rgb;
 
     int blockSize = 16;
     vec2 blockOriginUV = floor(v_TexCoord / (u_TexelSize * float(blockSize))) * u_TexelSize * float(blockSize); 
@@ -273,7 +265,7 @@ vec4 converter(vec4 color){
 
 void main() {
 
-  vec4 baseImage = bloom(contrast(gamma_corr(brightness(stars(converter(gaussian()))))));
+  vec4 baseImage = bloom(contrast(gamma_corr(brightness(converter(gaussian())))));
   
   FragColor = baseImage + sobel() * u_SobelStatus;
 

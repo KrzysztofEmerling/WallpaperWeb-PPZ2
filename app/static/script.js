@@ -4,12 +4,13 @@ import { createImage } from "./scripts/generator.js";
 
 // =================================== WebGL ===================================
 
+
 const canvas = document.getElementById('glcanvas');
 const gl = canvas.getContext("webgl2");
 const scenesData = fetchSceneValues();
 const sceneAvailableShaders = {
   // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 1, zawiera id elementow z html
-  scene1: ['steps', 'rgb', 'sky-creator'],
+  scene1: ['steps', 'rgb', 'sky-generator'],
   // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 2, zawiera id elementow z html
   scene2: ['brightness', 'gamma', 'contrast', 'gauss', 'sobel', 'bloom', 'asciiArt']
 }
@@ -24,7 +25,8 @@ let sourceTexture1 = null;
 let sourceTexture2 = null;
 let sourceTexture3 = null;
 
-// ======= render stats
+// ============================= PERFORMENCE STATS =============================
+
 const fpsCounter = document.getElementById('fps');
 const frametimeCounter = document.getElementById('frametime');
 
@@ -50,6 +52,8 @@ function updateStats(){
     frametimeCounter.textContent = frametime.toFixed(1);
   }
 }
+
+// =============================================================================
 
 if (!gl) {
     alert('Unable to initialize WebGL. Your browser may not support it.');
@@ -216,7 +220,7 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
           gl.uniform2f(uResolutionLocation, canvas.width, canvas.height);
           
           const step_slider = document.getElementById("stepsize-slider");
-          gl.uniform1f(uStepSizeLocation, step_slider.value);
+          gl.uniform1f(uStepSizeLocation, (step_slider.value * 0.0001));
 
           const [r,g,b,a] = rgbCreator('red-slider','green-slider','blue-slider');
           gl.uniform3f(uHaloColorLocation, r,g,b);
@@ -227,7 +231,6 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
           const skyTexture = createImage(points, canvas.width, canvas.height, starSize);
 
           sourceTexture3 = createTextureFromImage(gl, program, skyTexture, 3, "u_SkyTexture");
-
 
           gl.drawArrays(gl.TRIANGLES,0,6); 
           renderScene1Requested = false; 
@@ -243,6 +246,8 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
           gl.viewport(0,0,canvas.width,canvas.height);
           gl.clearColor(0,0,0,1); //czarne tło
           gl.clear(gl.COLOR_BUFFER_BIT);
+
+          gl.uniform2f(uTexelSizeLocation, (1.0/canvas.width), (1.0/canvas.height));
 
           // =================== BRIGHTNESS SHADER ===================
 
@@ -595,7 +600,8 @@ sliderInputs.forEach((element, index) => {
 
   sliderID.addEventListener('input', () => {
     inputValue(sliderID, valueID);
-    renderScene2Requested = true;
+    // if (sliderID.closest("#" + sceneAvailableShaders.scene1.join(", #"))) setTimeout(() => { renderScene1Requested = true }, 2000);
+    if (sliderID.closest("#" + sceneAvailableShaders.scene2.join(", #"))) renderScene2Requested = true;
   });
 });
 
@@ -607,7 +613,8 @@ valueInputs.forEach((element, index) => {
     restoreDefault(valueID);
     sliderValue(sliderID, valueID);
     inputValidation(valueID);
-    renderScene2Requested = true;
+    // if (sliderID.closest("#" + sceneAvailableShaders.scene1.join(", #"))) setTimeout(() => { renderScene1Requested = true }, 2000);
+    if (sliderID.closest("#" + sceneAvailableShaders.scene2.join(", #"))) renderScene2Requested = true;
   });
 });
 
