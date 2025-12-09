@@ -102,7 +102,7 @@ async function loadShaderSource(name) {
 
 async function init() {
   const vertexShaderSource = await loadShaderSource('vertex.shader');
-  const fragmentShaderSource = await loadShaderSource('fragment.shader');
+  const fragmentShaderSource = await loadShaderSource('voronoi3d.shader');
   const fragmentAsciiShaderSource = await loadShaderSource('fragment_ascii.shader'); //*
 
   // ZWRACAMY OBIEKT – tu musi być return { ... }

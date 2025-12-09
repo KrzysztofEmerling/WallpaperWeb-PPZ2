@@ -5,10 +5,10 @@ in vec2 v_TexCoord;
 out vec4 fragColor;
 
 uniform vec2 u_Resolution;
-uniform float u_Time;
+float u_Time = 0.124245;
 
 //Pseudo-losowe wartości
-float hash3(vec3 p) {
+vec3 hash3(vec3 p) {
     p = fract(p * 0.3183099 + vec3(0.1, 0.2, 0.3));
     p *= 17.0;
     return fract(vec3(
@@ -51,7 +51,8 @@ vec4 voronoi3d(vec3 p) {
     }
 
     float edge = sqrt(d2) - sqrt(d1); //rzeczywista różnica odległości
-    vec3 col = voronoiColor(id1);
+    // vec3 col = voronoiColor(id1);
+    vec3 col = vec3(1.0);
 
     float border = smoothstep(0.045, 0.0, edge);
     vec3 finalColor = mix(col, vec3(0.0), border);
@@ -63,8 +64,8 @@ void main() {
 
     vec2 uv = v_TexCoord.xy / u_Resolution.xy;
 
-    float z = uTime * 0.3;
-    vec3 pos = vec3(uv * 4.0, z);
+    float z = u_Time * 0.3;
+    vec3 pos = vec3(uv * 12.0, z);
 
-    FragColor = voronoi3d(pos);
+    fragColor = voronoi3d(pos);
 }
