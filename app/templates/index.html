@@ -80,63 +80,6 @@
                         </div> 
                     </li>
 
-                    <!-- To jest template dla shadera, ktory ma tylko 1 parametr -->
-
-                    <!--
-                    <li class="mb-1" id="cat1"> 
-                        <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#cat1-collapse" aria-expanded="true">
-                            Category 1
-                        </button>
-
-                        <div class="collapse ps-3 pt-2" id="cat1-collapse">
-
-                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                <li>
-                                    <div class="d-flex justify-content-between align-items-center gap-4">
-                                        <input type="range" class="form-range hidden flex-fill slider" step="1" min="0" max="100" value="5" id="slider1">
-                                        <input type="number" class="form-control form-control-sm hidden single-value flex-fill" step="1" min="0" max="100" value="50" id="value1">
-                                    </div>
-                                </li> 
-                            </ul> 
-
-                        </div> 
-                    </li>
-                    -->
-
-                    <!-- To jest template dla shadera, ktory ma wiecej niz 1 parametr -->
-
-                    <!--
-                    <li class="mb-1" id="cat2"> 
-                        <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#cat2-collapse" aria-expanded="true">
-                            Category 2
-                        </button>
-
-                        <div class="collapse ps-3 pt-2" id="cat2-collapse">
-                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-
-                                <li> 
-                                    <span class="text-white text-nowrap hidden">sub-category 1</span>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="100" value="50" id="slider2">
-                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="100" value="50" id="value2">
-                                    </div>
-                                </li> 
-
-                                <li>
-                                    <span class="text-white text-nowrap hidden">sub-category 2</span>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="100" value="50" id="slider3">
-                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="100" value="50" id="value3">
-                                    </div>
-                                </li>
-
-                            </ul> 
-                        </div>
-                    </li>
-                    -->
-
-                    <!-- Test RGB -->
-
                     <li class="mb-1" id="rgb"> 
                         <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#rgb-collapse" aria-expanded="true">
                             RGB test
@@ -180,7 +123,7 @@
                         <div class="collapse ps-3 pt-2" id="brightness-collapse">
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
 
-                                <li> <!-- Jeden znacznik li to jest jedna podkategoria -->
+                                <li>
                                     <span class="text-white text-nowrap hidden">Brightness</span>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <input type="range" class="form-range hidden pe-4 slider" min="0" max="2" value="1" step="0.01" id="brightness-slider">
@@ -211,8 +154,6 @@
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="2" value="1" step="0.01" id="highlights-value">
                                     </div>
                                 </li>
-
-                                <!-- W tym miejscu dodac kolejne elementy listy tak jak wyzej -->
 
                             </ul> 
                         </div>
@@ -293,10 +234,8 @@
 
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li>
-                                    <div class="form-check form-switch align-items-center gap-4">
-                                        <span class="text-white text-nowrap hidden">Turn OFF/ON</span>
-                                        <input class="form-check-input hidden switch flex-shrink-0 flex-fill" type="checkbox" role="switch" id="switch-sobel">
-                                    </div>
+                                    <input class="btn-check hidden switch" type="checkbox" id="switch-sobel" autocomplete="off">
+                                    <label class="btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap" for="switch-sobel">Turn ON/OFF</label>
                                 </li> 
                             </ul> 
 
@@ -339,19 +278,27 @@
                         <div class="collapse ps-3 pt-2" id="sg-collapse">
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
 
-                                <li> <!-- Jeden znacznik li to jest jedna podkategoria -->
+                                <li> 
                                     <span class="text-white text-nowrap hidden">Seed</span>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <input type="range" class="form-range hidden pe-4 slider" min="1" max="1000" value="500" id="sg-seed-slider">
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="1" max="1000" value="500" id="sg-seed-value">
                                     </div>
-                                </li> 
+                                </li>
+
+                                <li>
+                                    <span class="text-white text-nowrap hidden">Size</span>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden pe-4 slider" min="1" max="10" value="1" id="sg-size-slider">
+                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="1" max="10" value="1" id="sg-size-value">
+                                    </div>
+                                </li>
 
                                 <li>
                                     <span class="text-white text-nowrap hidden">Minimal Distance</span>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <input type="range" class="form-range hidden pe-4 slider" min="50" max="200" value="100" id="sg-md-slider">
-                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="50" max="200" value="100" id="sg-md-value">
+                                        <input type="range" class="form-range hidden pe-4 slider" min="20" max="200" value="100" id="sg-md-slider">
+                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="20" max="200" value="100" id="sg-md-value">
                                     </div>
                                 </li>
 
@@ -362,8 +309,6 @@
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="5" max="100" value="50" id="sg-k-value">
                                     </div>
                                 </li>
-
-                                <!-- W tym miejscu dodac kolejne elementy listy tak jak wyzej -->
 
                             </ul> 
                         </div>
@@ -378,11 +323,8 @@
 
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li>
-                                    <div class="form-check form-switch align-items-center gap-4">
-                                        <span class="text-white text-nowrap hidden">Turn OFF/ON</span>
-                                        <input class="form-check-input hidden switch flex-shrink-0 flex-fill" type="checkbox" role="switch" id="switch-asciiArt">
-                                    </div>
-                                    
+                                    <input class="btn-check hidden switch" type="checkbox" id="switch-asciiArt" autocomplete="off">
+                                    <label class="btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap" for="switch-asciiArt">Turn ON/OFF</label>
                                 </li> 
                             </ul> 
 

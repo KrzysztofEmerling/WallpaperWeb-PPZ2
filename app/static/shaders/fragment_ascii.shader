@@ -8,22 +8,12 @@ out vec4 FragColor;
 uniform sampler2D u_Texture;
 uniform vec2 u_TexelSize;
 
-// ============================ STARS GENERATOR =============================
+// ============================ STARS RENDER =============================
 
-uniform int u_ArraySize;
-uniform float u_Array[950];
-uniform vec2 u_Resolution;
+uniform sampler2D u_SkyTexture;
 
-vec4 poisson(vec4 color){
-  vec3 result = color.rgb;
-  vec2 coords = vec2(v_TexCoord.x * u_Resolution.x, v_TexCoord.y * u_Resolution.y);
-
-  for(int i = 0 ; i < u_ArraySize ; i += 2){
-    result += step(length(coords - vec2(u_Array[i], u_Array[i+1])), 1.0);
-  }
-
-  result = clamp(result, 0.0, 1.0);
-  return vec4(result, 1.0);
+vec4 stars(vec4 color){
+  return color + texture(u_SkyTexture, v_TexCoord);
 }
   
 // ============================ BRIGHTNESS SHADER ===========================
@@ -283,7 +273,7 @@ vec4 converter(vec4 color){
 
 void main() {
 
-  vec4 baseImage = bloom(contrast(gamma_corr(brightness(poisson(converter(gaussian()))))));
+  vec4 baseImage = bloom(contrast(gamma_corr(brightness(stars(converter(gaussian()))))));
   
   FragColor = baseImage + sobel() * u_SobelStatus;
 

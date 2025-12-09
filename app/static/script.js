@@ -1,5 +1,6 @@
-import { poissonDiskSampling } from "./poisson.js";
-import { createAtlas } from "./atlas.js";
+import { poissonDiskSampling } from "./scripts/poisson.js";
+import { createAtlas } from "./scripts/atlas.js";
+import { createImage } from "./scripts/generator.js";
 
 // =================================== WebGL ===================================
 
@@ -21,6 +22,7 @@ let renderScene2Requested = false;
 let sourceTexture = null;
 let sourceTexture1 = null;
 let sourceTexture2 = null;
+let sourceTexture3 = null;
 
 // ======= render stats
 const fpsCounter = document.getElementById('fps');
@@ -111,17 +113,6 @@ async function init() {
   };
 }
 
-// function createTextureFromImage(gl, image){
-//   const texture = gl.createTexture();
-//   gl.bindTexture(gl.TEXTURE_2D, texture);
-//   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-//   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-//   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-//   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-//   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-
-//   return texture;
-// }
 function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
     const texture = gl.createTexture();
 
@@ -186,6 +177,7 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
   const charAtlas = createAtlas("@#%*+=-. ");
   gl.useProgram(programAscii);
   sourceTexture1 = createTextureFromImage(gl, programAscii, charAtlas.image, 1, "u_CharAtlas");
+
   const lineAtlas = createAtlas("-/\\|");
   sourceTexture2 = createTextureFromImage(gl, programAscii, lineAtlas.image, 2, "u_LineAtlas");
 
@@ -193,12 +185,8 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
   const uResolutionLocation       = gl.getUniformLocation(program, "u_Resolution");
   const uStepSizeLocation         = gl.getUniformLocation(program, "u_StepSize");
   const uHaloColorLocation        = gl.getUniformLocation(program, "u_HaloColor");
-
-  const uArraySizeLocation        = gl.getUniformLocation(programAscii, "u_ArraySize");
-  const uArrayLocation            = gl.getUniformLocation(programAscii, "u_Array");
-  const uResolution1Location      = gl.getUniformLocation(programAscii, "u_Resolution");
-  const uAtlasSizeLocation        = gl.getUniformLocation(programAscii, "u_AtlasSize");
   // ===========================================================================
+  const uAtlasSizeLocation        = gl.getUniformLocation(programAscii, "u_AtlasSize");
   const uBrightnessLocation       = gl.getUniformLocation(programAscii, "u_Brightness");
   const uSobelStatusLocation      = gl.getUniformLocation(programAscii, "u_SobelStatus");
   const uGammaLocation            = gl.getUniformLocation(programAscii, "u_Gamma");
@@ -208,10 +196,10 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
   const uTexelSizeLocation        = gl.getUniformLocation(programAscii, "u_TexelSize");
   const uBloomIntensityLocation   = gl.getUniformLocation(programAscii, "u_BloomIntensity");
   const uBloomKernelSizeLocation  = gl.getUniformLocation(programAscii, "u_BloomKernelSize");
-  const uColor1Location           = gl.getUniformLocation(programAscii,"u_Color1");
-  const uColor2Location           = gl.getUniformLocation(programAscii,"u_Color2");
-  const uAsciiFlagLocation        = gl.getUniformLocation(programAscii, "u_AsciiFlag"); //*
-  //============================================================================
+  const uColor1Location           = gl.getUniformLocation(programAscii, "u_Color1");
+  const uColor2Location           = gl.getUniformLocation(programAscii, "u_Color2");
+  const uAsciiFlagLocation        = gl.getUniformLocation(programAscii, "u_AsciiFlag");
+  // ===========================================================================
 
   const scenes = {
     scene1: {
@@ -246,8 +234,6 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
           gl.viewport(0,0,canvas.width,canvas.height);
           gl.clearColor(0,0,0,1); //czarne tło
           gl.clear(gl.COLOR_BUFFER_BIT);
-
-          gl.uniform2f(uTexelSizeLocation, (1.0/canvas.width), (1.0/canvas.height));
 
           // =================== BRIGHTNESS SHADER ===================
 
@@ -284,22 +270,27 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
 
           // ===================== STARS GENERATOR ===================
 
-          const points = starsCreator("sg-seed-slider", "sg-md-slider", "sg-k-slider");
+          const starSize = parseInt(document.getElementById('sg-size-slider').value);
+          const points = starsGenerator("sg-seed-slider", "sg-md-slider", "sg-k-slider");
+          const skyTexture = createImage(points, canvas.width, canvas.height, starSize);
+          
+          sourceTexture3 = createTextureFromImage(gl, programAscii, skyTexture, 3, "u_SkyTexture");
 
-          gl.uniform1fv(uArrayLocation, points);
-          gl.uniform1i(uArraySizeLocation, points.length);
-          gl.uniform2f(uResolution1Location, canvas.width, canvas.height);
-
-          // =========================================================
+          // ======================= ASCII ART =======================
+          
           gl.uniform1i(uAtlasSizeLocation, charAtlas.length);
+
           const [r1,g1,b1,a1] = rgbCreator('color1-red-slider','color1-green-slider','color1-blue-slider');
           const [r2,g2,b2,a2] = rgbCreator('color2-red-slider','color2-green-slider','color2-blue-slider');
+
           gl.uniform3f(uColor1Location, r1, g1, b1);
           gl.uniform3f(uColor2Location, r2, g2, b2);
 
           const asciiFlag = asciiArt('switch-asciiArt');
-          gl.uniform1f(uAsciiFlagLocation, asciiFlag); //*
-          console.log(asciiFlag);
+          gl.uniform1f(uAsciiFlagLocation, asciiFlag);
+
+          // =========================================================
+
           gl.drawArrays(gl.TRIANGLES,0,6);
           renderScene2Requested = false;
         }
@@ -357,7 +348,7 @@ function rgbCreator(red, green, blue){
   return colors;
 }
 
-function starsCreator(seed, minDistance, K){
+function starsGenerator(seed, minDistance, K){
   const seed_slider = document.getElementById(seed);
   const minDistance_slider = document.getElementById(minDistance);
   const K_slider = document.getElementById(K);
