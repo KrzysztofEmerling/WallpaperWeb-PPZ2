@@ -6,8 +6,10 @@ uniform float u_StepSize;
 // uniform float u_Density;
 uniform vec3 u_HaloColor;
 out vec4 fragColor;
+uniform sampler2D u_SkyTexture;
 
-//Prlin
+
+
 float u_PerlinTime = 23.2144;    // time
 vec3 quintic(vec3 t) {
     t = t * t * t * (t * (t * 6.0 - 15.0) + 10.0);
@@ -63,7 +65,7 @@ float perlinNoise3D(vec3 p) {
 
     return n;
 }
-//end
+
 
 float sdSphere(vec3 p, float r) {
     return length(p) - r;
@@ -109,6 +111,10 @@ vec2 cubemap(vec3 rd) {
     uv = uv * 0.5 + 0.5;   // map to [0..1]
     return uv;
 }
+vec3 getBg(vec2 uv)
+{
+    return texture(u_SkyTexture, uv).rgb;
+}
 
 float falloff(float d, float r) {
     return clamp((0.5 * d - r) / r, 0.0, 1.0);
@@ -142,7 +148,7 @@ vec3 raymarch(vec3 ro, vec3 rd, vec3 bHoleCenter, float SchwarzschildRadious) {
             float localLight = 0.1 / max(distToCenter * distToCenter, 0.0001) * 5.0;
             float backLight  = clamp(dot(rd, -dirToCenter), 0.0, 1.0) * 1.0;
 
-            float light = localLight + 0.25 * (0.5 + backLight);
+            float light = localLight + 0.25 * (0.5 + backLight) + 0.5;
 
             vec3 scatterColor = u_HaloColor * light; // referencyjnie vec3(0.8, 0.6, 1.0);
             float stepA = (1.0 - alpha) * (0.001 * mix(1.0, clamp(perlinNoise3D(p), 0.0, 1.0), falloff(distToCenter, SchwarzschildRadious)) + 0.0001); 
@@ -156,9 +162,9 @@ vec3 raymarch(vec3 ro, vec3 rd, vec3 bHoleCenter, float SchwarzschildRadious) {
         rd = normalize(rd + bendingStrength * dirToCenter * 0.000025);
         t += u_StepSize;
         if (t > MAX_DIST)  {
-                return mix(vec3(cubemap(rd),0.0), color, alpha);
+                return mix(getBg(cubemap(rd)), color, alpha);
         } 
-        if(i == iter - 1) return mix(vec3(cubemap(rd),0.0), color, alpha);
+        if(i == iter - 1) return mix(getBg(cubemap(rd)), color, alpha);
     } 
         
     // zabezpieczenie

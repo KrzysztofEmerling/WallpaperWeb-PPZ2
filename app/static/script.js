@@ -9,9 +9,9 @@ const gl = canvas.getContext("webgl2");
 const scenesData = fetchSceneValues();
 const sceneAvailableShaders = {
   // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 1, zawiera id elementow z html
-  scene1: ['steps', 'rgb'],
+  scene1: ['steps', 'rgb', 'sky-creator'],
   // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 2, zawiera id elementow z html
-  scene2: ['brightness', 'gamma', 'contrast', 'gauss', 'sobel', 'bloom', 'sky-creator', 'asciiArt']
+  scene2: ['brightness', 'gamma', 'contrast', 'gauss', 'sobel', 'bloom', 'asciiArt']
 }
 
 updateSceneShaders(sceneAvailableShaders.scene2, sceneAvailableShaders.scene1);
@@ -220,6 +220,15 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
 
           const [r,g,b,a] = rgbCreator('red-slider','green-slider','blue-slider');
           gl.uniform3f(uHaloColorLocation, r,g,b);
+
+          // ===================== STARS GENERATOR ===================
+          const starSize = parseInt(document.getElementById('sg-size-slider').value);
+          const points = starsGenerator("sg-seed-slider", "sg-md-slider", "sg-k-slider");
+          const skyTexture = createImage(points, canvas.width, canvas.height, starSize);
+
+          sourceTexture3 = createTextureFromImage(gl, program, skyTexture, 3, "u_SkyTexture");
+
+
           gl.drawArrays(gl.TRIANGLES,0,6); 
           renderScene1Requested = false; 
         }
@@ -267,14 +276,6 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
 
           const sobel_status = sobel('switch-sobel');
           gl.uniform1f(uSobelStatusLocation, sobel_status);
-
-          // ===================== STARS GENERATOR ===================
-
-          const starSize = parseInt(document.getElementById('sg-size-slider').value);
-          const points = starsGenerator("sg-seed-slider", "sg-md-slider", "sg-k-slider");
-          const skyTexture = createImage(points, canvas.width, canvas.height, starSize);
-          
-          sourceTexture3 = createTextureFromImage(gl, programAscii, skyTexture, 3, "u_SkyTexture");
 
           // ======================= ASCII ART =======================
           
