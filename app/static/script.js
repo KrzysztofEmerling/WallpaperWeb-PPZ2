@@ -4,7 +4,6 @@ import { createImage } from "./scripts/generator.js";
 
 // =================================== WebGL ===================================
 
-
 const canvas = document.getElementById('glcanvas');
 const gl = canvas.getContext("webgl2");
 const scenesData = fetchSceneValues();
@@ -305,6 +304,7 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
   }
 
   activeScene = 'scene2';
+  hideButton();
 
   function toggleScene() {
     
@@ -312,10 +312,12 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
         renderScene2Requested = true;
         updateSceneShaders(sceneAvailableShaders.scene2, sceneAvailableShaders.scene1);
         activeScene = 'scene2';
+        hideButton();
     } else {
         renderScene1Requested = true;
         updateSceneShaders(sceneAvailableShaders.scene1, sceneAvailableShaders.scene2);
         activeScene = 'scene1';
+        hideButton();
     }
   }
 
@@ -497,6 +499,10 @@ function updateSceneShaders(scene1, scene2){
   scene1.forEach(id => {
     document.getElementById(id).classList.remove('remove');
   });
+}
+
+function hideButton(){
+  document.getElementById('render-scene1-button').classList.toggle('disable');
 }
 
 function createJSON(){
