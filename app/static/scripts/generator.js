@@ -13,11 +13,6 @@ export function createImage(array, width, height, size = 1){
   function drawStar(ctx, x, y, size){
     ctx.beginPath();
 
-    ctx.moveTo(x - size, y);
-    ctx.lineTo(x + size, y);
-    ctx.moveTo(x, y + size);
-    ctx.lineTo(x, y - size);
-
     ctx.strokeStyle = 'white';
     ctx.lineWidth = 1;
     
