@@ -117,6 +117,91 @@
                         </div>
                     </li>
 
+                    
+
+                    <li class="mb-1" id="blackhole"> 
+                        <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#bh-collapse" aria-expanded="true">
+                            Black Hole
+                        </button>
+
+                        <div class="collapse ps-3 pt-2" id="bh-collapse">
+                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+
+                                    <span class="text-white text-nowrap hidden">X</span>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden pe-4 slider" min="-50" max="200" value="4" id="x-slider">
+                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="-50" max="200" value="4" id="x-value">
+                                    </div>
+                                </li> 
+
+                                <li>
+                                    <span class="text-white text-nowrap hidden">Y</span>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden pe-4 slider" min="-50" max="200" value="-1" id="y-slider">
+                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="-50" max="200" value="-1" id="y-value">
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <span class="text-white text-nowrap hidden">Z</span>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden pe-4 slider" min="-50" max="200" value="12" id="z-slider">
+                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="-50" max="200" value="12" id="z-value">
+                                    </div>
+                                </li>
+
+                            </ul> 
+                        </div>
+
+
+                        <div class="collapse ps-3 pt-2" id="bh-collapse">
+                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+
+                                    <span class="text-white text-nowrap hidden">rotationX</span>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="360" value="0" id="rot-x-slider">
+                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="360" value="0" id="rot-x-value">
+                                    </div>
+                                </li> 
+
+                                <li>
+                                    <span class="text-white text-nowrap hidden">rotationY</span>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="360" value="0" id="rot-y-slider">
+                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="360" value="0" id="rot-y-value">
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <span class="text-white text-nowrap hidden">rotationZ</span>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="360" value="0" id="rot-z-slider">
+                                        <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="360" value="0" id="rot-z-value">
+                                    </div>
+                                </li>
+
+                            </ul> 
+                        </div>
+
+                        <div class="collapse ps-3 pt-2" id="bh-collapse">
+
+                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                <li>
+                                    <span class="text-white text-nowrap hidden">Radius</span>
+
+                                    <div class="d-flex justify-content-between align-items-center gap-4">
+                                        <input type="range" class="form-range hidden flex-fill slider" min="0" max="20" value="8" id="radius-slider">
+                                        <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="0" max="20" value="8" id="radius-value">
+                                    </div>
+                                </li> 
+                            </ul> 
+                        </div> 
+
+
+
+
+                    </li>
+
                     <li class="mb-1" id="brightness"> 
                         <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#brightness-collapse" aria-expanded="true">
                             Brightness correction

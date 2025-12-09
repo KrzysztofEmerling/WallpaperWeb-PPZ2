@@ -8,6 +8,10 @@ uniform vec3 u_HaloColor;
 out vec4 fragColor;
 uniform sampler2D u_SkyTexture;
 
+uniform vec3 u_Position;
+uniform vec3 u_Rotation;
+uniform float u_Radious;
+
 
 
 float u_PerlinTime = 23.2144;    // time
@@ -66,7 +70,28 @@ float perlinNoise3D(vec3 p) {
     return n;
 }
 
+mat3 rotationX(float angle) {
+    angle = angle * 3.14159265359 / 180.0;
+    float c = cos(angle);
+    float s = sin(angle);
 
+    return mat3(
+        1.0, 0.0, 0.0,
+        0.0, c, -s,
+        0.0, s, c
+    );
+}
+mat3 rotationY(float angle) {
+    angle = angle * 3.14159265359 / 180.0;
+    float c = cos(angle);
+    float s = sin(angle);
+
+    return mat3(
+        c, 0.0, s,
+        0.0, 1.0, 0.0,
+        -s, 0.0, c
+    );
+}
 float sdSphere(vec3 p, float r) {
     return length(p) - r;
 } 
@@ -76,9 +101,15 @@ float sdCylinder(vec3 p, float r, float h) {
 
 // Zwraca najmniejszą odległość do obiektów w scenie (matemtyczna reprezentacja sceny) 
 float sceneSDF(vec3 p) { 
-    float nebula1 = sdCylinder(p - vec3(0.4, -1.0, 12.0), 1.2, 0.4);
-    float nebula2 = sdCylinder(p - vec3(0.4, -1.0, 12.0), 4.0, 0.2);
-    float nebula3 = sdCylinder(p - vec3(0.4, -1.0, 12.0), 6.0, 0.125);
+    // translacja
+    // p = p - u_Position;
+    // p = rotationY(u_Rotation.x) * p;
+    // p = rotationX(u_Rotation.y) * p;
+    p = p - vec3(4.0, -1.0, 12.0);
+
+    float nebula1 = sdCylinder(p, 2.0, 0.25);
+    float nebula2 = sdCylinder(p, 5.0, 0.225);
+    float nebula3 = sdCylinder(p, 7.0, 0.2);
     return min(nebula1, min(nebula2, nebula3));
 } 
 float getbHoleMass(float r) { // Mass = (c**2 * r) / (2 * G) gdzie G = 6.67 * 10**-11, c = 3 * 10 ** 8 pomniejszony o 10000000000000000000000000 
@@ -148,7 +179,7 @@ vec3 raymarch(vec3 ro, vec3 rd, vec3 bHoleCenter, float SchwarzschildRadious) {
             float localLight = 0.1 / max(distToCenter * distToCenter, 0.0001) * 5.0;
             float backLight  = clamp(dot(rd, -dirToCenter), 0.0, 1.0) * 1.0;
 
-            float light = localLight + 0.25 * (0.5 + backLight) + 0.5;
+            float light = localLight + 0.75 * (0.6 + backLight) + 0.5;
 
             vec3 scatterColor = u_HaloColor * light; // referencyjnie vec3(0.8, 0.6, 1.0);
             float stepA = (1.0 - alpha) * (0.001 * mix(1.0, clamp(perlinNoise3D(p), 0.0, 1.0), falloff(distToCenter, SchwarzschildRadious)) + 0.0001); 
@@ -177,6 +208,6 @@ void main() {
     // Kamera
     vec3 ro = vec3(0.0, 0.0, 0.0);
     vec3 rd = normalize(vec3(uv.x, uv.y, 1.0));
-    vec3 col = raymarch(ro, rd, vec3(0.4, -1.0, 12.0), 0.08);
+    vec3 col = raymarch(ro, rd, vec3(4.0, -1.0, 12.0), u_Radious);
     fragColor = vec4(col, 1.0); 
 }

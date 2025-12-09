@@ -9,7 +9,7 @@ const gl = canvas.getContext("webgl2");
 const scenesData = fetchSceneValues();
 const sceneAvailableShaders = {
   // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 1, zawiera id elementow z html
-  scene1: ['steps', 'rgb', 'sky-generator'],
+  scene1: ['steps', 'blackhole', 'rgb', 'sky-generator'],
   // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 2, zawiera id elementow z html
   scene2: ['brightness', 'gamma', 'contrast', 'gauss', 'sobel', 'bloom', 'asciiArt']
 }
@@ -188,6 +188,9 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
   const uResolutionLocation       = gl.getUniformLocation(program, "u_Resolution");
   const uStepSizeLocation         = gl.getUniformLocation(program, "u_StepSize");
   const uHaloColorLocation        = gl.getUniformLocation(program, "u_HaloColor");
+  const uRadiusLocation           = gl.getUniformLocation(program, "u_Radius");
+  const uTranslationLocation      = gl.getUniformLocation(program, "u_Translation");
+  const uRotationLocation         = gl.getUniformLocation(program, "u_Rotation");
   // ===========================================================================
   const uAtlasSizeLocation        = gl.getUniformLocation(programAscii, "u_AtlasSize");
   const uBrightnessLocation       = gl.getUniformLocation(programAscii, "u_Brightness");
@@ -219,16 +222,24 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
           gl.uniform2f(uResolutionLocation, canvas.width, canvas.height);
           
           const step_slider = document.getElementById("stepsize-slider");
-          gl.uniform1f(uStepSizeLocation, (step_slider.value * 0.0001));
+          gl.uniform1f(uStepSizeLocation, (step_slider.value * 0.00005));
+          
+          const radius_slider = document.getElementById("radius-slider");
+          gl.uniform1f(uRadiusLocation, (radius_slider.value * 0.01));
 
           const [r,g,b,a] = rgbCreator('red-slider','green-slider','blue-slider');
           gl.uniform3f(uHaloColorLocation, r,g,b);
+
+          const [x,y,z,_] = rgbCreator('rot-x-slider','rot-y-slider','rot-z-slider');
+          gl.uniform3f(uTranslationLocation, x,y,z);
+
+          const [rx,ry,rz,__] = rgbCreator('x-slider','y-slider','z-slider');
+          gl.uniform3f(uRotationLocation, rx,ry,rz);
 
           // ===================== STARS GENERATOR ===================
           const starSize = parseInt(document.getElementById('sg-size-slider').value);
           const points = starsGenerator("sg-seed-slider", "sg-md-slider", "sg-k-slider");
           const skyTexture = createImage(points, canvas.width, canvas.height, starSize);
-
           sourceTexture3 = createTextureFromImage(gl, program, skyTexture, 3, "u_SkyTexture");
 
           gl.drawArrays(gl.TRIANGLES,0,6); 
