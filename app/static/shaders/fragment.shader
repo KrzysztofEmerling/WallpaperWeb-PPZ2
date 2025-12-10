@@ -10,9 +10,7 @@ uniform sampler2D u_SkyTexture;
 
 uniform vec3 u_Position;
 uniform vec3 u_Rotation;
-uniform float u_Radious;
-
-
+uniform float u_Radius;
 
 float u_PerlinTime = 23.2144;    // time
 vec3 quintic(vec3 t) {
@@ -99,7 +97,7 @@ float sdCylinder(vec3 p, float r, float h) {
     return max(sqrt(p.x * p.x + p.z * p.z) - r, abs(p.y) - (h / 2.0));
 } 
 
-// Zwraca najmniejszą odległość do obiektów w scenie (matemtyczna reprezentacja sceny) 
+// Zwraca najmniejszą odległość do obiektów w scenie (matematyczna reprezentacja sceny) 
 float sceneSDF(vec3 p) { 
     // translacja
     // p = p - u_Position;
@@ -151,9 +149,9 @@ float falloff(float d, float r) {
     return clamp((0.5 * d - r) / r, 0.0, 1.0);
 }
 
-vec3 raymarch(vec3 ro, vec3 rd, vec3 bHoleCenter, float SchwarzschildRadious) { 
+vec3 raymarch(vec3 ro, vec3 rd, vec3 bHoleCenter, float SchwarzschildRadius) { 
 
-    float bHoleMass = getbHoleMass(SchwarzschildRadious);
+    float bHoleMass = getbHoleMass(SchwarzschildRadius);
     float t = 0.0;
     const float MAX_DIST = 60.0;
     const float EPSILON = 0.001;
@@ -172,7 +170,7 @@ vec3 raymarch(vec3 ro, vec3 rd, vec3 bHoleCenter, float SchwarzschildRadious) {
         vec3 toCenter = bHoleCenter - p; 
         float distToCenter = length(toCenter);
         vec3 dirToCenter = toCenter / distToCenter;
-        if (distToCenter < SchwarzschildRadious) return vec3(0.0);
+        if (distToCenter < SchwarzschildRadius) return vec3(0.0);
 
         // wolumetria: opisana SDF 
         if (d < 0.0) { 
@@ -182,7 +180,7 @@ vec3 raymarch(vec3 ro, vec3 rd, vec3 bHoleCenter, float SchwarzschildRadious) {
             float light = localLight + 0.75 * (0.6 + backLight) + 0.5;
 
             vec3 scatterColor = u_HaloColor * light; // referencyjnie vec3(0.8, 0.6, 1.0);
-            float stepA = (1.0 - alpha) * (0.001 * mix(1.0, clamp(perlinNoise3D(p), 0.0, 1.0), falloff(distToCenter, SchwarzschildRadious)) + 0.0001); 
+            float stepA = (1.0 - alpha) * (0.001 * mix(1.0, clamp(perlinNoise3D(p), 0.0, 1.0), falloff(distToCenter, SchwarzschildRadius)) + 0.0001); 
             color += scatterColor * stepA; 
             alpha += stepA;
             if (alpha >= 1.0) return color;
@@ -208,6 +206,6 @@ void main() {
     // Kamera
     vec3 ro = vec3(0.0, 0.0, 0.0);
     vec3 rd = normalize(vec3(uv.x, uv.y, 1.0));
-    vec3 col = raymarch(ro, rd, vec3(4.0, -1.0, 12.0), u_Radious);
+    vec3 col = raymarch(ro, rd, vec3(4.0, -1.0, 12.0), u_Radius);
     fragColor = vec4(col, 1.0); 
 }

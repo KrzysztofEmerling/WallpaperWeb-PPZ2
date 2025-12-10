@@ -16,13 +16,13 @@ const sceneAvailableShaders = {
 
 updateSceneShaders(sceneAvailableShaders.scene2, sceneAvailableShaders.scene1);
 
-let activeScene = null;
+let activeScene           = null;
 let renderScene1Requested = true;
 let renderScene2Requested = false;
-let sourceTexture = null;
-let sourceTexture1 = null;
-let sourceTexture2 = null;
-let sourceTexture3 = null;
+let sourceTexture         = null;
+let sourceTexture1        = null;
+let sourceTexture2        = null;
+let sourceTexture3        = null;
 
 // ============================= PERFORMENCE STATS =============================
 
@@ -59,7 +59,7 @@ if (!gl) {
 }
 
 function resizeCanvas() {
-    canvas.width = window.innerWidth;
+    canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
     renderScene2Requested = true;
@@ -104,11 +104,10 @@ async function loadShaderSource(name) {
 }
 
 async function init() {
-  const vertexShaderSource = await loadShaderSource('vertex.shader');
-  const fragmentShaderSource = await loadShaderSource('fragment.shader');
-  const fragmentAsciiShaderSource = await loadShaderSource('fragment_ascii.shader'); //*
+  const vertexShaderSource        = await loadShaderSource('vertex.shader');
+  const fragmentShaderSource      = await loadShaderSource('fragment.shader');
+  const fragmentAsciiShaderSource = await loadShaderSource('fragment_ascii.shader');
 
-  // ZWRACAMY OBIEKT – tu musi być return { ... }
   return {
       vertexShaderSource,
       fragmentShaderSource,
@@ -139,17 +138,17 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
          fragmentShaderSource,
          fragmentAsciiShaderSource} = await init();
 
-  // Kompiluj shadery
-  const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-  const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+  // Kompilacja shaderów
+  const vertexShader        = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+  const fragmentShader      = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
   const fragmentAsciiShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentAsciiShaderSource);
 
-  // Stwórz program i ustaw go
-  const program = createProgram(gl, vertexShader, fragmentShader);
-  const programAscii = createProgram(gl, vertexShader, fragmentAsciiShader);
+  // Tworzenie programów
+  const program       = createProgram(gl, vertexShader, fragmentShader);
+  const programAscii  = createProgram(gl, vertexShader, fragmentAsciiShader);
   gl.useProgram(program);
 
-  // Ustaw bufor współrzędnych prostokąta obejmującego cały canvas
+  // Ustawianie buforu współrzędnych prostokąta obejmującego cały canvas
   const positionBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
   const positions = [
@@ -162,7 +161,7 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
   ];
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
-  // Połącz atrybut pozycji z buforem
+  // Połączenie atrybutu pozycji z buforem
   const positionLocation = gl.getAttribLocation(program, 'a_position');
   gl.enableVertexAttribArray(positionLocation);
   gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
@@ -177,8 +176,8 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
     renderScene2Requested = true;
   }
 
-  const charAtlas = createAtlas("@#%*+=-. ");
   gl.useProgram(programAscii);
+  const charAtlas = createAtlas("@#%*+=-. ");
   sourceTexture1 = createTextureFromImage(gl, programAscii, charAtlas.image, 1, "u_CharAtlas");
 
   const lineAtlas = createAtlas("-/\\|");
@@ -221,26 +220,39 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
 
           gl.uniform2f(uResolutionLocation, canvas.width, canvas.height);
           
-          const step_slider = document.getElementById("stepsize-slider");
-          gl.uniform1f(uStepSizeLocation, (step_slider.value * 0.00005));
-          
-          const radius_slider = document.getElementById("radius-slider");
-          gl.uniform1f(uRadiusLocation, (radius_slider.value * 0.01));
+          // ======================== STEP SIZE ======================
 
-          const [r,g,b,a] = rgbCreator('red-slider','green-slider','blue-slider');
+          const step_slider = vector1f('stepsize-slider') * 0.00005;
+          gl.uniform1f(uStepSizeLocation, step_slider);
+
+          // ========================= RADIUS ========================
+          
+          const radius_slider = vector1f('radius-slider') * 0.01;
+          gl.uniform1f(uRadiusLocation, radius_slider);
+
+          // ======================= HALO COLOR ======================
+
+          const [r, g, b] = normalize(vector3f('red-slider','green-slider','blue-slider'));
           gl.uniform3f(uHaloColorLocation, r,g,b);
 
-          const [x,y,z,_] = rgbCreator('rot-x-slider','rot-y-slider','rot-z-slider');
-          gl.uniform3f(uTranslationLocation, x,y,z);
+          // ======================= COORDINATES =====================
 
-          const [rx,ry,rz,__] = rgbCreator('x-slider','y-slider','z-slider');
-          gl.uniform3f(uRotationLocation, rx,ry,rz);
+          const [x, y, z] = vector3f('x-slider','y-slider','z-slider');
+          gl.uniform3f(uTranslationLocation, x, y, z);
 
+          // ======================== ROTATION =======================
+
+          const [rx, ry, rz] = vector3f('rot-x-slider','rot-y-slider','rot-z-slider');
+          gl.uniform3f(uRotationLocation, rx, ry, rz);
+          
           // ===================== STARS GENERATOR ===================
-          const starSize = parseInt(document.getElementById('sg-size-slider').value);
+
+          const starSize = vector1i('sg-size-slider');
           const points = starsGenerator("sg-seed-slider", "sg-md-slider", "sg-k-slider");
           const skyTexture = createImage(points, canvas.width, canvas.height, starSize);
           sourceTexture3 = createTextureFromImage(gl, program, skyTexture, 3, "u_SkyTexture");
+
+          // =========================================================
 
           gl.drawArrays(gl.TRIANGLES,0,6); 
           renderScene1Requested = false; 
@@ -261,24 +273,24 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
 
           // =================== BRIGHTNESS SHADER ===================
 
-          const [brightness_val, shadows_val, midtones_val, highlights_val] = brightness('brightness-slider', 'shadows-slider', 'midtones-slider', 'highlights-slider');
+          const [brightness_val, shadows_val, midtones_val, highlights_val] = vector4f('brightness-slider', 'shadows-slider', 'midtones-slider', 'highlights-slider');
 
           gl.uniform4f(uBrightnessLocation, brightness_val, shadows_val, midtones_val, highlights_val);
 
           // ===================== GAMMA SHADER ======================
 
-          const [gamma_val] = gamma('gamma-slider');
-          gl.uniform1f(uGammaLocation, parseFloat(gamma_val));
+          const gamma_val = vector1f('gamma-slider');
+          gl.uniform1f(uGammaLocation, gamma_val);
 
           // ==================== CONTRAST SHADER ====================
 
-          const [contrast_val] = contrast('contrast-slider');
-          gl.uniform1f(uContrastLocation, parseFloat(contrast_val));
+          const contrast_val = vector1f('contrast-slider');
+          gl.uniform1f(uContrastLocation, contrast_val);
 
           // ===================== BLOOM SHADER ======================
 
           const [bloomIntensity_val, bloomKernelSize_val] = bloom('bloom-intensity-slider', 'bloom-kernel-slider');
-          gl.uniform1f(uBloomIntensityLocation, parseFloat(bloomIntensity_val));
+          gl.uniform1f(uBloomIntensityLocation, bloomIntensity_val);
           gl.uniform1i(uBloomKernelSizeLocation, bloomKernelSize_val);
 
           // ==================== GAUSSIAN SHADER ====================
@@ -289,20 +301,20 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
 
           // ====================== SOBEL SHADER =====================
 
-          const sobel_status = sobel('switch-sobel');
+          const sobel_status = isChecked('switch-sobel');
           gl.uniform1f(uSobelStatusLocation, sobel_status);
 
           // ======================= ASCII ART =======================
           
           gl.uniform1i(uAtlasSizeLocation, charAtlas.length);
 
-          const [r1,g1,b1,a1] = rgbCreator('color1-red-slider','color1-green-slider','color1-blue-slider');
-          const [r2,g2,b2,a2] = rgbCreator('color2-red-slider','color2-green-slider','color2-blue-slider');
+          const [r1, g1, b1] = normalize(vector3f('color1-red-slider','color1-green-slider','color1-blue-slider'));
+          const [r2, g2, b2] = normalize(vector3f('color2-red-slider','color2-green-slider','color2-blue-slider'));
 
           gl.uniform3f(uColor1Location, r1, g1, b1);
           gl.uniform3f(uColor2Location, r2, g2, b2);
 
-          const asciiFlag = asciiArt('switch-asciiArt');
+          const asciiFlag = isChecked('switch-asciiArt');
           gl.uniform1f(uAsciiFlagLocation, asciiFlag);
 
           // =========================================================
@@ -349,61 +361,92 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
 
 })();
 
+// ================================ WEKTORY INT ===============================
+
+function vector1i(x_){
+  const x = parseInt(document.getElementById(x_).value);
+
+  return [x];
+}
+
+function vector2i(x_, y_){
+  const x = parseInt(document.getElementById(x_).value);
+  const y = parseInt(document.getElementById(y_).value);
+
+  return [x, y];
+}
+
+function vector3i(x_, y_, z_){
+  const x = parseInt(document.getElementById(x_).value);
+  const y = parseInt(document.getElementById(y_).value);
+  const z = parseInt(document.getElementById(z_).value);
+
+  return [x, y, z];
+}
+
+function vector4i(x_, y_, z_, t_){
+  const x = parseInt(document.getElementById(x_).value);
+  const y = parseInt(document.getElementById(y_).value);
+  const z = parseInt(document.getElementById(z_).value);
+  const t = parseInt(document.getElementById(t_).value);
+
+  return [x, y, z, t];
+}
+
+// =============================== WEKTORY FLOAT ==============================
+
+function vector1f(x_){
+  const x = parseFloat(document.getElementById(x_).value);
+
+  return [x];
+}
+
+function vector2f(x_, y_){
+  const x = parseFloat(document.getElementById(x_).value);
+  const y = parseFloat(document.getElementById(y_).value);
+
+  return [x, y];
+}
+
+function vector3f(x_, y_, z_){
+  const x = parseFloat(document.getElementById(x_).value);
+  const y = parseFloat(document.getElementById(y_).value);
+  const z = parseFloat(document.getElementById(z_).value);
+
+  return [x, y, z];
+}
+
+function vector4f(x_, y_, z_, t_){
+  const x = parseFloat(document.getElementById(x_).value);
+  const y = parseFloat(document.getElementById(y_).value);
+  const z = parseFloat(document.getElementById(z_).value);
+  const t = parseFloat(document.getElementById(t_).value);
+
+  return [x, y, z, t];
+}
+
 // ========================= Funkcje obsługi shaderów =========================
 // (Pobieranie wartości z HTMLa)
 
-function rgbCreator(red, green, blue){
-  const red_slider = document.getElementById(red);
-  const green_slider = document.getElementById(green);
-  const blue_slider = document.getElementById(blue);
-
-  const r = red_slider.value / 255;
-  const g = green_slider.value / 255;
-  const b = blue_slider.value / 255;
-  const a = 1.0;
-
-  const colors = [r, g, b, a];
-
-  return colors;
+function normalize(array){
+  return array.map(value => value / 255);
 }
 
 function starsGenerator(seed, minDistance, K){
-  const seed_slider = document.getElementById(seed);
-  const minDistance_slider = document.getElementById(minDistance);
-  const K_slider = document.getElementById(K);
+  const [seed_value, minDistance_value, K_value] = vector3i(seed, minDistance, K);
 
-  const result = poissonDiskSampling(canvas.width, canvas.height, seed_slider.value, minDistance_slider.value, K_slider.value);
+  const result = poissonDiskSampling(canvas.width, canvas.height, seed_value, minDistance_value, K_value);
 
   return result;
 }
 
-function brightness(bright_handle, shadow_handle, midtone_handle, highlight_handle){
-  const brighness_value  = parseFloat(document.getElementById(bright_handle).value);
-  const shadows_value    = parseFloat(document.getElementById(shadow_handle).value);
-  const midtones_value   = parseFloat(document.getElementById(midtone_handle).value);
-  const highlights_value = parseFloat(document.getElementById(highlight_handle).value);
-
-  const data = [brighness_value, shadows_value, midtones_value, highlights_value];
-  return data;
-}
-
-function gamma(gamma_handle){
-  const gamma_value = document.getElementById(gamma_handle).value;
-  return [gamma_value];
-}
-
-function contrast(contrast_handler){
-  const contrast_value = document.getElementById(contrast_handler).value;
-  return [contrast_value];
-}
-
 function gaussian(x, sigma){
-  return Math.exp(-(x*x)/(2*sigma*sigma));
+  return Math.exp(-(x * x) / (2 * sigma * sigma));
 }
 
 function gaussianBlur(kernelSize_handler, intensity_handler){
-  const kernelSize = document.getElementById(kernelSize_handler).value;
-  const sigma = document.getElementById(intensity_handler).value;
+  const kernelSize = vector1i(kernelSize_handler)
+  const sigma = vector1f(intensity_handler);
   
   let weights = [];
   for(let i = 0; i <= kernelSize; i++){
@@ -414,27 +457,20 @@ function gaussianBlur(kernelSize_handler, intensity_handler){
 }
 
 function bloom(bloomIntensity_handler, bloomKernelSize_handler){
-  const intensity = document.getElementById(bloomIntensity_handler).value;
-  const kernelSize = document.getElementById(bloomKernelSize_handler).value;
+  const intensity = vector1f(bloomIntensity_handler);
+  const kernelSize = vector1i(bloomKernelSize_handler);
   return [intensity, kernelSize];
 }
 
-function sobel(sobel_handler){
-  const status = document.getElementById(sobel_handler);
+function isChecked(element){
+  const status = document.getElementById(element);
   return status.checked ? 1.0 : 0.0;
 }
 
 function perlin(widthSliderId, heightSliderId, timeSliderId) {
-  const width  = parseFloat(document.getElementById(widthSliderId).value);
-  const height = parseFloat(document.getElementById(heightSliderId).value);
-  const time   = parseFloat(document.getElementById(timeSliderId).value);
+  const [width, height, time] = vector3f(widthSliderId, heightSliderId, timeSliderId);
 
   return [width, height, time];
-}
-
-function asciiArt(asciiArt_handler){
-  const status = document.getElementById(asciiArt_handler);
-  return status.checked ? 1.0 : 0.0;
 }
 
 // ============================== Reszta Skryptów ==============================
@@ -601,9 +637,9 @@ export_btn.addEventListener('click', () => {
   createJSON();
 });
 
-const sliderInputs = document.querySelectorAll('input.slider');
-const valueInputs = document.querySelectorAll('input.single-value, input.multi-value');
-const switchInputs = document.querySelectorAll('input.switch');
+const sliderInputs  = document.querySelectorAll('input.slider');
+const valueInputs   = document.querySelectorAll('input.single-value, input.multi-value');
+const switchInputs  = document.querySelectorAll('input.switch');
 
 switchInputs.forEach((element) => {
   element.addEventListener('click', () => {
