@@ -8,7 +8,7 @@ uniform vec3 u_HaloColor;
 out vec4 fragColor;
 uniform sampler2D u_SkyTexture;
 
-uniform vec3 u_Position;
+uniform vec3 u_Translation;
 uniform vec3 u_Rotation;
 uniform float u_Radius;
 
@@ -90,6 +90,17 @@ mat3 rotationY(float angle) {
         -s, 0.0, c
     );
 }
+mat3 rotationZ(float angle) {
+    angle = angle * 3.14159265359 / 180.0;
+    float c = cos(angle);
+    float s = sin(angle);
+
+    return mat3(
+         c, -s, 0.0,
+         s,  c, 0.0,
+         0.0, 0.0, 1.0
+    );
+}
 float sdSphere(vec3 p, float r) {
     return length(p) - r;
 } 
@@ -100,15 +111,20 @@ float sdCylinder(vec3 p, float r, float h) {
 // Zwraca najmniejszą odległość do obiektów w scenie (matematyczna reprezentacja sceny) 
 float sceneSDF(vec3 p) { 
     // translacja
-    // p = p - u_Position;
-    // p = rotationY(u_Rotation.x) * p;
-    // p = rotationX(u_Rotation.y) * p;
-    p = p - vec3(4.0, -1.0, 12.0);
+    p = p - u_Translation;
+    p = rotationZ(u_Rotation.z) * p;
+    p = rotationY(u_Rotation.x) * p;
+    p = rotationX(u_Rotation.y) * p;
 
-    float nebula1 = sdCylinder(p, 2.0, 0.25);
-    float nebula2 = sdCylinder(p, 5.0, 0.225);
-    float nebula3 = sdCylinder(p, 7.0, 0.2);
-    return min(nebula1, min(nebula2, nebula3));
+    float nebula = sdCylinder(p, 2.0, 1.75);
+    nebula = min(nebula, sdCylinder(p, 5.0, 1.5));
+    nebula = min(nebula, sdCylinder(p, 6.0, 1.25));
+    nebula = min(nebula, sdCylinder(p, 7.0, 1.0));
+    nebula = min(nebula, sdCylinder(p, 8.0, 0.5));
+    nebula = min(nebula, sdCylinder(p, 9.5, 0.3));
+    nebula = min(nebula, sdCylinder(p, 10.0, 0.15));
+    nebula = min(nebula, sdCylinder(p, 11.0, 0.1));
+    return nebula;
 } 
 float getbHoleMass(float r) { // Mass = (c**2 * r) / (2 * G) gdzie G = 6.67 * 10**-11, c = 3 * 10 ** 8 pomniejszony o 10000000000000000000000000 
     return(r * 90.0) / (1.334);
@@ -146,7 +162,7 @@ vec3 getBg(vec2 uv)
 }
 
 float falloff(float d, float r) {
-    return clamp((0.5 * d - r) / r, 0.0, 1.0);
+    return clamp( 1.0 - (0.0075 * d - r) / r, 0.0, 1.0);
 }
 
 vec3 raymarch(vec3 ro, vec3 rd, vec3 bHoleCenter, float SchwarzschildRadius) { 
@@ -156,7 +172,7 @@ vec3 raymarch(vec3 ro, vec3 rd, vec3 bHoleCenter, float SchwarzschildRadius) {
     const float MAX_DIST = 60.0;
     const float EPSILON = 0.001;
 
-    int iter = int(floor(20.0 / u_StepSize));
+    int iter = int(floor(25.0 / u_StepSize));
 
     float alpha = 0.0;
 
@@ -174,13 +190,13 @@ vec3 raymarch(vec3 ro, vec3 rd, vec3 bHoleCenter, float SchwarzschildRadius) {
 
         // wolumetria: opisana SDF 
         if (d < 0.0) { 
-            float localLight = 0.1 / max(distToCenter * distToCenter, 0.0001) * 5.0;
+            float localLight = 1.0 / max(distToCenter * distToCenter, 0.0001) * 1.5;
             float backLight  = clamp(dot(rd, -dirToCenter), 0.0, 1.0) * 1.0;
 
-            float light = localLight + 0.75 * (0.6 + backLight) + 0.5;
+            float light = localLight + 0.75 * (0.4 + backLight) + 0.05;
 
             vec3 scatterColor = u_HaloColor * light; // referencyjnie vec3(0.8, 0.6, 1.0);
-            float stepA = (1.0 - alpha) * (0.001 * mix(1.0, clamp(perlinNoise3D(p), 0.0, 1.0), falloff(distToCenter, SchwarzschildRadius)) + 0.0001); 
+            float stepA = (1.0 - alpha) * (0.001 * clamp(perlinNoise3D(p), 0.0, 1.0) * falloff(distToCenter, SchwarzschildRadius) + 0.00005 * falloff(distToCenter, SchwarzschildRadius)); 
             color += scatterColor * stepA; 
             alpha += stepA;
             if (alpha >= 1.0) return color;
@@ -206,6 +222,6 @@ void main() {
     // Kamera
     vec3 ro = vec3(0.0, 0.0, 0.0);
     vec3 rd = normalize(vec3(uv.x, uv.y, 1.0));
-    vec3 col = raymarch(ro, rd, vec3(4.0, -1.0, 12.0), u_Radius);
+    vec3 col = raymarch(ro, rd, u_Translation, u_Radius);
     fragColor = vec4(col, 1.0); 
 }
