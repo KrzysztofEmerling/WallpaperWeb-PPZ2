@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html lang="{{ lang }}"></html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,7 +23,7 @@
                             data-bs-toggle="collapse" 
                             data-bs-target="#scene-collapse" 
                             aria-expanded="true">
-                        Scenes
+                        {{ _('Scenes') }}
                     </button>
                 
                     <div class="collapse ps-3 pt-2" id="scene-collapse">
@@ -30,9 +31,15 @@
 
                             <div class="d-flex justify-content-between gap-3 flex-shrink-0 flex-fill text-nowrap">
                                 <input class="btn-check hidden switch" type="checkbox" id="switch-scene" autocomplete="off">
-                                <label class="btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap" for="switch-scene">Toggle scene</label>
+                                <label class="btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap" for="switch-scene">{{ _('Toggle scene') }}</label>
 
-                                <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap' id="render-scene1-button">Render Scene</button>
+                                <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap' id="render-scene1-button">{{ _('Render scene') }}</button>
+                            </div>
+
+                            <div class="d-flex justify-content-between gap-3 flex-shrink-0 flex-fill text-nowrap">
+                                <a href=" {{ url_for('routes.change_lang', lang=lang, new_lang='en')}}">EN</a>
+                                <a href=" {{ url_for('routes.change_lang', lang=lang, new_lang='pl')}}">PL</a>
+                                <a href=" {{ url_for('routes.change_lang', lang=lang, new_lang='ru')}}">RU</a>
                             </div>
                             
                         </ul>
@@ -42,7 +49,7 @@
 
                     <li class="mb-1"> 
                         <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#ls-collapse" aria-expanded="true">
-                            Load/Save
+                            {{ _('Load/Save') }}
                         </button>
 
                         <div class="collapse ps-3 pt-2" id="ls-collapse">
@@ -52,10 +59,10 @@
                                     <div class="d-flex justify-content-center flex-column">
                                         <input class="form-control form-control-sm hidden flex-shrink-0" type="file" id="formFile">
                                         <div class="d-flex justify-content-between gap-3 pt-2">
-                                            <button class="btn btn-light btn-sm hidden flex-shrink-0 flex-fill" id="import-btn"><i class="bi bi-upload pe-2"></i>Import</button>
-                                            <button class="btn btn-light btn-sm hidden flex-shrink-0 flex-fill" id="export-btn"><i class="bi bi-download pe-2"></i>Export</button>
+                                            <button class="btn btn-light btn-sm hidden flex-shrink-0 flex-fill" id="import-btn"><i class="bi bi-upload pe-2"></i>{{ _('Import') }}</button>
+                                            <button class="btn btn-light btn-sm hidden flex-shrink-0 flex-fill" id="export-btn"><i class="bi bi-download pe-2"></i>{{ _('Export') }}</button>
                                         </div>
-                                        <button class="btn btn-light btn-sm hidden flex-shrink-0 text-nowrap flex-fill mt-2" id="save-btn"><i class="bi bi-floppy-fill pe-2"></i>Save as image</button>
+                                        <button class="btn btn-light btn-sm hidden flex-shrink-0 text-nowrap flex-fill mt-2" id="save-btn"><i class="bi bi-floppy-fill pe-2"></i>{{ _('Save as image') }}</button>
                                     </div>
                                 </li> 
                             </ul> 
@@ -65,7 +72,7 @@
 
                     <li class="mb-1" id="steps"> 
                         <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#stepsize-collapse" aria-expanded="true">
-                            Steps Count
+                            {{ _('Steps Count') }}
                         </button>
 
                         <div class="collapse ps-3 pt-2" id="stepsize-collapse">
@@ -84,13 +91,13 @@
 
                     <li class="mb-1" id="rgb"> 
                         <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#rgb-collapse" aria-expanded="true">
-                            Halo Color
+                            {{ _('Halo Color') }}
                         </button>
 
                         <div class="collapse ps-3 pt-2" id="rgb-collapse">
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
 
-                                    <span class="text-white text-nowrap hidden">Red</span>
+                                    <span class="text-white text-nowrap hidden">{{ _('Red') }}</span>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <input type="range" class="form-range hidden pe-4 slider" min="0" max="255" value="128" id="red-slider">
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="128" id="red-value">
@@ -98,7 +105,7 @@
                                 </li> 
 
                                 <li>
-                                    <span class="text-white text-nowrap hidden">Green</span>
+                                    <span class="text-white text-nowrap hidden">{{ _('Green') }}</span>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <input type="range" class="form-range hidden pe-4 slider" min="0" max="255" value="128" id="green-slider">
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="128" id="green-value">
@@ -106,7 +113,7 @@
                                 </li>
 
                                 <li>
-                                    <span class="text-white text-nowrap hidden">Blue</span>
+                                    <span class="text-white text-nowrap hidden">{{ _('Blue') }}</span>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <input type="range" class="form-range hidden pe-4 slider" min="0" max="255" value="128" id="blue-slider">
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="128" id="blue-value">
@@ -120,14 +127,14 @@
 
                     <li class="mb-1" id="blackhole"> 
                         <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#bh-collapse" aria-expanded="true">
-                            Black Hole
+                            {{ _('Black Hole') }}
                         </button>
 
                         <div class="collapse ps-1 pt-2" id="bh-collapse">
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ps-0">
                                 <li class="mb-1" id="coords"> 
                                     <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#coords-collapse" aria-expanded="true">
-                                        Coordinates
+                                        {{ _('Coordinates') }}
                                     </button>
 
                                     <div class="collapse ps-3 pt-2" id="coords-collapse">
@@ -165,14 +172,14 @@
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ps-0">
                                 <li class="mb-1" id="rotation"> 
                                     <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#rotation-collapse" aria-expanded="true">
-                                        Rotation
+                                        {{ _('Rotation') }}
                                     </button>
 
                                     <div class="collapse ps-3 pt-2" id="rotation-collapse">
                                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
 
                                             <li>
-                                                <span class="text-white text-nowrap hidden">rotation-X</span>
+                                                <span class="text-white text-nowrap hidden">{{ _('rotation-X') }}</span>
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <input type="range" class="form-range hidden pe-4 slider" min="0" max="360" value="0" id="rot-x-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="360" value="0" id="rot-x-value">
@@ -180,7 +187,7 @@
                                             </li> 
 
                                             <li>
-                                                <span class="text-white text-nowrap hidden">rotation-Y</span>
+                                                <span class="text-white text-nowrap hidden">{{ _('rotation-Y') }}</span>
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <input type="range" class="form-range hidden pe-4 slider" min="0" max="360" value="0" id="rot-y-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="360" value="0" id="rot-y-value">
@@ -188,7 +195,7 @@
                                             </li>
 
                                             <li>
-                                                <span class="text-white text-nowrap hidden">rotation-Z</span>
+                                                <span class="text-white text-nowrap hidden">{{ _('rotation-Z') }}</span>
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <input type="range" class="form-range hidden pe-4 slider" min="0" max="360" value="0" id="rot-z-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="360" value="0" id="rot-z-value">
@@ -203,7 +210,7 @@
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ps-0">
                                 <li class="mb-1" id="radius"> 
                                     <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#radius-collapse" aria-expanded="true">
-                                        Radius
+                                        {{ _('Radius') }}
                                     </button>
 
                                     <div class="collapse ps-3 pt-2" id="radius-collapse">
@@ -225,14 +232,14 @@
 
                     <li class="mb-1" id="brightness"> 
                         <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#brightness-collapse" aria-expanded="true">
-                            Brightness correction
+                            {{ _('Brightness correction') }}
                         </button>
 
                         <div class="collapse ps-3 pt-2" id="brightness-collapse">
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
 
                                 <li>
-                                    <span class="text-white text-nowrap hidden">Brightness</span>
+                                    <span class="text-white text-nowrap hidden">{{ _('Brightness') }}</span>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <input type="range" class="form-range hidden pe-4 slider" min="0" max="2" value="1" step="0.01" id="brightness-slider">
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="2" value="1" step="0.01" id="brightness-value">
@@ -240,7 +247,7 @@
                                 </li> 
 
                                 <li>
-                                    <span class="text-white text-nowrap hidden">Shadows</span>
+                                    <span class="text-white text-nowrap hidden">{{ _('Shadows') }}</span>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <input type="range" class="form-range hidden pe-4 slider" min="0" max="2" value="1" step="0.01" id="shadows-slider">
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="2" value="1" step="0.01" id="shadows-value">
@@ -248,7 +255,7 @@
                                 </li>
 
                                 <li>
-                                    <span class="text-white text-nowrap hidden">Midtones</span>
+                                    <span class="text-white text-nowrap hidden">{{ _('Midtones') }}</span>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <input type="range" class="form-range hidden pe-4 slider" min="0" max="2" value="1" step="0.01" id="midtones-slider">
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="2" value="1" step="0.01" id="midtones-value">
@@ -256,7 +263,7 @@
                                 </li>
 
                                 <li>
-                                    <span class="text-white text-nowrap hidden">Highlights</span>
+                                    <span class="text-white text-nowrap hidden">{{ _('Highlights') }}</span>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <input type="range" class="form-range hidden pe-4 slider" min="0" max="2" value="1" step="0.01" id="highlights-slider">
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="2" value="1" step="0.01" id="highlights-value">
@@ -269,7 +276,7 @@
 
                     <li class="mb-1" id="gamma"> 
                         <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#gamma-collapse" aria-expanded="true">
-                            Gamma
+                            {{ _('Gamma') }}
                         </button>
 
                         <div class="collapse ps-3 pt-2" id="gamma-collapse">
@@ -288,7 +295,7 @@
 
                     <li class="mb-1" id="contrast"> 
                         <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#contrast-collapse" aria-expanded="true">
-                            Contrast
+                            {{ _('Contrast') }}
                         </button>
 
                         <div class="collapse ps-3 pt-2" id="contrast-collapse">
@@ -307,14 +314,14 @@
 
                     <li class="mb-1" id="gauss"> 
                         <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#gauss-collapse" aria-expanded="true">
-                            Gaussian blur
+                            {{ _('Gaussian blur') }}
                         </button>
 
                         <div class="collapse ps-3 pt-2" id="gauss-collapse">
 
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li>
-                                    <span class="text-white text-nowrap hidden">Kernel Size</span>
+                                    <span class="text-white text-nowrap hidden">{{ _('Kernel Size') }}</span>
                                     <div class="d-flex justify-content-between align-items-center gap-4">
                                         <input type="range" class="form-range hidden flex-fill slider" min="1" max="7" value="3" id="gauss-kernel-slider">
                                         <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="1" max="7" value="3" id="gauss-kernel-value">
@@ -322,7 +329,7 @@
                                 </li> 
 
                                 <li>
-                                    <span class="text-white text-nowrap hidden">Blur intensity</span>
+                                    <span class="text-white text-nowrap hidden">{{ _('Blur intensity') }}</span>
                                     <div class="d-flex justify-content-between align-items-center gap-4">
                                         <input type="range" class="form-range hidden flex-fill slider" min="0.01" max="10" value="0.01" step="0.01" id="gauss-intensity-slider">
                                         <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="0.01" max="10" value="0.01" step="0.01" id="gauss-intensity-value">
@@ -335,7 +342,7 @@
 
                     <li class="mb-1" id="sobel"> 
                         <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#sobel-collapse" aria-expanded="true">
-                            Sobel 
+                            {{ _('Sobel') }}
                         </button>
 
                         <div class="collapse ps-3 pt-2" id="sobel-collapse">
@@ -343,7 +350,7 @@
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li>
                                     <input class="btn-check hidden switch" type="checkbox" id="switch-sobel" autocomplete="off">
-                                    <label class="btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap" for="switch-sobel">Turn ON/OFF</label>
+                                    <label class="btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap" for="switch-sobel">{{ _('Turn ON/OFF') }}</label>
                                 </li> 
                             </ul> 
 
@@ -352,14 +359,14 @@
 
                     <li class="mb-1" id="bloom"> 
                         <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#bloom-collapse" aria-expanded="true">
-                            Bloom
+                            {{ _('Bloom') }}
                         </button>
 
                         <div class="collapse ps-3 pt-2" id="bloom-collapse">
 
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li>
-                                    <span class="text-white text-nowrap hidden">Kernel Size</span>
+                                    <span class="text-white text-nowrap hidden">{{ _('Kernel Size') }}</span>
                                     <div class="d-flex justify-content-between align-items-center gap-4">
                                         <input type="range" class="form-range hidden flex-fill slider" min="1" max="10" value="3" id="bloom-kernel-slider">
                                         <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="1" max="10" value="3" id="bloom-kernel-value">
@@ -367,7 +374,7 @@
                                 </li> 
 
                                 <li>
-                                    <span class="text-white text-nowrap hidden">Intensity</span>
+                                    <span class="text-white text-nowrap hidden">{{ _('Intensity') }}</span>
                                     <div class="d-flex justify-content-between align-items-center gap-4">
                                         <input type="range" class="form-range hidden flex-fill slider" min="0" max="5" value="0" step="0.01" id="bloom-intensity-slider">
                                         <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="0" max="5" value="0" step="0.01" id="bloom-intensity-value">
@@ -380,14 +387,14 @@
 
                     <li class="mb-1" id="sky-generator"> 
                         <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#sg-collapse" aria-expanded="true">
-                            Sky Generator
+                            {{ _('Sky Generator') }}
                         </button>
 
                         <div class="collapse ps-3 pt-2" id="sg-collapse">
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
 
                                 <li> 
-                                    <span class="text-white text-nowrap hidden">Seed</span>
+                                    <span class="text-white text-nowrap hidden">{{ _('Seed') }}</span>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <input type="range" class="form-range hidden pe-4 slider" min="1" max="1000" value="500" id="sg-seed-slider">
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="1" max="1000" value="500" id="sg-seed-value">
@@ -395,7 +402,7 @@
                                 </li>
 
                                 <li>
-                                    <span class="text-white text-nowrap hidden">Size</span>
+                                    <span class="text-white text-nowrap hidden">{{ _('Size') }}</span>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <input type="range" class="form-range hidden pe-4 slider" min="1" max="10" value="1" id="sg-size-slider">
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="1" max="10" value="1" id="sg-size-value">
@@ -403,7 +410,7 @@
                                 </li>
 
                                 <li>
-                                    <span class="text-white text-nowrap hidden">Minimal Distance</span>
+                                    <span class="text-white text-nowrap hidden">{{ _('Minimal Distance') }}</span>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <input type="range" class="form-range hidden pe-4 slider" min="20" max="200" value="100" id="sg-md-slider">
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="20" max="200" value="100" id="sg-md-value">
@@ -411,7 +418,7 @@
                                 </li>
 
                                 <li>
-                                    <span class="text-white text-nowrap hidden">K</span>
+                                    <span class="text-white text-nowrap hidden">{{ _('K') }}</span>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <input type="range" class="form-range hidden pe-4 slider" min="5" max="100" value="50" id="sg-k-slider">
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="5" max="100" value="50" id="sg-k-value">
@@ -424,7 +431,7 @@
 
                     <li class="mb-1" id="asciiArt"> 
                         <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#asciiArt-collapse" aria-expanded="true">
-                            ASCII Art
+                            {{ _('ASCII Art') }}
                         </button>
 
                         <div class="collapse ps-1 pt-2" id="asciiArt-collapse">
@@ -432,20 +439,20 @@
                             <ul class="btn-toggle-nav list-unstyled fw-normal ps-2 pb-1 small">
                                 <li>
                                     <input class="btn-check hidden switch" type="checkbox" id="switch-asciiArt" autocomplete="off">
-                                    <label class="btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap" for="switch-asciiArt">Turn ON/OFF</label>
+                                    <label class="btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap" for="switch-asciiArt">{{ _('Turn ON/OFF') }}</label>
                                 </li> 
                             </ul> 
 
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ps-0">
                                  <li class="mb-1" id="color1-rgb"> 
                                     <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#color1-rgb-collapse" aria-expanded="true">
-                                        Gradient Color 1
+                                        {{ _('Gradient Color 1') }}
                                     </button>
 
                                     <div class="collapse ps-3 pt-2" id="color1-rgb-collapse">
                                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                             <li>
-                                                <span class="text-white text-nowrap hidden">Red</span>
+                                                <span class="text-white text-nowrap hidden">{{ _('Red') }}</span>
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <input type="range" class="form-range hidden pe-4 slider" min="0" max="255" value="0" id="color1-red-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="0" id="color1-red-value">
@@ -453,7 +460,7 @@
                                             </li> 
 
                                             <li>
-                                                <span class="text-white text-nowrap hidden">Green</span>
+                                                <span class="text-white text-nowrap hidden">{{ _('Green') }}</span>
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <input type="range" class="form-range hidden pe-4 slider" min="0" max="255" value="0" id="color1-green-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="0" id="color1-green-value">
@@ -461,7 +468,7 @@
                                             </li>
 
                                             <li>
-                                                <span class="text-white text-nowrap hidden">Blue</span>
+                                                <span class="text-white text-nowrap hidden">{{ _('Blue') }}</span>
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <input type="range" class="form-range hidden pe-4 slider" min="0" max="255" value="0" id="color1-blue-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="0" id="color1-blue-value">
@@ -475,14 +482,14 @@
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small ps-0">
                                 <li class="mb-1" id="color2-rgb"> 
                                     <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#color2-rgb-collapse" aria-expanded="true">
-                                        Gradient Color 2
+                                        {{ _('Gradient Color 2') }}
                                     </button>
 
                                     <div class="collapse ps-3 pt-2" id="color2-rgb-collapse">
                                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
 
                                             <li>
-                                                <span class="text-white text-nowrap hidden">Red</span>
+                                                <span class="text-white text-nowrap hidden">{{ _('Red') }}</span>
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <input type="range" class="form-range hidden pe-4 slider" min="0" max="255" value="0" id="color2-red-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="0" id="color2-red-value">
@@ -490,7 +497,7 @@
                                             </li> 
 
                                             <li>
-                                                <span class="text-white text-nowrap hidden">Green</span>
+                                                <span class="text-white text-nowrap hidden">{{ _('Green') }}</span>
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <input type="range" class="form-range hidden pe-4 slider" min="0" max="255" value="0" id="color2-green-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="0" id="color2-green-value">
@@ -498,7 +505,7 @@
                                             </li>
 
                                             <li>
-                                                <span class="text-white text-nowrap hidden">Blue</span>
+                                                <span class="text-white text-nowrap hidden">{{ _('Blue') }}</span>
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <input type="range" class="form-range hidden pe-4 slider" min="0" max="255" value="0" id="color2-blue-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="0" id="color2-blue-value">

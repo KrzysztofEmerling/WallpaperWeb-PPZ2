@@ -1,0 +1,188 @@
+# Russian translations for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-12-14 15:31+0100\n"
+"PO-Revision-Date: 2025-12-14 15:36+0100\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ru\n"
+"Language-Team: ru <LL@li.org>\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: templates/index.html:26
+msgid "Scenes"
+msgstr ""
+
+#: templates/index.html:34
+msgid "Toggle scene"
+msgstr ""
+
+#: templates/index.html:36
+msgid "Render scene"
+msgstr ""
+
+#: templates/index.html:52
+msgid "Load/Save"
+msgstr ""
+
+#: templates/index.html:62
+msgid "Import"
+msgstr ""
+
+#: templates/index.html:63
+msgid "Export"
+msgstr ""
+
+#: templates/index.html:65
+msgid "Save as image"
+msgstr ""
+
+#: templates/index.html:75
+msgid "Steps Count"
+msgstr ""
+
+#: templates/index.html:94
+msgid "Halo Color"
+msgstr ""
+
+#: templates/index.html:100 templates/index.html:455 templates/index.html:492
+msgid "Red"
+msgstr ""
+
+#: templates/index.html:108 templates/index.html:463 templates/index.html:500
+msgid "Green"
+msgstr ""
+
+#: templates/index.html:116 templates/index.html:471 templates/index.html:508
+msgid "Blue"
+msgstr ""
+
+#: templates/index.html:130
+msgid "Black Hole"
+msgstr ""
+
+#: templates/index.html:137
+msgid "Coordinates"
+msgstr ""
+
+#: templates/index.html:175
+msgid "Rotation"
+msgstr ""
+
+#: templates/index.html:182
+msgid "rotation-X"
+msgstr ""
+
+#: templates/index.html:190
+msgid "rotation-Y"
+msgstr ""
+
+#: templates/index.html:198
+msgid "rotation-Z"
+msgstr ""
+
+#: templates/index.html:213
+msgid "Radius"
+msgstr ""
+
+#: templates/index.html:235
+msgid "Brightness correction"
+msgstr ""
+
+#: templates/index.html:242
+msgid "Brightness"
+msgstr ""
+
+#: templates/index.html:250
+msgid "Shadows"
+msgstr ""
+
+#: templates/index.html:258
+msgid "Midtones"
+msgstr ""
+
+#: templates/index.html:266
+msgid "Highlights"
+msgstr ""
+
+#: templates/index.html:279
+msgid "Gamma"
+msgstr ""
+
+#: templates/index.html:298
+msgid "Contrast"
+msgstr ""
+
+#: templates/index.html:317
+msgid "Gaussian blur"
+msgstr ""
+
+#: templates/index.html:324 templates/index.html:369
+msgid "Kernel Size"
+msgstr ""
+
+#: templates/index.html:332
+msgid "Blur intensity"
+msgstr ""
+
+#: templates/index.html:345
+msgid "Sobel"
+msgstr ""
+
+#: templates/index.html:353 templates/index.html:442
+msgid "Turn ON/OFF"
+msgstr ""
+
+#: templates/index.html:362
+msgid "Bloom"
+msgstr ""
+
+#: templates/index.html:377
+msgid "Intensity"
+msgstr ""
+
+#: templates/index.html:390
+msgid "Sky Generator"
+msgstr ""
+
+#: templates/index.html:397
+msgid "Seed"
+msgstr ""
+
+#: templates/index.html:405
+msgid "Size"
+msgstr ""
+
+#: templates/index.html:413
+msgid "Minimal Distance"
+msgstr ""
+
+#: templates/index.html:421
+msgid "K"
+msgstr ""
+
+#: templates/index.html:434
+msgid "ASCII Art"
+msgstr ""
+
+#: templates/index.html:449
+msgid "Gradient Color 1"
+msgstr ""
+
+#: templates/index.html:485
+msgid "Gradient Color 2"
+msgstr ""
+
+#~ msgid "Render Scene"
+#~ msgstr ""
+

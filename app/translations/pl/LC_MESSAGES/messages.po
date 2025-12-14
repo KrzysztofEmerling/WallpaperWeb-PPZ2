@@ -1,0 +1,185 @@
+# Polish translations for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-12-14 15:31+0100\n"
+"PO-Revision-Date: 2025-12-14 15:32+0100\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: pl\n"
+"Language-Team: pl <LL@li.org>\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && "
+"(n%100<10 || n%100>=20) ? 1 : 2);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: templates/index.html:26
+msgid "Scenes"
+msgstr "Sceny"
+
+#: templates/index.html:34
+msgid "Toggle scene"
+msgstr "Przełącz scenę"
+
+#: templates/index.html:36
+msgid "Render scene"
+msgstr "Wyrenderuj scenę"
+
+#: templates/index.html:52
+msgid "Load/Save"
+msgstr "Wczytaj/Zapisz"
+
+#: templates/index.html:62
+msgid "Import"
+msgstr "Importuj"
+
+#: templates/index.html:63
+msgid "Export"
+msgstr "Eksportuj"
+
+#: templates/index.html:65
+msgid "Save as image"
+msgstr "Zapisz obraz"
+
+#: templates/index.html:75
+msgid "Steps Count"
+msgstr "Ilość kroków"
+
+#: templates/index.html:94
+msgid "Halo Color"
+msgstr "Kolor poświaty"
+
+#: templates/index.html:100 templates/index.html:455 templates/index.html:492
+msgid "Red"
+msgstr "Czerwony"
+
+#: templates/index.html:108 templates/index.html:463 templates/index.html:500
+msgid "Green"
+msgstr "Zielony"
+
+#: templates/index.html:116 templates/index.html:471 templates/index.html:508
+msgid "Blue"
+msgstr "Niebieski"
+
+#: templates/index.html:130
+msgid "Black Hole"
+msgstr "Czarna Dziura"
+
+#: templates/index.html:137
+msgid "Coordinates"
+msgstr "Koordynaty"
+
+#: templates/index.html:175
+msgid "Rotation"
+msgstr "Obrót"
+
+#: templates/index.html:182
+msgid "rotation-X"
+msgstr "Obrót-X"
+
+#: templates/index.html:190
+msgid "rotation-Y"
+msgstr "Obrót-Y"
+
+#: templates/index.html:198
+msgid "rotation-Z"
+msgstr "Obrót-Z"
+
+#: templates/index.html:213
+msgid "Radius"
+msgstr "Promień"
+
+#: templates/index.html:235
+msgid "Brightness correction"
+msgstr "Korekcja jasności"
+
+#: templates/index.html:242
+msgid "Brightness"
+msgstr "Jasność"
+
+#: templates/index.html:250
+msgid "Shadows"
+msgstr "Cienie"
+
+#: templates/index.html:258
+msgid "Midtones"
+msgstr "Średnie tony"
+
+#: templates/index.html:266
+msgid "Highlights"
+msgstr "Rozbłyski"
+
+#: templates/index.html:279
+msgid "Gamma"
+msgstr "Gamma"
+
+#: templates/index.html:298
+msgid "Contrast"
+msgstr "Kontrast"
+
+#: templates/index.html:317
+msgid "Gaussian blur"
+msgstr "Rozmycie Gaussa"
+
+#: templates/index.html:324 templates/index.html:369
+msgid "Kernel Size"
+msgstr "Rozmiar jądra"
+
+#: templates/index.html:332
+msgid "Blur intensity"
+msgstr "Intensywność rozmycia"
+
+#: templates/index.html:345
+msgid "Sobel"
+msgstr "Sobel"
+
+#: templates/index.html:353 templates/index.html:442
+msgid "Turn ON/OFF"
+msgstr "Włącz/Wyłącz"
+
+#: templates/index.html:362
+msgid "Bloom"
+msgstr "Bloom"
+
+#: templates/index.html:377
+msgid "Intensity"
+msgstr "Intensywność"
+
+#: templates/index.html:390
+msgid "Sky Generator"
+msgstr "Generator rozmieszczenia gwiazd"
+
+#: templates/index.html:397
+msgid "Seed"
+msgstr "Ziarno"
+
+#: templates/index.html:405
+msgid "Size"
+msgstr "Wielkość"
+
+#: templates/index.html:413
+msgid "Minimal Distance"
+msgstr "Minimalny dystans"
+
+#: templates/index.html:421
+msgid "K"
+msgstr "K"
+
+#: templates/index.html:434
+msgid "ASCII Art"
+msgstr "ASCII Art"
+
+#: templates/index.html:449
+msgid "Gradient Color 1"
+msgstr "1 Kolor gradientu"
+
+#: templates/index.html:485
+msgid "Gradient Color 2"
+msgstr "2 Kolor gradientu"
+
