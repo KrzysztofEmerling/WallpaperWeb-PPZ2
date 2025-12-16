@@ -53,8 +53,17 @@ body {
     background-color: var(--bs-secondary);
 }
 
+input::-webkit-outer-spin-button, ::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
 .single-value{
-    width: 30%;
+    width: 28%;
 }
 
 .multi-value{

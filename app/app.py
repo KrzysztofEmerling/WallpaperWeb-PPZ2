@@ -5,6 +5,7 @@ from flask_babel import Babel
 app = f.Flask(__name__)
 app.config['BABEL_DEFAULT_LOCALE'] = 'en'
 app.config['BABEL_SUPPORTED_LOCALES'] = ['en', 'pl', 'ru']
+app.config['BABEL_LANGUAGE_NAMES'] = { 'en': 'English', 'pl': 'Polski', 'ru': 'Russian'}
 app.config['BABEL_TRANSLATION_DIRECTORIES'] = 'translations'
 
 babel = Babel(app)

@@ -6,13 +6,14 @@ import { createImage } from "./scripts/generator.js";
 
 const canvas = document.getElementById('glcanvas');
 const gl = canvas.getContext("webgl2");
-const scenesData = fetchSceneValues();
 const sceneAvailableShaders = {
   // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 1, zawiera id elementow z html
   scene1: ['steps', 'blackhole', 'rgb', 'sky-generator'],
   // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 2, zawiera id elementow z html
   scene2: ['brightness', 'gamma', 'contrast', 'gauss', 'sobel', 'bloom', 'asciiArt']
 }
+const scenesData = fetchSceneValues();
+const defaultState = fetchSceneValues();
 
 updateSceneShaders(sceneAvailableShaders.scene2, sceneAvailableShaders.scene1);
 
@@ -330,7 +331,6 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
   hideButton();
 
   function toggleScene() {
-    
     if (activeScene === 'scene1') {
         renderScene2Requested = true;
         updateSceneShaders(sceneAvailableShaders.scene2, sceneAvailableShaders.scene1);
@@ -347,8 +347,8 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
   const switch_scene = document.getElementById('switch-scene');
 
   switch_scene.addEventListener('change', () => {
-    updateSceneValues(scenesData, activeScene);
     toggleScene();
+    updateSceneValues(scenesData, activeScene);
     setSceneValues(scenesData, activeScene);
   });
 
@@ -514,8 +514,21 @@ function fetchSceneValues(){
   const values = { scene1: {}, scene2: {} };
 
   sliders.forEach(input => {
-    values.scene1[input.id] = input.value;
-    values.scene2[input.id] = input.value;
+    const s1 = input.closest("#" + sceneAvailableShaders.scene1.join(", #"));
+    const s2 = input.closest("#" + sceneAvailableShaders.scene2.join(", #"));
+
+    if(s1){
+      const id = s1.id;
+      if(!values.scene1[id]) values.scene1[id] = {};
+      values.scene1[id][input.id] = input.value;
+    }
+
+    if(s2) {
+      const id = s2.id;
+      if(!values.scene2[id]) values.scene2[id] = {};
+      values.scene2[id][input.id] = input.value;
+    }
+
   });
 
   return values;
@@ -525,7 +538,19 @@ function updateSceneValues(array, scene){
   const sliders = document.querySelectorAll('input.slider');
 
   sliders.forEach(input => {
-    array[scene][input.id] = input.value;
+    const s1 = input.closest("#" + sceneAvailableShaders.scene1.join(", #"));
+    const s2 = input.closest("#" + sceneAvailableShaders.scene2.join(", #"));
+
+    if(s1 && scene === 'scene1'){
+      const id = s1.id;
+      array[scene][id][input.id] = input.value;
+    }
+
+    if(s2 && scene === 'scene2'){
+      const id = s2.id;
+      array[scene][id][input.id] = input.value;
+    }
+
   });
 }
 
@@ -533,8 +558,21 @@ function setSceneValues(array, scene){
   const sliders = document.querySelectorAll('input.slider');
 
   sliders.forEach(input => {
-    input.value = array[scene][input.id]
-    input.dispatchEvent(new Event('input'));
+    const s1 = input.closest("#" + sceneAvailableShaders.scene1.join(", #"));
+    const s2 = input.closest("#" + sceneAvailableShaders.scene2.join(", #"));
+
+    if(s1 && scene === 'scene1'){
+      const id = s1.id;
+      input.value = array[scene][id][input.id];
+      input.dispatchEvent(new Event('input'));
+    }
+
+    if(s2 && scene === 'scene2'){
+      const id = s2.id;
+      input.value = array[scene][id][input.id];
+      input.dispatchEvent(new Event('input'));
+    } 
+
   });
 }
 
@@ -635,6 +673,12 @@ const export_btn = document.getElementById('export-btn');
 
 export_btn.addEventListener('click', () => {
   createJSON();
+});
+
+const restore_btn = document.getElementById('default-btn');
+
+restore_btn.addEventListener('click', () => {
+  setSceneValues(defaultState, activeScene);
 });
 
 const sliderInputs  = document.querySelectorAll('input.slider');

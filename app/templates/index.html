@@ -18,33 +18,63 @@
 
             <div class="pt-3">
                 <ul class="list-unstyled ps-0 text-start overflow-control"> 
-                <li class="mb-1"> 
-                    <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" 
-                            data-bs-toggle="collapse" 
-                            data-bs-target="#scene-collapse" 
-                            aria-expanded="true">
-                        {{ _('Scenes') }}
-                    </button>
-                
-                    <div class="collapse ps-3 pt-2" id="scene-collapse">
-                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                    <li class="mb-1"> 
+                        <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" 
+                                data-bs-toggle="collapse" 
+                                data-bs-target="#scene-collapse" 
+                                aria-expanded="true">
+                            {{ _('Scenes') }}
+                        </button>
+                    
+                        <div class="collapse ps-3 pt-2" id="scene-collapse">
+                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
 
-                            <div class="d-flex justify-content-between gap-3 flex-shrink-0 flex-fill text-nowrap">
-                                <input class="btn-check hidden switch" type="checkbox" id="switch-scene" autocomplete="off">
-                                <label class="btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap" for="switch-scene">{{ _('Toggle scene') }}</label>
+                                <div class="d-flex justify-content-between gap-3 flex-shrink-0 flex-fill text-nowrap">
+                                    <input class="btn-check hidden switch" type="checkbox" id="switch-scene" autocomplete="off">
+                                    <label class="btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap" for="switch-scene">{{ _('Toggle scene') }}</label>
 
-                                <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap' id="render-scene1-button">{{ _('Render scene') }}</button>
+                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap' id="render-scene1-button">{{ _('Render scene') }}</button>
+                                </div>
+
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="mb-1"> 
+                        <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#options-collapse" aria-expanded="true">
+                            {{ _('Options') }}
+                        </button>
+
+                        <div class="collapse ps-3 pt-2" id="options-collapse">
+
+                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-2 small">
+
+                                <span class="text-white text-nowrap hidden">Change language</span>
+                                <div class="dropdown hidden flex-shrink-0 flex-fill pt-2 d-flex justify-content-center">
+                                    <button class="btn btn-light btn-sm dropdown-toggle hidden flex-shrink-0 flex-fill" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="lang-change">
+                                        {{ config['BABEL_LANGUAGE_NAMES'][config['BABEL_DEFAULT_LOCALE']] }}
+                                    </button>
+
+                                    <ul class="dropdown-menu w-100">
+                                        {% for i in config['BABEL_SUPPORTED_LOCALES'] %}
+                                            <li>
+                                                <a href=" {{ url_for('routes.change_lang', lang=lang, new_lang=i) }}" class="dropdown-item hidden flex-shrink-0 flex-fill">
+                                                    {{ config['BABEL_LANGUAGE_NAMES'][i] }}
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+
+                            </ul>
+
+                            <div>
+                                <span class="text-white text-nowrap hidden small">Restore settings</span>
+                                <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2' id="default-btn">Restore default values</button>
                             </div>
-
-                            <div class="d-flex justify-content-between gap-3 flex-shrink-0 flex-fill text-nowrap">
-                                <a href=" {{ url_for('routes.change_lang', lang=lang, new_lang='en')}}">EN</a>
-                                <a href=" {{ url_for('routes.change_lang', lang=lang, new_lang='pl')}}">PL</a>
-                                <a href=" {{ url_for('routes.change_lang', lang=lang, new_lang='ru')}}">RU</a>
-                            </div>
-                            
-                        </ul>
-                    </div>
-                </li>
+                        
+                        </div> 
+                    </li>
                 
 
                     <li class="mb-1"> 
@@ -79,12 +109,13 @@
 
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li>
-                                    <div class="d-flex justify-content-between align-items-center gap-4">
-                                        <input type="range" class="form-range hidden flex-fill slider" step="1" min="4" max="10" value="10" id="stepsize-slider">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden flex-fill slider pe-2" step="1" min="4" max="10" value="10" id="stepsize-slider">
                                         <input type="number" class="form-control form-control-sm hidden single-value flex-fill" step="1" min="4" max="10" value="10" id="stepsize-value">
+                                        <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-step"><i class="bi bi-arrow-counterclockwise"></i></button>
                                     </div>
                                 </li> 
-                            </ul> 
+                            </ul>
 
                         </div> 
                     </li>
@@ -99,28 +130,36 @@
 
                                     <span class="text-white text-nowrap hidden">{{ _('Red') }}</span>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="255" value="128" id="red-slider">
+                                        <input type="range" class="form-range hidden pe-2 slider" min="0" max="255" value="128" id="red-slider">
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="128" id="red-value">
+                                        <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-halo-red"><i class="bi bi-arrow-counterclockwise"></i></button>
                                     </div>
                                 </li> 
 
                                 <li>
                                     <span class="text-white text-nowrap hidden">{{ _('Green') }}</span>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="255" value="128" id="green-slider">
+                                        <input type="range" class="form-range hidden pe-2 slider" min="0" max="255" value="128" id="green-slider">
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="128" id="green-value">
+                                        <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-halo-green"><i class="bi bi-arrow-counterclockwise"></i></button>
                                     </div>
                                 </li>
 
                                 <li>
                                     <span class="text-white text-nowrap hidden">{{ _('Blue') }}</span>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="255" value="128" id="blue-slider">
+                                        <input type="range" class="form-range hidden pe-2 slider" min="0" max="255" value="128" id="blue-slider">
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="128" id="blue-value">
+                                        <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-halo-blue"><i class="bi bi-arrow-counterclockwise"></i></button>
                                     </div>
                                 </li>
 
-                            </ul> 
+                            </ul>
+
+                            <div>
+                                <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 restore' id="default-halo">Restore default values</button>
+                            </div>
+
                         </div>
                     </li>
 
@@ -143,28 +182,36 @@
                                             <li>
                                                 <span class="text-white text-nowrap hidden">X</span>
                                                 <div class="d-flex justify-content-between align-items-center">
-                                                    <input type="range" class="form-range hidden pe-4 slider" min="-50" max="200" value="4" id="x-slider">
+                                                    <input type="range" class="form-range hidden pe-2 slider" min="-50" max="200" value="4" id="x-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="-50" max="200" value="4" id="x-value">
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-coord-x"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li> 
 
                                             <li>
                                                 <span class="text-white text-nowrap hidden">Y</span>
                                                 <div class="d-flex justify-content-between align-items-center">
-                                                    <input type="range" class="form-range hidden pe-4 slider" min="-50" max="200" value="-1" id="y-slider">
+                                                    <input type="range" class="form-range hidden pe-2 slider" min="-50" max="200" value="-1" id="y-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="-50" max="200" value="-1" id="y-value">
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-coord-y"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li>
 
                                             <li>
                                                 <span class="text-white text-nowrap hidden">Z</span>
                                                 <div class="d-flex justify-content-between align-items-center">
-                                                    <input type="range" class="form-range hidden pe-4 slider" min="-50" max="200" value="12" id="z-slider">
+                                                    <input type="range" class="form-range hidden pe-2 slider" min="-50" max="200" value="12" id="z-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="-50" max="200" value="12" id="z-value">
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-coord-y"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li>
 
                                         </ul>
+
+                                        <div>
+                                            <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 restore' id="default-coords">Restore default values</button>
+                                        </div>
+
                                     </div>
                                 </li>
                             </ul>
@@ -181,28 +228,36 @@
                                             <li>
                                                 <span class="text-white text-nowrap hidden">{{ _('rotation-X') }}</span>
                                                 <div class="d-flex justify-content-between align-items-center">
-                                                    <input type="range" class="form-range hidden pe-4 slider" min="0" max="360" value="0" id="rot-x-slider">
+                                                    <input type="range" class="form-range hidden pe-2 slider" min="0" max="360" value="0" id="rot-x-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="360" value="0" id="rot-x-value">
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-rot-x"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li> 
 
                                             <li>
                                                 <span class="text-white text-nowrap hidden">{{ _('rotation-Y') }}</span>
                                                 <div class="d-flex justify-content-between align-items-center">
-                                                    <input type="range" class="form-range hidden pe-4 slider" min="0" max="360" value="0" id="rot-y-slider">
+                                                    <input type="range" class="form-range hidden pe-2 slider" min="0" max="360" value="0" id="rot-y-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="360" value="0" id="rot-y-value">
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-rot-y"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li>
 
                                             <li>
                                                 <span class="text-white text-nowrap hidden">{{ _('rotation-Z') }}</span>
                                                 <div class="d-flex justify-content-between align-items-center">
-                                                    <input type="range" class="form-range hidden pe-4 slider" min="0" max="360" value="0" id="rot-z-slider">
+                                                    <input type="range" class="form-range hidden pe-2 slider" min="0" max="360" value="0" id="rot-z-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="360" value="0" id="rot-z-value">
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-rot-z"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li>
 
                                         </ul>
+
+                                        <div>
+                                            <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 restore' id="default-rot">Restore default values</button>
+                                        </div>
+
                                     </div>
                                 </li>
                             </ul>
@@ -217,13 +272,15 @@
                                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
 
                                             <li>
-                                                <div class="d-flex justify-content-between align-items-center gap-4">
-                                                    <input type="range" class="form-range hidden flex-fill slider" min="0" max="10" value="8" id="radius-slider">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <input type="range" class="form-range hidden pe-2 slider" min="0" max="10" value="8" id="radius-slider">
                                                     <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="0" max="20" value="8" id="radius-value">
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-radius"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li> 
 
                                         </ul>
+
                                     </div>
                                 </li>
                             </ul>
@@ -241,36 +298,45 @@
                                 <li>
                                     <span class="text-white text-nowrap hidden">{{ _('Brightness') }}</span>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="2" value="1" step="0.01" id="brightness-slider">
+                                        <input type="range" class="form-range hidden pe-2 slider" min="0" max="2" value="1" step="0.01" id="brightness-slider">
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="2" value="1" step="0.01" id="brightness-value">
+                                        <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-bc-brightness"><i class="bi bi-arrow-counterclockwise"></i></button>
                                     </div>
                                 </li> 
 
                                 <li>
                                     <span class="text-white text-nowrap hidden">{{ _('Shadows') }}</span>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="2" value="1" step="0.01" id="shadows-slider">
+                                        <input type="range" class="form-range hidden pe-2 slider" min="0" max="2" value="1" step="0.01" id="shadows-slider">
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="2" value="1" step="0.01" id="shadows-value">
+                                        <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-bc-shadows"><i class="bi bi-arrow-counterclockwise"></i></button>
                                     </div>
                                 </li>
 
                                 <li>
                                     <span class="text-white text-nowrap hidden">{{ _('Midtones') }}</span>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="2" value="1" step="0.01" id="midtones-slider">
+                                        <input type="range" class="form-range hidden pe-2 slider" min="0" max="2" value="1" step="0.01" id="midtones-slider">
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="2" value="1" step="0.01" id="midtones-value">
+                                        <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-bc-midtones"><i class="bi bi-arrow-counterclockwise"></i></button>
                                     </div>
                                 </li>
 
                                 <li>
                                     <span class="text-white text-nowrap hidden">{{ _('Highlights') }}</span>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <input type="range" class="form-range hidden pe-4 slider" min="0" max="2" value="1" step="0.01" id="highlights-slider">
+                                        <input type="range" class="form-range hidden pe-2 slider" min="0" max="2" value="1" step="0.01" id="highlights-slider">
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="2" value="1" step="0.01" id="highlights-value">
+                                        <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-bc-highlights"><i class="bi bi-arrow-counterclockwise"></i></button>
                                     </div>
                                 </li>
 
-                            </ul> 
+                            </ul>
+
+                            <div>
+                                <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 restore' id="default-brightness">Restore default values</button>
+                            </div>
+
                         </div>
                     </li>
 
@@ -283,9 +349,10 @@
 
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li>
-                                    <div class="d-flex justify-content-between align-items-center gap-4">
-                                        <input type="range" class="form-range hidden flex-fill slider" min="0" max="4" value="1" step="0.01" id="gamma-slider">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden flex-fill slider pe-2" min="0" max="4" value="1" step="0.01" id="gamma-slider">
                                         <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="0" max="4" value="1" step="0.01" id="gamma-value">
+                                        <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-gamma"><i class="bi bi-arrow-counterclockwise"></i></button>
                                     </div>
                                 </li> 
                             </ul> 
@@ -302,9 +369,10 @@
 
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li>
-                                    <div class="d-flex justify-content-between align-items-center gap-4">
-                                        <input type="range" class="form-range hidden flex-fill slider" min="0" max="3" value="0" step="0.01" id="contrast-slider">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden flex-fill slider pe-2" min="0" max="3" value="0" step="0.01" id="contrast-slider">
                                         <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="0" max="3" value="0" step="0.01" id="contrast-value">
+                                        <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-contrast"><i class="bi bi-arrow-counterclockwise"></i></button>
                                     </div>
                                 </li> 
                             </ul> 
@@ -322,20 +390,26 @@
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li>
                                     <span class="text-white text-nowrap hidden">{{ _('Kernel Size') }}</span>
-                                    <div class="d-flex justify-content-between align-items-center gap-4">
-                                        <input type="range" class="form-range hidden flex-fill slider" min="1" max="7" value="3" id="gauss-kernel-slider">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden flex-fill slider pe-2" min="1" max="7" value="3" id="gauss-kernel-slider">
                                         <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="1" max="7" value="3" id="gauss-kernel-value">
+                                        <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-gauss-kernel"><i class="bi bi-arrow-counterclockwise"></i></button>
                                     </div>
                                 </li> 
 
                                 <li>
                                     <span class="text-white text-nowrap hidden">{{ _('Blur intensity') }}</span>
-                                    <div class="d-flex justify-content-between align-items-center gap-4">
-                                        <input type="range" class="form-range hidden flex-fill slider" min="0.01" max="10" value="0.01" step="0.01" id="gauss-intensity-slider">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden flex-fill slider pe-2" min="0.01" max="10" value="0.01" step="0.01" id="gauss-intensity-slider">
                                         <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="0.01" max="10" value="0.01" step="0.01" id="gauss-intensity-value">
+                                        <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-gauss-intensity"><i class="bi bi-arrow-counterclockwise"></i></button>
                                     </div>
                                 </li> 
-                            </ul> 
+                            </ul>
+
+                            <div>
+                                <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 restore' id="default-gauss">Restore default values</button>
+                            </div>
 
                         </div> 
                     </li>                    
@@ -350,7 +424,7 @@
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li>
                                     <input class="btn-check hidden switch" type="checkbox" id="switch-sobel" autocomplete="off">
-                                    <label class="btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap" for="switch-sobel">{{ _('Turn ON/OFF') }}</label>
+                                    <label class="btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100" for="switch-sobel">{{ _('Turn ON/OFF') }}</label>
                                 </li> 
                             </ul> 
 
@@ -367,20 +441,26 @@
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                 <li>
                                     <span class="text-white text-nowrap hidden">{{ _('Kernel Size') }}</span>
-                                    <div class="d-flex justify-content-between align-items-center gap-4">
-                                        <input type="range" class="form-range hidden flex-fill slider" min="1" max="10" value="3" id="bloom-kernel-slider">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden flex-fill slider pe-2" min="1" max="10" value="3" id="bloom-kernel-slider">
                                         <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="1" max="10" value="3" id="bloom-kernel-value">
+                                        <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-bloom-kernel"><i class="bi bi-arrow-counterclockwise"></i></button>
                                     </div>
                                 </li> 
 
                                 <li>
                                     <span class="text-white text-nowrap hidden">{{ _('Intensity') }}</span>
-                                    <div class="d-flex justify-content-between align-items-center gap-4">
-                                        <input type="range" class="form-range hidden flex-fill slider" min="0" max="5" value="0" step="0.01" id="bloom-intensity-slider">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <input type="range" class="form-range hidden flex-fill slider pe-2" min="0" max="5" value="0" step="0.01" id="bloom-intensity-slider">
                                         <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="0" max="5" value="0" step="0.01" id="bloom-intensity-value">
+                                        <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-bloom-intensity"><i class="bi bi-arrow-counterclockwise"></i></button>
                                     </div>
                                 </li> 
-                            </ul> 
+                            </ul>
+
+                            <div>
+                                <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 restore' id="default-bloom">Restore default values</button>
+                            </div>
 
                         </div> 
                     </li>
@@ -396,36 +476,45 @@
                                 <li> 
                                     <span class="text-white text-nowrap hidden">{{ _('Seed') }}</span>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <input type="range" class="form-range hidden pe-4 slider" min="1" max="1000" value="500" id="sg-seed-slider">
+                                        <input type="range" class="form-range hidden pe-2 slider" min="1" max="1000" value="500" id="sg-seed-slider">
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="1" max="1000" value="500" id="sg-seed-value">
+                                        <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-sg-seed"><i class="bi bi-arrow-counterclockwise"></i></button>
                                     </div>
                                 </li>
 
                                 <li>
                                     <span class="text-white text-nowrap hidden">{{ _('Size') }}</span>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <input type="range" class="form-range hidden pe-4 slider" min="1" max="10" value="1" id="sg-size-slider">
+                                        <input type="range" class="form-range hidden pe-2 slider" min="1" max="10" value="1" id="sg-size-slider">
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="1" max="10" value="1" id="sg-size-value">
+                                        <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-sg-size"><i class="bi bi-arrow-counterclockwise"></i></button>
                                     </div>
                                 </li>
 
                                 <li>
                                     <span class="text-white text-nowrap hidden">{{ _('Minimal Distance') }}</span>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <input type="range" class="form-range hidden pe-4 slider" min="20" max="200" value="100" id="sg-md-slider">
+                                        <input type="range" class="form-range hidden pe-2 slider" min="20" max="200" value="100" id="sg-md-slider">
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="20" max="200" value="100" id="sg-md-value">
+                                        <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-sg-md"><i class="bi bi-arrow-counterclockwise"></i></button>
                                     </div>
                                 </li>
 
                                 <li>
                                     <span class="text-white text-nowrap hidden">{{ _('K') }}</span>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <input type="range" class="form-range hidden pe-4 slider" min="5" max="100" value="50" id="sg-k-slider">
+                                        <input type="range" class="form-range hidden pe-2 slider" min="5" max="100" value="50" id="sg-k-slider">
                                         <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="5" max="100" value="50" id="sg-k-value">
+                                        <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-sg-k"><i class="bi bi-arrow-counterclockwise"></i></button>
                                     </div>
                                 </li>
 
-                            </ul> 
+                            </ul>
+
+                            <div>
+                                <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 restore' id="default-sg">Restore default values</button>
+                            </div>
+
                         </div>
                     </li>
 
@@ -439,7 +528,7 @@
                             <ul class="btn-toggle-nav list-unstyled fw-normal ps-2 pb-1 small">
                                 <li>
                                     <input class="btn-check hidden switch" type="checkbox" id="switch-asciiArt" autocomplete="off">
-                                    <label class="btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap" for="switch-asciiArt">{{ _('Turn ON/OFF') }}</label>
+                                    <label class="btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100" for="switch-asciiArt">{{ _('Turn ON/OFF') }}</label>
                                 </li> 
                             </ul> 
 
@@ -454,27 +543,35 @@
                                             <li>
                                                 <span class="text-white text-nowrap hidden">{{ _('Red') }}</span>
                                                 <div class="d-flex justify-content-between align-items-center">
-                                                    <input type="range" class="form-range hidden pe-4 slider" min="0" max="255" value="0" id="color1-red-slider">
+                                                    <input type="range" class="form-range hidden pe-2 slider" min="0" max="255" value="0" id="color1-red-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="0" id="color1-red-value">
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-color1-red"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li> 
 
                                             <li>
                                                 <span class="text-white text-nowrap hidden">{{ _('Green') }}</span>
                                                 <div class="d-flex justify-content-between align-items-center">
-                                                    <input type="range" class="form-range hidden pe-4 slider" min="0" max="255" value="0" id="color1-green-slider">
+                                                    <input type="range" class="form-range hidden pe-2 slider" min="0" max="255" value="0" id="color1-green-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="0" id="color1-green-value">
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-color1-green"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li>
 
                                             <li>
                                                 <span class="text-white text-nowrap hidden">{{ _('Blue') }}</span>
                                                 <div class="d-flex justify-content-between align-items-center">
-                                                    <input type="range" class="form-range hidden pe-4 slider" min="0" max="255" value="0" id="color1-blue-slider">
+                                                    <input type="range" class="form-range hidden pe-2 slider" min="0" max="255" value="0" id="color1-blue-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="0" id="color1-blue-value">
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-color1-blue"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li>
                                         </ul> 
+
+                                        <div>
+                                            <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 restore' id="default-color1">Restore default values</button>
+                                        </div>
+
                                     </div>
                                 </li>
                             </ul>
@@ -491,28 +588,36 @@
                                             <li>
                                                 <span class="text-white text-nowrap hidden">{{ _('Red') }}</span>
                                                 <div class="d-flex justify-content-between align-items-center">
-                                                    <input type="range" class="form-range hidden pe-4 slider" min="0" max="255" value="0" id="color2-red-slider">
+                                                    <input type="range" class="form-range hidden pe-2 slider" min="0" max="255" value="0" id="color2-red-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="0" id="color2-red-value">
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-color2-red"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li> 
 
                                             <li>
                                                 <span class="text-white text-nowrap hidden">{{ _('Green') }}</span>
                                                 <div class="d-flex justify-content-between align-items-center">
-                                                    <input type="range" class="form-range hidden pe-4 slider" min="0" max="255" value="0" id="color2-green-slider">
+                                                    <input type="range" class="form-range hidden pe-2 slider" min="0" max="255" value="0" id="color2-green-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="0" id="color2-green-value">
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-color2-green"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li>
 
                                             <li>
                                                 <span class="text-white text-nowrap hidden">{{ _('Blue') }}</span>
                                                 <div class="d-flex justify-content-between align-items-center">
-                                                    <input type="range" class="form-range hidden pe-4 slider" min="0" max="255" value="0" id="color2-blue-slider">
+                                                    <input type="range" class="form-range hidden pe-2 slider" min="0" max="255" value="0" id="color2-blue-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="0" id="color2-blue-value">
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-color2-blue"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li>
 
-                                        </ul> 
+                                        </ul>
+                                        
+                                        <div>
+                                            <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 restore' id="default-color2">Restore default values</button>
+                                        </div>
+
                                     </div>
                                 </li>
                             </ul>
