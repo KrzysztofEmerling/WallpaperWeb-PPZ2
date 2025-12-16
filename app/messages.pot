@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-12-14 15:31+0100\n"
+"POT-Creation-Date: 2025-12-16 15:09+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,155 +29,174 @@ msgstr ""
 msgid "Render scene"
 msgstr ""
 
+#: templates/index.html:45
+msgid "Settings"
+msgstr ""
+
 #: templates/index.html:52
+msgid "Change language"
+msgstr ""
+
+#: templates/index.html:72
+msgid "Restore settings"
+msgstr ""
+
+#: templates/index.html:73 templates/index.html:160 templates/index.html:212
+#: templates/index.html:258 templates/index.html:337 templates/index.html:411
+#: templates/index.html:462 templates/index.html:515 templates/index.html:572
+#: templates/index.html:618
+msgid "Restore default values"
+msgstr ""
+
+#: templates/index.html:82
 msgid "Load/Save"
 msgstr ""
 
-#: templates/index.html:62
+#: templates/index.html:92
 msgid "Import"
 msgstr ""
 
-#: templates/index.html:63
+#: templates/index.html:93
 msgid "Export"
 msgstr ""
 
-#: templates/index.html:65
+#: templates/index.html:95
 msgid "Save as image"
 msgstr ""
 
-#: templates/index.html:75
+#: templates/index.html:105
 msgid "Steps Count"
 msgstr ""
 
-#: templates/index.html:94
+#: templates/index.html:125
 msgid "Halo Color"
 msgstr ""
 
-#: templates/index.html:100 templates/index.html:455 templates/index.html:492
+#: templates/index.html:131 templates/index.html:544 templates/index.html:589
 msgid "Red"
 msgstr ""
 
-#: templates/index.html:108 templates/index.html:463 templates/index.html:500
+#: templates/index.html:140 templates/index.html:553 templates/index.html:598
 msgid "Green"
 msgstr ""
 
-#: templates/index.html:116 templates/index.html:471 templates/index.html:508
+#: templates/index.html:149 templates/index.html:562 templates/index.html:607
 msgid "Blue"
 msgstr ""
 
-#: templates/index.html:130
+#: templates/index.html:169
 msgid "Black Hole"
 msgstr ""
 
-#: templates/index.html:137
+#: templates/index.html:176
 msgid "Coordinates"
 msgstr ""
 
-#: templates/index.html:175
+#: templates/index.html:222
 msgid "Rotation"
 msgstr ""
 
-#: templates/index.html:182
+#: templates/index.html:229
 msgid "rotation-X"
 msgstr ""
 
-#: templates/index.html:190
+#: templates/index.html:238
 msgid "rotation-Y"
 msgstr ""
 
-#: templates/index.html:198
+#: templates/index.html:247
 msgid "rotation-Z"
 msgstr ""
 
-#: templates/index.html:213
+#: templates/index.html:268
 msgid "Radius"
 msgstr ""
 
-#: templates/index.html:235
+#: templates/index.html:292
 msgid "Brightness correction"
 msgstr ""
 
-#: templates/index.html:242
+#: templates/index.html:299
 msgid "Brightness"
 msgstr ""
 
-#: templates/index.html:250
+#: templates/index.html:308
 msgid "Shadows"
 msgstr ""
 
-#: templates/index.html:258
+#: templates/index.html:317
 msgid "Midtones"
 msgstr ""
 
-#: templates/index.html:266
+#: templates/index.html:326
 msgid "Highlights"
 msgstr ""
 
-#: templates/index.html:279
+#: templates/index.html:345
 msgid "Gamma"
 msgstr ""
 
-#: templates/index.html:298
+#: templates/index.html:365
 msgid "Contrast"
 msgstr ""
 
-#: templates/index.html:317
+#: templates/index.html:385
 msgid "Gaussian blur"
 msgstr ""
 
-#: templates/index.html:324 templates/index.html:369
+#: templates/index.html:392 templates/index.html:443
 msgid "Kernel Size"
 msgstr ""
 
-#: templates/index.html:332
+#: templates/index.html:401
 msgid "Blur intensity"
 msgstr ""
 
-#: templates/index.html:345
+#: templates/index.html:419
 msgid "Sobel"
 msgstr ""
 
-#: templates/index.html:353 templates/index.html:442
+#: templates/index.html:427 templates/index.html:531
 msgid "Turn ON/OFF"
 msgstr ""
 
-#: templates/index.html:362
+#: templates/index.html:436
 msgid "Bloom"
 msgstr ""
 
-#: templates/index.html:377
+#: templates/index.html:452
 msgid "Intensity"
 msgstr ""
 
-#: templates/index.html:390
+#: templates/index.html:470
 msgid "Sky Generator"
 msgstr ""
 
-#: templates/index.html:397
+#: templates/index.html:477
 msgid "Seed"
 msgstr ""
 
-#: templates/index.html:405
+#: templates/index.html:486
 msgid "Size"
 msgstr ""
 
-#: templates/index.html:413
+#: templates/index.html:495
 msgid "Minimal Distance"
 msgstr ""
 
-#: templates/index.html:421
+#: templates/index.html:504
 msgid "K"
 msgstr ""
 
-#: templates/index.html:434
+#: templates/index.html:523
 msgid "ASCII Art"
 msgstr ""
 
-#: templates/index.html:449
+#: templates/index.html:538
 msgid "Gradient Color 1"
 msgstr ""
 
-#: templates/index.html:485
+#: templates/index.html:582
 msgid "Gradient Color 2"
 msgstr ""
 

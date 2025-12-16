@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-12-14 15:31+0100\n"
-"PO-Revision-Date: 2025-12-14 15:32+0100\n"
+"POT-Creation-Date: 2025-12-16 14:44+0100\n"
+"PO-Revision-Date: 2025-12-16 14:44+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: pl\n"
 "Language-Team: pl <LL@li.org>\n"
@@ -30,6 +30,25 @@ msgstr "Przełącz scenę"
 #: templates/index.html:36
 msgid "Render scene"
 msgstr "Wyrenderuj scenę"
+
+#: templates/index.html:45
+msgid "Settings"
+msgstr "Ustawienia"
+
+#: templates/index.html:52
+msgid "Change language"
+msgstr "Zmień język"
+
+#: templates/index.html:72
+msgid "Restore settings"
+msgstr "Ustawienia przywracania"
+
+#: templates/index.html:73 templates/index.html:160 templates/index.html:212
+#: templates/index.html:258 templates/index.html:337 templates/index.html:411
+#: templates/index.html:462 templates/index.html:515 templates/index.html:572
+#: templates/index.html:618
+msgid "Restore default values"
+msgstr "Przywróć domyślne wartości"
 
 #: templates/index.html:52
 msgid "Load/Save"

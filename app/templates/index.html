@@ -41,15 +41,15 @@
                     </li>
 
                     <li class="mb-1"> 
-                        <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#options-collapse" aria-expanded="true">
-                            {{ _('Options') }}
+                        <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#settings-collapse" aria-expanded="true">
+                            {{ _('Settings') }}
                         </button>
 
-                        <div class="collapse ps-3 pt-2" id="options-collapse">
+                        <div class="collapse ps-3 pt-2" id="settings-collapse">
 
                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-2 small">
 
-                                <span class="text-white text-nowrap hidden">Change language</span>
+                                <span class="text-white text-nowrap hidden">{{ _('Change language') }}</span>
                                 <div class="dropdown hidden flex-shrink-0 flex-fill pt-2 d-flex justify-content-center">
                                     <button class="btn btn-light btn-sm dropdown-toggle hidden flex-shrink-0 flex-fill" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="lang-change">
                                         {{ config['BABEL_LANGUAGE_NAMES'][config['BABEL_DEFAULT_LOCALE']] }}
@@ -69,8 +69,8 @@
                             </ul>
 
                             <div>
-                                <span class="text-white text-nowrap hidden small">Restore settings</span>
-                                <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2' id="default-btn">Restore default values</button>
+                                <span class="text-white text-nowrap hidden small">{{ _('Restore settings') }}</span>
+                                <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2' id="default-btn">{{ _('Restore default values') }}</button>
                             </div>
                         
                         </div> 
@@ -157,14 +157,14 @@
                             </ul>
 
                             <div>
-                                <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 restore' id="default-halo">Restore default values</button>
+                                <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 restore' id="default-halo">{{ _('Restore default values') }}</button>
                             </div>
 
                         </div>
                     </li>
 
 
-                    <li class="mb-1" id="blackhole"> 
+                    <li class="mb-1 main" id="blackhole"> 
                         <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#bh-collapse" aria-expanded="true">
                             {{ _('Black Hole') }}
                         </button>
@@ -184,7 +184,7 @@
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <input type="range" class="form-range hidden pe-2 slider" min="-50" max="200" value="4" id="x-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="-50" max="200" value="4" id="x-value">
-                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-coord-x"><i class="bi bi-arrow-counterclockwise"></i></button>
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap sub-single-restore ms-2' id="default-coord-x"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li> 
 
@@ -193,7 +193,7 @@
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <input type="range" class="form-range hidden pe-2 slider" min="-50" max="200" value="-1" id="y-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="-50" max="200" value="-1" id="y-value">
-                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-coord-y"><i class="bi bi-arrow-counterclockwise"></i></button>
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap sub-single-restore ms-2' id="default-coord-y"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li>
 
@@ -202,14 +202,14 @@
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <input type="range" class="form-range hidden pe-2 slider" min="-50" max="200" value="12" id="z-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="-50" max="200" value="12" id="z-value">
-                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-coord-y"><i class="bi bi-arrow-counterclockwise"></i></button>
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap sub-single-restore ms-2' id="default-coord-y"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li>
 
                                         </ul>
 
                                         <div>
-                                            <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 restore' id="default-coords">Restore default values</button>
+                                            <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 sub-restore' id="default-coords">{{ _('Restore default values') }}</button>
                                         </div>
 
                                     </div>
@@ -230,7 +230,7 @@
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <input type="range" class="form-range hidden pe-2 slider" min="0" max="360" value="0" id="rot-x-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="360" value="0" id="rot-x-value">
-                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-rot-x"><i class="bi bi-arrow-counterclockwise"></i></button>
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap sub-single-restore ms-2' id="default-rot-x"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li> 
 
@@ -239,7 +239,7 @@
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <input type="range" class="form-range hidden pe-2 slider" min="0" max="360" value="0" id="rot-y-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="360" value="0" id="rot-y-value">
-                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-rot-y"><i class="bi bi-arrow-counterclockwise"></i></button>
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap sub-single-restore ms-2' id="default-rot-y"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li>
 
@@ -248,14 +248,14 @@
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <input type="range" class="form-range hidden pe-2 slider" min="0" max="360" value="0" id="rot-z-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="360" value="0" id="rot-z-value">
-                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-rot-z"><i class="bi bi-arrow-counterclockwise"></i></button>
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap sub-single-restore ms-2' id="default-rot-z"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li>
 
                                         </ul>
 
                                         <div>
-                                            <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 restore' id="default-rot">Restore default values</button>
+                                            <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 sub-restore' id="default-rot">{{ _('Restore default values') }}</button>
                                         </div>
 
                                     </div>
@@ -275,7 +275,7 @@
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <input type="range" class="form-range hidden pe-2 slider" min="0" max="10" value="8" id="radius-slider">
                                                     <input type="number" class="form-control form-control-sm hidden single-value flex-fill" min="0" max="20" value="8" id="radius-value">
-                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-radius"><i class="bi bi-arrow-counterclockwise"></i></button>
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap sub-single-restore ms-2' id="default-radius"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li> 
 
@@ -334,7 +334,7 @@
                             </ul>
 
                             <div>
-                                <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 restore' id="default-brightness">Restore default values</button>
+                                <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 restore' id="default-brightness">{{ _('Restore default values') }}</button>
                             </div>
 
                         </div>
@@ -408,7 +408,7 @@
                             </ul>
 
                             <div>
-                                <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 restore' id="default-gauss">Restore default values</button>
+                                <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 restore' id="default-gauss">{{ _('Restore default values') }}</button>
                             </div>
 
                         </div> 
@@ -459,7 +459,7 @@
                             </ul>
 
                             <div>
-                                <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 restore' id="default-bloom">Restore default values</button>
+                                <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 restore' id="default-bloom">{{ _('Restore default values') }}</button>
                             </div>
 
                         </div> 
@@ -512,13 +512,13 @@
                             </ul>
 
                             <div>
-                                <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 restore' id="default-sg">Restore default values</button>
+                                <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 restore' id="default-sg">{{ _('Restore default values') }}</button>
                             </div>
 
                         </div>
                     </li>
 
-                    <li class="mb-1" id="asciiArt"> 
+                    <li class="mb-1 main" id="asciiArt"> 
                         <button class="btn btn-toggle text-nowrap d-inline-flex align-items-center rounded border-0 collapsed hidden custom-color" data-bs-toggle="collapse" data-bs-target="#asciiArt-collapse" aria-expanded="true">
                             {{ _('ASCII Art') }}
                         </button>
@@ -545,7 +545,7 @@
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <input type="range" class="form-range hidden pe-2 slider" min="0" max="255" value="0" id="color1-red-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="0" id="color1-red-value">
-                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-color1-red"><i class="bi bi-arrow-counterclockwise"></i></button>
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap sub-single-restore ms-2' id="default-color1-red"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li> 
 
@@ -554,7 +554,7 @@
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <input type="range" class="form-range hidden pe-2 slider" min="0" max="255" value="0" id="color1-green-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="0" id="color1-green-value">
-                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-color1-green"><i class="bi bi-arrow-counterclockwise"></i></button>
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap sub-single-restore ms-2' id="default-color1-green"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li>
 
@@ -563,13 +563,13 @@
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <input type="range" class="form-range hidden pe-2 slider" min="0" max="255" value="0" id="color1-blue-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="0" id="color1-blue-value">
-                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-color1-blue"><i class="bi bi-arrow-counterclockwise"></i></button>
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap sub-single-restore ms-2' id="default-color1-blue"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li>
                                         </ul> 
 
                                         <div>
-                                            <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 restore' id="default-color1">Restore default values</button>
+                                            <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 sub-restore' id="default-color1">{{ _('Restore default values') }}</button>
                                         </div>
 
                                     </div>
@@ -590,7 +590,7 @@
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <input type="range" class="form-range hidden pe-2 slider" min="0" max="255" value="0" id="color2-red-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="0" id="color2-red-value">
-                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-color2-red"><i class="bi bi-arrow-counterclockwise"></i></button>
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap sub-single-restore ms-2' id="default-color2-red"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li> 
 
@@ -599,7 +599,7 @@
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <input type="range" class="form-range hidden pe-2 slider" min="0" max="255" value="0" id="color2-green-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="0" id="color2-green-value">
-                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-color2-green"><i class="bi bi-arrow-counterclockwise"></i></button>
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap sub-single-restore ms-2' id="default-color2-green"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li>
 
@@ -608,14 +608,14 @@
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <input type="range" class="form-range hidden pe-2 slider" min="0" max="255" value="0" id="color2-blue-slider">
                                                     <input type="number" class="form-control form-control-sm hidden multi-value flex-fill" min="0" max="255" value="0" id="color2-blue-value">
-                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap single-restore ms-2' id="default-color2-blue"><i class="bi bi-arrow-counterclockwise"></i></button>
+                                                    <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap sub-single-restore ms-2' id="default-color2-blue"><i class="bi bi-arrow-counterclockwise"></i></button>
                                                 </div>
                                             </li>
 
                                         </ul>
                                         
                                         <div>
-                                            <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 restore' id="default-color2">Restore default values</button>
+                                            <button class='btn btn-light btn-sm hidden flex-shrink-0 flex-fill text-nowrap w-100 mt-2 sub-restore' id="default-color2">{{ _('Restore default values') }}</button>
                                         </div>
 
                                     </div>
