@@ -12,18 +12,20 @@ const sceneAvailableShaders = {
   // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 2, zawiera id elementow z html
   scene2: ['brightness', 'gamma', 'contrast', 'gauss', 'sobel', 'bloom', 'asciiArt']
 }
-const scenesData = fetchSceneValues();
-const defaultState = fetchSceneValues();
 
 updateSceneShaders(sceneAvailableShaders.scene2, sceneAvailableShaders.scene1);
 
-let activeScene           = null;
+let activeScene           = 'scene2';
 let renderScene1Requested = true;
 let renderScene2Requested = false;
 let sourceTexture         = null;
 let sourceTexture1        = null;
 let sourceTexture2        = null;
 let sourceTexture3        = null;
+
+const condition = (sessionStorage.getItem('scenesData') !== null);
+const scenesData = condition ? JSON.parse(sessionStorage.getItem('scenesData')) : fetchSceneValues();
+const defaultState = condition ? JSON.parse(sessionStorage.getItem('defaultState')) : fetchSceneValues();
 
 // ============================= PERFORMENCE STATS =============================
 
@@ -257,7 +259,9 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
           // =========================================================
 
           gl.drawArrays(gl.TRIANGLES,0,6); 
-          renderScene1Requested = false; 
+          renderScene1Requested = false;
+          updateSceneValues(scenesData, activeScene);
+          saveSessionData();
         }
       }
     },
@@ -323,6 +327,8 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
 
           gl.drawArrays(gl.TRIANGLES,0,6);
           renderScene2Requested = false;
+          updateSceneValues(scenesData, activeScene);
+          saveSessionData();
         }
       }
     }
@@ -330,6 +336,7 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
 
   activeScene = 'scene2';
   hideButton();
+  setSceneValues(scenesData, activeScene);
 
   function toggleScene() {
     if (activeScene === 'scene1') {
@@ -349,8 +356,15 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
 
   switch_scene.addEventListener('change', () => {
     toggleScene();
-    updateSceneValues(scenesData, activeScene);
     setSceneValues(scenesData, activeScene);
+    updateSceneValues(scenesData, activeScene);
+  });
+
+  const lang_change = document.getElementById('lang-change');
+
+  lang_change.addEventListener('click', () => {
+    updateSceneValues(scenesData, activeScene);
+    saveSessionData();
   });
 
   function render(time){
@@ -508,6 +522,11 @@ function inputValidation(input){
   if (val > max) val = max;
 
   input.value = val;
+}
+
+function saveSessionData(){
+  sessionStorage.setItem('scenesData', JSON.stringify(scenesData));
+  sessionStorage.setItem('defaultState', JSON.stringify(defaultState));
 }
 
 function fetchSceneValues(){
@@ -719,6 +738,8 @@ valueInputs.forEach((element, index) => {
 const buttonRenderScene1 = document.getElementById('render-scene1-button');
 buttonRenderScene1.addEventListener('click', () => {
   renderScene1Requested = true;
+  updateSceneValues(scenesData, activeScene);
+  saveSessionData();
 });
 
 const restoreButtons          = document.querySelectorAll('button.restore');
@@ -735,6 +756,8 @@ restoreButtons.forEach(button => {
     sliders.forEach(input => {
       input.value = defaultState[activeScene][parentID][input.id];
       input.dispatchEvent(new Event('input'));
+      updateSceneValues(scenesData, activeScene);
+      saveSessionData();
     });
   });
 });
@@ -749,6 +772,8 @@ subRestoreButtons.forEach(button => {
     sliders.forEach(input => {
       input.value = defaultState[activeScene][secondParentID][input.id];
       input.dispatchEvent(new Event('input'));
+      updateSceneValues(scenesData, activeScene);
+      saveSessionData();
     });
   });
 });
@@ -762,12 +787,14 @@ singleRestoreButtons.forEach(button => {
   button.addEventListener('click', () => {
     input.value = defaultState[activeScene][parentID][input.id];
     input.dispatchEvent(new Event('input'));
+    updateSceneValues(scenesData, activeScene);
+    saveSessionData();
   });
 });
 
 subSingleRestoreButtons.forEach(button => {
   const parent = button.closest('.mb-1');
-    const secondParent = parent.closest('.main');
+  const secondParent = parent.closest('.main');
   const secondParentID = secondParent.id;
   const container = button.closest('.d-flex');
   const input = container.querySelector('input.slider');
@@ -775,5 +802,7 @@ subSingleRestoreButtons.forEach(button => {
   button.addEventListener('click', () => {
     input.value = defaultState[activeScene][secondParentID][input.id];
     input.dispatchEvent(new Event('input'));
+    updateSceneValues(scenesData, activeScene);
+    saveSessionData();
   });
 });
