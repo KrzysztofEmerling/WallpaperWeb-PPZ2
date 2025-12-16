@@ -63,6 +63,7 @@ function resizeCanvas() {
     canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+    renderScene1Requested = true;
     renderScene2Requested = true;
 }
 
@@ -718,4 +719,61 @@ valueInputs.forEach((element, index) => {
 const buttonRenderScene1 = document.getElementById('render-scene1-button');
 buttonRenderScene1.addEventListener('click', () => {
   renderScene1Requested = true;
+});
+
+const restoreButtons          = document.querySelectorAll('button.restore');
+const subRestoreButtons       = document.querySelectorAll('button.sub-restore');
+const singleRestoreButtons    = document.querySelectorAll('button.single-restore');
+const subSingleRestoreButtons = document.querySelectorAll('button.sub-single-restore');
+
+restoreButtons.forEach(button => {
+  const parent = button.closest('.mb-1');
+  const parentID = parent.id;
+  const sliders = parent.querySelectorAll('input.slider');
+  
+  button.addEventListener('click', () => {
+    sliders.forEach(input => {
+      input.value = defaultState[activeScene][parentID][input.id];
+      input.dispatchEvent(new Event('input'));
+    });
+  });
+});
+
+subRestoreButtons.forEach(button => {
+  const parent = button.closest('.mb-1');
+  const secondParent = parent.closest('.main');
+  const secondParentID = secondParent.id;
+  const sliders = parent.querySelectorAll('input.slider');
+  
+  button.addEventListener('click', () => {
+    sliders.forEach(input => {
+      input.value = defaultState[activeScene][secondParentID][input.id];
+      input.dispatchEvent(new Event('input'));
+    });
+  });
+});
+
+singleRestoreButtons.forEach(button => {
+  const parent = button.closest('.mb-1');
+  const parentID = parent.id;
+  const container = button.closest('.d-flex');
+  const input = container.querySelector('input.slider');
+  
+  button.addEventListener('click', () => {
+    input.value = defaultState[activeScene][parentID][input.id];
+    input.dispatchEvent(new Event('input'));
+  });
+});
+
+subSingleRestoreButtons.forEach(button => {
+  const parent = button.closest('.mb-1');
+    const secondParent = parent.closest('.main');
+  const secondParentID = secondParent.id;
+  const container = button.closest('.d-flex');
+  const input = container.querySelector('input.slider');
+  
+  button.addEventListener('click', () => {
+    input.value = defaultState[activeScene][secondParentID][input.id];
+    input.dispatchEvent(new Event('input'));
+  });
 });
