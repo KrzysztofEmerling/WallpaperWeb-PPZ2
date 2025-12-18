@@ -21,184 +21,184 @@ msgstr ""
 
 #: templates/index.html:26
 msgid "Scenes"
-msgstr ""
+msgstr "Сцены"
 
 #: templates/index.html:34
 msgid "Toggle scene"
-msgstr ""
+msgstr "Переключить сцену"
 
 #: templates/index.html:36
 msgid "Render scene"
-msgstr ""
+msgstr "Рендеринг сцены"
 
 #: templates/index.html:45
 msgid "Settings"
-msgstr ""
+msgstr "Настройки"
 
 #: templates/index.html:52
 msgid "Change language"
-msgstr ""
+msgstr "Изменить язык"
 
 #: templates/index.html:72
 msgid "Restore settings"
-msgstr ""
+msgstr "Восстановить настройки"
 
 #: templates/index.html:73 templates/index.html:160 templates/index.html:212
 #: templates/index.html:258 templates/index.html:337 templates/index.html:411
 #: templates/index.html:462 templates/index.html:515 templates/index.html:572
 #: templates/index.html:618
 msgid "Restore default values"
-msgstr ""
+msgstr "Значения по умолчанию"
 
 #: templates/index.html:82
 msgid "Load/Save"
-msgstr ""
+msgstr "Загрузить/Сохранить"
 
 #: templates/index.html:92
 msgid "Import"
-msgstr ""
+msgstr "Импорт"
 
 #: templates/index.html:93
 msgid "Export"
-msgstr ""
+msgstr "Экспорт"
 
 #: templates/index.html:95
 msgid "Save as image"
-msgstr ""
+msgstr "Сохранить как изображение"
 
 #: templates/index.html:105
 msgid "Steps Count"
-msgstr ""
+msgstr "Количество шагов"
 
 #: templates/index.html:125
 msgid "Halo Color"
-msgstr ""
+msgstr "Цвет ореола"
 
 #: templates/index.html:131 templates/index.html:544 templates/index.html:589
 msgid "Red"
-msgstr ""
+msgstr "Красный"
 
 #: templates/index.html:140 templates/index.html:553 templates/index.html:598
 msgid "Green"
-msgstr ""
+msgstr "Зеленый"
 
 #: templates/index.html:149 templates/index.html:562 templates/index.html:607
 msgid "Blue"
-msgstr ""
+msgstr "Синий"
 
 #: templates/index.html:169
 msgid "Black Hole"
-msgstr ""
+msgstr "Чёрная дыра"
 
 #: templates/index.html:176
 msgid "Coordinates"
-msgstr ""
+msgstr "Координаты"
 
 #: templates/index.html:222
 msgid "Rotation"
-msgstr ""
+msgstr "Вращение"
 
 #: templates/index.html:229
 msgid "rotation-X"
-msgstr ""
+msgstr "Вращение-X"
 
 #: templates/index.html:238
 msgid "rotation-Y"
-msgstr ""
+msgstr "Вращение-Y"
 
 #: templates/index.html:247
 msgid "rotation-Z"
-msgstr ""
+msgstr "Вращение-Z"
 
 #: templates/index.html:268
 msgid "Radius"
-msgstr ""
+msgstr "Радиус"
 
 #: templates/index.html:292
 msgid "Brightness correction"
-msgstr ""
+msgstr "Коррекция яркости"
 
 #: templates/index.html:299
 msgid "Brightness"
-msgstr ""
+msgstr "Яркость"
 
 #: templates/index.html:308
 msgid "Shadows"
-msgstr ""
+msgstr "Тени"
 
 #: templates/index.html:317
 msgid "Midtones"
-msgstr ""
+msgstr "Средние тона"
 
 #: templates/index.html:326
 msgid "Highlights"
-msgstr ""
+msgstr "Светлые участки"
 
 #: templates/index.html:345
 msgid "Gamma"
-msgstr ""
+msgstr "Гамма"
 
 #: templates/index.html:365
 msgid "Contrast"
-msgstr ""
+msgstr "Контраст"
 
 #: templates/index.html:385
 msgid "Gaussian blur"
-msgstr ""
+msgstr "Размытие Гаусса"
 
 #: templates/index.html:392 templates/index.html:443
 msgid "Kernel Size"
-msgstr ""
+msgstr "Величина"
 
 #: templates/index.html:401
 msgid "Blur intensity"
-msgstr ""
+msgstr "Интенсивность размытия"
 
 #: templates/index.html:419
 msgid "Sobel"
-msgstr ""
+msgstr "Cобель"
 
 #: templates/index.html:427 templates/index.html:531
 msgid "Turn ON/OFF"
-msgstr ""
+msgstr "ВКЛ/ВЫКЛ"
 
 #: templates/index.html:436
 msgid "Bloom"
-msgstr ""
+msgstr "Блум"
 
 #: templates/index.html:452
 msgid "Intensity"
-msgstr ""
+msgstr "Интенсивность"
 
 #: templates/index.html:470
 msgid "Sky Generator"
-msgstr ""
+msgstr "Небесный генератор"
 
 #: templates/index.html:477
 msgid "Seed"
-msgstr ""
+msgstr "Зерно"
 
 #: templates/index.html:486
 msgid "Size"
-msgstr ""
+msgstr "Размер"
 
 #: templates/index.html:495
 msgid "Minimal Distance"
-msgstr ""
+msgstr "Минимальная дистанция"
 
 #: templates/index.html:504
 msgid "K"
-msgstr ""
+msgstr "К"
 
 #: templates/index.html:523
 msgid "ASCII Art"
-msgstr ""
+msgstr "ASCII Art"
 
 #: templates/index.html:538
 msgid "Gradient Color 1"
-msgstr ""
+msgstr "Цвет градиента 1"
 
 #: templates/index.html:582
 msgid "Gradient Color 2"
-msgstr ""
+msgstr "Цвет градиента 2"
 
