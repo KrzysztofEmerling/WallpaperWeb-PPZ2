@@ -111,11 +111,14 @@ async function init() {
   const vertexShaderSource        = await loadShaderSource('vertex.shader');
   const fragmentShaderSource      = await loadShaderSource('fragment.shader');
   const fragmentAsciiShaderSource = await loadShaderSource('fragment_ascii.shader');
+  const fragmentFXAASource = await loadShaderSource('fragment_fxaa.shader');
+
 
   return {
       vertexShaderSource,
       fragmentShaderSource,
-      fragmentAsciiShaderSource
+      fragmentAsciiShaderSource,
+      fragmentFXAASource
   };
 }
 
@@ -137,19 +140,60 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
     return texture;
 }
 
+function createRenderTarget(gl, width, height) {
+  const fbo = gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+
+  const tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.texImage2D(
+    gl.TEXTURE_2D,
+    0,
+    gl.RGBA,
+    width,
+    height,
+    0,
+    gl.RGBA,
+    gl.UNSIGNED_BYTE,
+    null
+  );
+
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+  gl.framebufferTexture2D(
+    gl.FRAMEBUFFER,
+    gl.COLOR_ATTACHMENT0,
+    gl.TEXTURE_2D,
+    tex,
+    0
+  );
+
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+  return { fbo, tex };
+}
+
+
 (async () => {
   const {vertexShaderSource,
          fragmentShaderSource,
-         fragmentAsciiShaderSource} = await init();
+         fragmentAsciiShaderSource,
+         fragmentFXAASource} = await init();
 
   // Kompilacja shaderów
   const vertexShader        = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
   const fragmentShader      = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
   const fragmentAsciiShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentAsciiShaderSource);
+  const fragmentFXAAShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentFXAASource);
 
   // Tworzenie programów
   const program       = createProgram(gl, vertexShader, fragmentShader);
   const programAscii  = createProgram(gl, vertexShader, fragmentAsciiShader);
+  const programFXAA = createProgram(gl, vertexShader, fragmentFXAAShader);
+
   gl.useProgram(program);
 
   // Ustawianie buforu współrzędnych prostokąta obejmującego cały canvas
@@ -187,6 +231,11 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
   const lineAtlas = createAtlas("-/\\|");
   sourceTexture2 = createTextureFromImage(gl, programAscii, lineAtlas.image, 2, "u_LineAtlas");
 
+  gl.useProgram(programFXAA)
+  const uFXAATextureLocation  = gl.getUniformLocation(programFXAA, "u_Texture");
+  const uFXAATexelSizeLocation = gl.getUniformLocation(programFXAA, "u_TexelSize");
+
+
   // ========================== Podpinanie uniformów ===========================
   const uResolutionLocation       = gl.getUniformLocation(program, "u_Resolution");
   const uStepSizeLocation         = gl.getUniformLocation(program, "u_StepSize");
@@ -217,6 +266,9 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
         updateStats();
         if(renderScene1Requested)
         {
+          let sceneTarget = createRenderTarget(gl, canvas.width, canvas.height);
+          gl.bindFramebuffer(gl.FRAMEBUFFER, sceneTarget.fbo);
+
           gl.useProgram(this.program);
           gl.viewport(0,0,canvas.width,canvas.height);
           gl.clearColor(0,0,0,1);
@@ -257,8 +309,28 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
           sourceTexture3 = createTextureFromImage(gl, program, skyTexture, 3, "u_SkyTexture");
 
           // =========================================================
-
           gl.drawArrays(gl.TRIANGLES,0,6); 
+
+
+          //FXAA:
+          gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+          gl.useProgram(programFXAA);
+          gl.viewport(0, 0, canvas.width, canvas.height);
+
+          gl.activeTexture(gl.TEXTURE0);
+          gl.bindTexture(gl.TEXTURE_2D, sceneTarget.tex);
+
+          gl.uniform1i(uFXAATextureLocation, 0);
+          gl.uniform2f(
+            uFXAATexelSizeLocation,
+            1.0 / canvas.width,
+            1.0 / canvas.height
+          );
+
+          gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+
+
           renderScene1Requested = false;
           updateSceneValues(scenesData, activeScene);
           saveSessionData();
