@@ -94,13 +94,13 @@ function resizeCanvas() {
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
-/** 
- * Funkcja do tworzenia i kompilacji shaderów. 
- * @param {object} gl 
- * @param {object} type 
- * @param {string} source 
- * @returns 
- */ 
+/**
+ * Tworzy i kompiluje shader WebGL.
+ * @param {WebGL2RenderingContext} gl - Aktywny kontekst WebGL2.
+ * @param {number} type - Typ shadera (`gl.VERTEX_SHADER` lub `gl.FRAGMENT_SHADER`).
+ * @param {string} source - Kod źródłowy shadera w języku GLSL.
+ * @returns {WebGLShader|null} - Skompilowany shader lub `null` w przypadku błędu kompilacji.
+ */
 function createShader(gl, type, source) {
   const shader = gl.createShader(type);
   gl.shaderSource(shader, source);
@@ -113,13 +113,13 @@ function createShader(gl, type, source) {
   return shader;
 }
 
-/** 
- * Funkcja do tworzenia programu. 
- * @param {object} gl 
- * @param {object} vertexShader 
- * @param {object} fragmentShader 
- * @returns 
- */ 
+/**
+ * Tworzy i linkuje program WebGL z shaderów wierzchołków i fragmentów.
+ * @param {WebGL2RenderingContext} gl - Aktywny kontekst WebGL2.
+ * @param {WebGLShader} vertexShader - Skompilowany shader wierzchołków.
+ * @param {WebGLShader} fragmentShader - Skompilowany shader fragmentów.
+ * @returns {WebGLProgram|null} - Zlinkowany program WebGL lub `null` w przypadku błędu linkowania.
+ */
 function createProgram(gl, vertexShader, fragmentShader) {
   const program = gl.createProgram();
   gl.attachShader(program, vertexShader);
@@ -133,9 +133,10 @@ function createProgram(gl, vertexShader, fragmentShader) {
 }
 
 /**
- * Funkcja asynchroniczna do ładowania shaderów z osobnych plików. 
- * @param {string} name 
- * @returns 
+ * Asynchronicznie ładuje kod źródłowy shadera z pliku.
+ * @param {string} name - Nazwa pliku shadera znajdującego się w katalogu `/static/shaders/`.
+ * @returns {Promise<string>} - Kod źródłowy shadera w formacie tekstowym.
+ * @throws {Error} - Gdy plik shadera nie może zostać załadowany.
  */
 async function loadShaderSource(name) {
   const response = await fetch(`/static/shaders/${name}`);
@@ -145,9 +146,14 @@ async function loadShaderSource(name) {
   return await response.text();
 }
 
-/** 
- * Funkcja asynchroniczna do ładowania shaderów do programu. 
- * @returns
+/**
+ * Asynchronicznie ładuje wszystkie shadery wykorzystywane w aplikacji.
+ * @returns {Promise<{
+ *   vertexShaderSource: string,
+ *   fragmentShaderSource: string,
+ *   fragmentAsciiShaderSource: string,
+ *   fragmentFXAASource: string
+ * }>} - Obiekt zawierający kody źródłowe wszystkich shaderów.
  */
 async function init() {
   const vertexShaderSource        = await loadShaderSource('vertex.shader');
@@ -166,12 +172,12 @@ async function init() {
 
 /**
  * Funkcja tworząca teksturę 2D z wczytanego obrazu.
- * @param {object} gl - wskaźnik na kontekst gl.
- * @param {object} program - wskaźnik na program.
- * @param {object} image - plik obrazu.
- * @param {int} textureSlot - wskaźnik na slot w który ładujemy teksturę.
+ * @param {WebGL2RenderingContext} gl - wskaźnik na kontekst gl.
+ * @param {WebGLProgram} program - wskaźnik na program.
+ * @param {TexImageSource} image - plik obrazu.
+ * @param {number} textureSlot - wskaźnik na slot w który ładujemy teksturę.
  * @param {string} uniformName - nazwa uniformu pod który podpinamy teksturę.
- * @returns obiekt tekstury
+ * @returns {WebGLTexture} - obiekt tekstury
  */
 function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
     const texture = gl.createTexture();
@@ -192,11 +198,11 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
 }
 
 /**
- * 
- * @param {object} gl - wskaźnik na kontekst gl.
- * @param {float} width - szerokość okna.
- * @param {float} height - wysokosć okna.
- * @returns 
+ * Tworzy bufor ramki (Framebuffer) z teksturą jako celem renderowania.
+ * @param {WebGL2RenderingContext} gl - Aktywny kontekst WebGL2.
+ * @param {number} width - Szerokość tekstury render targetu w pikselach.
+ * @param {number} height - Wysokość tekstury render targetu w pikselach.
+ * @returns {{fbo: WebGLFramebuffer, tex: WebGLTexture}} - Obiekt zawierający framebuffer oraz powiązaną z nim teksturę.
  */
 function createRenderTarget(gl, width, height) {
   const fbo = gl.createFramebuffer();
@@ -243,20 +249,20 @@ function createRenderTarget(gl, width, height) {
          fragmentFXAASource} = await init();
 
   // Kompilacja shaderów.
-  /** Stała przechowująca skompilowany shader VERTEX. */
+  /** Stała przechowująca wskaźnik na skompilowany shader VERTEX. */
   const vertexShader        = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
 
-  /** Stała przechowująca skompilowany shader FRAGMENT dla sceny 1. */
+  /** Stała przechowująca wskaźnik na skompilowany shader FRAGMENT dla sceny 1. */
   const fragmentShader      = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
 
-  /** Stała przechowująca skompilowany shader FRAGMENT dla sceny 2. */
+  /** Stała przechowująca wskaźnik na skompilowany shader FRAGMENT dla sceny 2. */
   const fragmentAsciiShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentAsciiShaderSource);
   const fragmentFXAAShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentFXAASource);
 
-  /** Stała przechowująca stworzony program dla sceny 1. */
+  /** Stała przechowująca wskaźnik na stworzony program dla sceny 1. */
   const program       = createProgram(gl, vertexShader, fragmentShader);
 
-  /** Stała przechowująca stworzony program dla sceny 2. */
+  /** Stała przechowująca wskaźnik na stworzony program dla sceny 2. */
   const programAscii  = createProgram(gl, vertexShader, fragmentAsciiShader);
   const programFXAA = createProgram(gl, vertexShader, fragmentFXAAShader);
 
