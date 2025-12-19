@@ -4,8 +4,13 @@ import { createImage } from "./scripts/generator.js";
 
 // =================================== WebGL ===================================
 
+/** Stała przechowująca obiekt canvasu. */
 const canvas = document.getElementById('glcanvas');
+
+/** Stała przechowująca kontekst webgl2. */
 const gl = canvas.getContext("webgl2");
+
+/** Stała przechowująca liste shaderów dla danej sceny. */
 const sceneAvailableShaders = {
   // lista suwakow, ktore maja byc wyswietlane tylko dla sceny 1, zawiera id elementow z html
   scene1: ['steps', 'blackhole', 'rgb', 'sky-generator'],
@@ -15,21 +20,36 @@ const sceneAvailableShaders = {
 
 updateSceneShaders(sceneAvailableShaders.scene2, sceneAvailableShaders.scene1);
 
-let activeScene           = 'scene2';
+/** Zmienna przechowująca informacje o aktualnie wyświetlanej scenie. */
+let activeScene           = null;
+
+/** Flaga do obsługi renderowania sceny 1 na żądanie. */
 let renderScene1Requested = true;
+
+/** Flaga do obsługi renderowania sceny 2 na żądanie. */
 let renderScene2Requested = false;
+
+/** Tymczasowy pojemnik na załadowaną teksturę. */
 let sourceTexture         = null;
 let sourceTexture1        = null;
 let sourceTexture2        = null;
 let sourceTexture3        = null;
 
+/** Flaga sprawdzająca czy w danych sesji jest zapisany stan aplikacji. */
 const condition = (sessionStorage.getItem('scenesData') !== null);
+
+/** Stała pomocnicza przechowująca stan aplikacji. */
 const scenesData = condition ? JSON.parse(sessionStorage.getItem('scenesData')) : fetchSceneValues();
+
+/** Stała pomocnicza przechowująca domyślny stan aplikacji. */
 const defaultState = condition ? JSON.parse(sessionStorage.getItem('defaultState')) : fetchSceneValues();
 
 // ============================= PERFORMENCE STATS =============================
 
+/** Stała przechowująca wskaźnik na licznik FPS. */
 const fpsCounter = document.getElementById('fps');
+
+/** Stała przechowująca wskaźnik na licznik Frametime */
 const frametimeCounter = document.getElementById('frametime');
 
 let lastFrametime = performance.now();
@@ -39,6 +59,7 @@ let fpsFrames = 0;
 let fps = 0;
 let frametime = 0;
 
+/** Funkcja wyliczająca FPS i Frametime na podstawie różnicy wydajności w poprzedniej i aktualnej klatce. */
 function updateStats(){
   const now = performance.now();
 
@@ -61,6 +82,7 @@ if (!gl) {
     alert('Unable to initialize WebGL. Your browser may not support it.');
 }
 
+/** Funkcja obsługująca automatyczne dostosowywanie rozmiaru canvasu do aktualnego rozmiaru okna przegladarki. */
 function resizeCanvas() {
     canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -72,7 +94,13 @@ function resizeCanvas() {
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
-// Funkcja do tworzenia i kompilacji shaderów
+/** 
+ * Funkcja do tworzenia i kompilacji shaderów. 
+ * @param {object} gl 
+ * @param {object} type 
+ * @param {string} source 
+ * @returns 
+ */ 
 function createShader(gl, type, source) {
   const shader = gl.createShader(type);
   gl.shaderSource(shader, source);
@@ -85,7 +113,13 @@ function createShader(gl, type, source) {
   return shader;
 }
 
-// Funkcja do tworzenia programu
+/** 
+ * Funkcja do tworzenia programu. 
+ * @param {object} gl 
+ * @param {object} vertexShader 
+ * @param {object} fragmentShader 
+ * @returns 
+ */ 
 function createProgram(gl, vertexShader, fragmentShader) {
   const program = gl.createProgram();
   gl.attachShader(program, vertexShader);
@@ -98,7 +132,11 @@ function createProgram(gl, vertexShader, fragmentShader) {
   return program;
 }
 
-//ładowanie shaderów
+/**
+ * Funkcja asynchroniczna do ładowania shaderów z osobnych plików. 
+ * @param {string} name 
+ * @returns 
+ */
 async function loadShaderSource(name) {
   const response = await fetch(`/static/shaders/${name}`);
   if (!response.ok) {
@@ -107,11 +145,15 @@ async function loadShaderSource(name) {
   return await response.text();
 }
 
+/** 
+ * Funkcja asynchroniczna do ładowania shaderów do programu. 
+ * @returns
+ */
 async function init() {
   const vertexShaderSource        = await loadShaderSource('vertex.shader');
   const fragmentShaderSource      = await loadShaderSource('fragment.shader');
   const fragmentAsciiShaderSource = await loadShaderSource('fragment_ascii.shader');
-  const fragmentFXAASource = await loadShaderSource('fragment_fxaa.shader');
+  const fragmentFXAASource        = await loadShaderSource('fragment_fxaa.shader');
 
 
   return {
@@ -122,6 +164,15 @@ async function init() {
   };
 }
 
+/**
+ * Funkcja tworząca teksturę 2D z wczytanego obrazu.
+ * @param {object} gl - wskaźnik na kontekst gl.
+ * @param {object} program - wskaźnik na program.
+ * @param {object} image - plik obrazu.
+ * @param {int} textureSlot - wskaźnik na slot w który ładujemy teksturę.
+ * @param {string} uniformName - nazwa uniformu pod który podpinamy teksturę.
+ * @returns obiekt tekstury
+ */
 function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
     const texture = gl.createTexture();
 
@@ -140,6 +191,13 @@ function createTextureFromImage(gl, program, image, textureSlot, uniformName) {
     return texture;
 }
 
+/**
+ * 
+ * @param {object} gl - wskaźnik na kontekst gl.
+ * @param {float} width - szerokość okna.
+ * @param {float} height - wysokosć okna.
+ * @returns 
+ */
 function createRenderTarget(gl, width, height) {
   const fbo = gl.createFramebuffer();
   gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
@@ -178,27 +236,38 @@ function createRenderTarget(gl, width, height) {
 
 
 (async () => {
+  /** Stała przechowująca wskaźniki na wczytane shadery. */
   const {vertexShaderSource,
          fragmentShaderSource,
          fragmentAsciiShaderSource,
          fragmentFXAASource} = await init();
 
-  // Kompilacja shaderów
+  // Kompilacja shaderów.
+  /** Stała przechowująca skompilowany shader VERTEX. */
   const vertexShader        = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+
+  /** Stała przechowująca skompilowany shader FRAGMENT dla sceny 1. */
   const fragmentShader      = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+
+  /** Stała przechowująca skompilowany shader FRAGMENT dla sceny 2. */
   const fragmentAsciiShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentAsciiShaderSource);
   const fragmentFXAAShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentFXAASource);
 
-  // Tworzenie programów
+  /** Stała przechowująca stworzony program dla sceny 1. */
   const program       = createProgram(gl, vertexShader, fragmentShader);
+
+  /** Stała przechowująca stworzony program dla sceny 2. */
   const programAscii  = createProgram(gl, vertexShader, fragmentAsciiShader);
   const programFXAA = createProgram(gl, vertexShader, fragmentFXAAShader);
 
   gl.useProgram(program);
 
   // Ustawianie buforu współrzędnych prostokąta obejmującego cały canvas
+  /** Stała przechowująca bufor współrzędnych prostokąta. */
   const positionBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+  /** Stała przechowująca pozycje buffera. */
   const positions = [
     -1, -1,
      1, -1,
@@ -209,7 +278,7 @@ function createRenderTarget(gl, width, height) {
   ];
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
-  // Połączenie atrybutu pozycji z buforem
+  /** Stała przechowująca połączenie atrybutu pozycji z buforem. */ 
   const positionLocation = gl.getAttribLocation(program, 'a_position');
   gl.enableVertexAttribArray(positionLocation);
   gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
@@ -259,6 +328,7 @@ function createRenderTarget(gl, width, height) {
   const uAsciiFlagLocation        = gl.getUniformLocation(programAscii, "u_AsciiFlag");
   // ===========================================================================
 
+  /** Stała przechowująca konfiguracje scen. */
   const scenes = {
     scene1: {
       program: program,
@@ -410,6 +480,7 @@ function createRenderTarget(gl, width, height) {
   hideButton();
   setSceneValues(scenesData, activeScene);
 
+  /** Funkcja obsługująca zmiane sceny. */
   function toggleScene() {
     if (activeScene === 'scene1') {
         renderScene2Requested = true;
@@ -450,12 +521,23 @@ function createRenderTarget(gl, width, height) {
 
 // ================================ WEKTORY INT ===============================
 
+/** 
+ * Funkcja tworząca jednowymiarowy wektor INT.
+ * @param {int} x_ - wartość x 
+ * @returns wektor jednowymiarowy w formie listy [x]
+ */
 function vector1i(x_){
   const x = parseInt(document.getElementById(x_).value);
 
   return [x];
 }
 
+/** 
+ * Funkcja tworząca dwuwymiarowy wektor INT.
+ * @param {int} x_ - wartość x 
+ * @param {int} y_ - wartość y
+ * @returns wektor dwuwymiarowy w formie listy [x, y]
+ */
 function vector2i(x_, y_){
   const x = parseInt(document.getElementById(x_).value);
   const y = parseInt(document.getElementById(y_).value);
@@ -463,6 +545,13 @@ function vector2i(x_, y_){
   return [x, y];
 }
 
+/** 
+ * Funkcja tworząca trójwymiarowy wektor INT.
+ * @param {int} x_ - wartość x 
+ * @param {int} y_ - wartość y
+ * @param {int} z_ - wartość z
+ * @returns wektor trójwymiarowy w formie listy [x, y, z]
+ */
 function vector3i(x_, y_, z_){
   const x = parseInt(document.getElementById(x_).value);
   const y = parseInt(document.getElementById(y_).value);
@@ -471,6 +560,14 @@ function vector3i(x_, y_, z_){
   return [x, y, z];
 }
 
+/** 
+ * Funkcja tworząca czterowymiarowy wektor INT.
+ * @param {int} x_ - wartość x 
+ * @param {int} y_ - wartość y
+ * @param {int} z_ - wartość z
+ * @param {int} t_ - wartość t
+ * @returns wektor czterowymiarowy w formie listy [x, y, z, t]
+ */
 function vector4i(x_, y_, z_, t_){
   const x = parseInt(document.getElementById(x_).value);
   const y = parseInt(document.getElementById(y_).value);
@@ -482,12 +579,23 @@ function vector4i(x_, y_, z_, t_){
 
 // =============================== WEKTORY FLOAT ==============================
 
+/** 
+ * Funkcja tworząca jednowymiarowy wektor FLOAT.
+ * @param {float} x_ - wartość x 
+ * @returns wektor jednowymiarowy w formie listy [x]
+ */
 function vector1f(x_){
   const x = parseFloat(document.getElementById(x_).value);
 
   return [x];
 }
 
+/** 
+ * Funkcja tworząca dwuwymiarowy wektor FLOAT.
+ * @param {float} x_ - wartość x 
+ * @param {float} y_ - wartość y
+ * @returns wektor dwuwymiarowy w formie listy [x, y]
+ */
 function vector2f(x_, y_){
   const x = parseFloat(document.getElementById(x_).value);
   const y = parseFloat(document.getElementById(y_).value);
@@ -495,6 +603,13 @@ function vector2f(x_, y_){
   return [x, y];
 }
 
+/** 
+ * Funkcja tworząca trójwymiarowy wektor FLOAT.
+ * @param {float} x_ - wartość x 
+ * @param {float} y_ - wartość y
+ * @param {float} z_ - wartość z
+ * @returns wektor trójwymiarowy w formie listy [x, y, z]
+ */
 function vector3f(x_, y_, z_){
   const x = parseFloat(document.getElementById(x_).value);
   const y = parseFloat(document.getElementById(y_).value);
@@ -503,6 +618,14 @@ function vector3f(x_, y_, z_){
   return [x, y, z];
 }
 
+/** 
+ * Funkcja tworząca czterowymiarowy wektor FLOAT.
+ * @param {float} x_ - wartość x 
+ * @param {float} y_ - wartość y
+ * @param {float} z_ - wartość z
+ * @param {float} t_ - wartość t
+ * @returns wektor czterowymiarowy w formie listy [x, y, z, t]
+ */
 function vector4f(x_, y_, z_, t_){
   const x = parseFloat(document.getElementById(x_).value);
   const y = parseFloat(document.getElementById(y_).value);
@@ -515,10 +638,22 @@ function vector4f(x_, y_, z_, t_){
 // ========================= Funkcje obsługi shaderów =========================
 // (Pobieranie wartości z HTMLa)
 
+/**
+ * Funkcja normalizująca każdą wartość w liście do zakresu [0, 1].
+ * @param {list} array - tablica
+ * @returns znormalizowana tablica.
+ */
 function normalize(array){
   return array.map(value => value / 255);
 }
 
+/**
+ * Funkcja obsługująca pobieranie wartości do generatora gwiazd.
+ * @param {int} seed - ziarno
+ * @param {int} minDistance - minimalna odleglość pomiędzy dwoma punktami
+ * @param {int} K - ilość prób podjęta do znalezienia pasującego punktu
+ * @returns wypłaszczony wektor zawierający współrzędne gwiazd [x1, y1, x2, y2, ..., xn, yn].
+ */
 function starsGenerator(seed, minDistance, K){
   const [seed_value, minDistance_value, K_value] = vector3i(seed, minDistance, K);
 
@@ -527,10 +662,22 @@ function starsGenerator(seed, minDistance, K){
   return result;
 }
 
+/**
+ * Funkcja pomocnicza do wyznaczania wartości jednowymiarowej funkcji Gaussa.
+ * @param {int} x - wartość
+ * @param {float} sigma - rozmycie sigma
+ * @returns wartość funkcji Gaussa.
+ */
 function gaussian(x, sigma){
   return Math.exp(-(x * x) / (2 * sigma * sigma));
 }
 
+/**
+ * Funkcja obsługująca pobieranie wartości do shadera Gaussian Blur.
+ * @param {int} kernelSize_handler - wielkość kernela
+ * @param {float} intensity_handler - intensywność efektu
+ * @returns gotowe wartości dla shadera.
+ */
 function gaussianBlur(kernelSize_handler, intensity_handler){
   const kernelSize = vector1i(kernelSize_handler)
   const sigma = vector1f(intensity_handler);
@@ -543,25 +690,35 @@ function gaussianBlur(kernelSize_handler, intensity_handler){
   return [weights, kernelSize];
 }
 
+/**
+ * Funkcja obsługująca pobieranie wartości do shadera Bloom.
+ * @param {float} bloomIntensity_handler - intensywność efektu
+ * @param {int} bloomKernelSize_handler - wielkość kernela
+ * @returns gotowe wartości dla shadera.
+ */
 function bloom(bloomIntensity_handler, bloomKernelSize_handler){
   const intensity = vector1f(bloomIntensity_handler);
   const kernelSize = vector1i(bloomKernelSize_handler);
   return [intensity, kernelSize];
 }
 
+/**
+ * Sprawdza czy przycisk jest wciśnięty.
+ * @param {object} element - obiekt DOM
+ * @returns boolean true/false.
+ */
 function isChecked(element){
   const status = document.getElementById(element);
   return status.checked ? 1.0 : 0.0;
 }
 
-function perlin(widthSliderId, heightSliderId, timeSliderId) {
-  const [width, height, time] = vector3f(widthSliderId, heightSliderId, timeSliderId);
-
-  return [width, height, time];
-}
-
 // ============================== Reszta Skryptów ==============================
 
+/**
+ * Funkcja pilnująca by wprowadzana wartość nie wchodziła poza zakres <min, max>.
+ * @param {object} slider - - input type Range
+ * @param {object} input - input type Number
+ */
 function sliderValue(slider, input){
   const min = slider.min;
   const max = slider.max;
@@ -574,16 +731,29 @@ function sliderValue(slider, input){
   slider.value = val;
 }
 
+/**
+ * Funkcja ustawiająca wartość na minimum jeżeli zostanie całkowicie usunięta z text area.
+ * @param {object} input - input type Number
+ */
 function restoreDefault(input){
   if (input.value === ''){
     input.value = input.min;
   }
 }
 
+/**
+ * Funkcja ustawiający input.value takie samo jak w sliderze.
+ * @param {object} slider - input type Range
+ * @param {object} input - input type Number
+ */
 function inputValue(slider, input){
   input.value = slider.value;
 }
 
+/**
+ * Funkcja pilnująca żeby w inpucie nie można było przekroczyć wartości minimalnej i maksymalnej.
+ * @param {object} input - input type Number
+ */
 function inputValidation(input){
   const min = input.min;
   const max = input.max;
@@ -596,11 +766,16 @@ function inputValidation(input){
   input.value = val;
 }
 
+/** Funkcja zapisująca dane sesji. */
 function saveSessionData(){
   sessionStorage.setItem('scenesData', JSON.stringify(scenesData));
   sessionStorage.setItem('defaultState', JSON.stringify(defaultState));
 }
 
+/**
+ * Funkcja pobierająca aktualne wartości w danej scenie.
+ * @returns array
+ */
 function fetchSceneValues(){
   const sliders = document.querySelectorAll('input.slider');
   const values = { scene1: {}, scene2: {} };
@@ -626,6 +801,11 @@ function fetchSceneValues(){
   return values;
 }
 
+/**
+ * Funkcja aktualizująca wartości w tablicy dla podanej sceny.
+ * @param {dict} array - tablica z wartościami
+ * @param {string} scene - wskaźnik na aktywną scene
+ */
 function updateSceneValues(array, scene){
   const sliders = document.querySelectorAll('input.slider');
 
@@ -646,6 +826,11 @@ function updateSceneValues(array, scene){
   });
 }
 
+/**
+ * Funkcja ustawiająca wartości dla podanej sceny.
+ * @param {dict} array - tablica z wartościami
+ * @param {string} scene - wskaźnik na aktywną scene
+ */
 function setSceneValues(array, scene){
   const sliders = document.querySelectorAll('input.slider');
 
@@ -668,6 +853,11 @@ function setSceneValues(array, scene){
   });
 }
 
+/**
+ * Ukrywa shadery niedostępne w wybranej scenie.
+ * @param {list} scene1 - tablica zawierająca liste shaderów dostępnych na scenie 1
+ * @param {list} scene2 - tablica zawierająca liste shaderów dostępnych na scenie 2
+ */
 function updateSceneShaders(scene1, scene2){
   scene2.forEach(id => {
     document.getElementById(id).classList.add('remove');
@@ -678,10 +868,12 @@ function updateSceneShaders(scene1, scene2){
   });
 }
 
+/** Ukrywa przycisk do renderowania sceny 1 */
 function hideButton(){
   document.getElementById('render-scene1-button').classList.toggle('disable');
 }
 
+/** Tworzy plik JSON i zapisuje do niego ustawienia aplikacji. */
 function createJSON(){
   const sliders = document.querySelectorAll('input.slider');
   const data = {};
@@ -703,6 +895,10 @@ function createJSON(){
   URL.revokeObjectURL(url);
 }
 
+/**
+ * Funkcja wczytuje plik JSON i odczytuje zapisane w nim ustawienia aplikacji.
+ * @returns sparsowany plik JSON.
+ */
 function loadJSON() {
   const fileInput = document.getElementById('formFile');
   const sliders = document.querySelectorAll('input.slider');
@@ -752,10 +948,10 @@ function loadJSON() {
   reader.readAsText(file);
 }
 
-
 // ==================== Podpiecia funkcji pod elementy HTML ====================
 const import_btn = document.getElementById('import-btn'); //dostajemy się do elementu
 
+/** Obsługa przycisku importu ustawień. */
 import_btn.addEventListener('click', () => {
   loadJSON();
 });
@@ -763,12 +959,14 @@ import_btn.addEventListener('click', () => {
 // =========================== Pobieranie pliku JSON ===========================
 const export_btn = document.getElementById('export-btn');
 
+/** Obsługa przycisku eksportu ustawień. */
 export_btn.addEventListener('click', () => {
   createJSON();
 });
 
 const restore_btn = document.getElementById('default-btn');
 
+/** Obsługa przycisku przywracającego ustawienia domyślne dla całej aplikacji. */
 restore_btn.addEventListener('click', () => {
   setSceneValues(defaultState, activeScene);
 });
@@ -777,12 +975,14 @@ const sliderInputs  = document.querySelectorAll('input.slider');
 const valueInputs   = document.querySelectorAll('input.single-value, input.multi-value');
 const switchInputs  = document.querySelectorAll('input.switch');
 
+/** Obsługa przycisków ON/OFF. */
 switchInputs.forEach((element) => {
   element.addEventListener('click', () => {
     renderScene2Requested = true;
   })
 });
 
+/** Obsługa inputów typu Range. */
 sliderInputs.forEach((element, index) => {
   const sliderID = element;
   const valueID = valueInputs[index];
@@ -794,6 +994,7 @@ sliderInputs.forEach((element, index) => {
   });
 });
 
+/** Obsługa inputów typu Number. */
 valueInputs.forEach((element, index) => {
   const sliderID = sliderInputs[index]; 
   const valueID = element;
@@ -808,6 +1009,7 @@ valueInputs.forEach((element, index) => {
 });
 
 const buttonRenderScene1 = document.getElementById('render-scene1-button');
+/** Obsługa zmiany sceny */
 buttonRenderScene1.addEventListener('click', () => {
   renderScene1Requested = true;
   updateSceneValues(scenesData, activeScene);
@@ -819,6 +1021,7 @@ const subRestoreButtons       = document.querySelectorAll('button.sub-restore');
 const singleRestoreButtons    = document.querySelectorAll('button.single-restore');
 const subSingleRestoreButtons = document.querySelectorAll('button.sub-single-restore');
 
+/** Obsługa logiki przywracania wartości domyślnych dla przycisków z klasy restore */
 restoreButtons.forEach(button => {
   const parent = button.closest('.mb-1');
   const parentID = parent.id;
@@ -834,6 +1037,7 @@ restoreButtons.forEach(button => {
   });
 });
 
+/** Obsługa logiki przywracania wartości domyślnych dla przycisków z klasy sub-restore */
 subRestoreButtons.forEach(button => {
   const parent = button.closest('.mb-1');
   const secondParent = parent.closest('.main');
@@ -850,6 +1054,7 @@ subRestoreButtons.forEach(button => {
   });
 });
 
+/** Obsługa logiki przywracania wartości domyślnych dla przycisków z klasy single-restore */
 singleRestoreButtons.forEach(button => {
   const parent = button.closest('.mb-1');
   const parentID = parent.id;
@@ -864,6 +1069,7 @@ singleRestoreButtons.forEach(button => {
   });
 });
 
+/** Obsługa logiki przywracania wartości domyślnych dla przycisków z klasy sub-single-restore */
 subSingleRestoreButtons.forEach(button => {
   const parent = button.closest('.mb-1');
   const secondParent = parent.closest('.main');
