@@ -516,7 +516,8 @@ function createRenderTarget(gl, width, height) {
     saveSessionData();
   });
 
-  function render(time){
+  /* Funkcja pominięta w dokumentacji. */
+  function render(time) {
     scenes[activeScene].render(time);
     requestAnimationFrame(render);
   }
