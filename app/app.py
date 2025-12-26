@@ -12,6 +12,12 @@ babel = Babel(app)
 app.register_blueprint(routes)
 
 def get_locale():
+    """
+    Pobiera preferowany język użytkownika zapisany w sesji.
+
+    Returns:
+        str: Kod języka (np. 'en' dla angielskiego), domyślnie 'en'.
+    """
     lang = f.request.view_args.get('lang', None)
     if lang in app.config['BABEL_SUPPORTED_LOCALES']:
         return lang
