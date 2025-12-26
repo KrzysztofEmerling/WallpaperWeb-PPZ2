@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>JavaScript Functions &#8212; WallpaperWeb 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_js.css" />
+    <script src="../_static/documentation_options.js?v=8d563738"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Python Functions" href="../python/python-functions.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="javascript-functions">
+<h1>JavaScript Functions<a class="headerlink" href="#javascript-functions" title="Link to this heading">¶</a></h1>
+<dl class="js function">
+<dt class="sig sig-object js" id="updateStats">
+<span class="sig-name descname"><span class="n"><span class="pre">updateStats</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#updateStats" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja wyliczająca FPS i Frametime na podstawie różnicy wydajności w poprzedniej i aktualnej klatce.</p>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="resizeCanvas">
+<span class="sig-name descname"><span class="n"><span class="pre">resizeCanvas</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#resizeCanvas" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja obsługująca automatyczne dostosowywanie rozmiaru canvasu do aktualnego rozmiaru okna przegladarki.</p>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="createShader">
+<span class="sig-name descname"><span class="n"><span class="pre">createShader</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#createShader" title="Link to this definition">¶</a></dt>
+<dd><p>Tworzy i kompiluje shader WebGL.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gl</strong> (<strong>WebGL2RenderingContext</strong>) – Aktywny kontekst WebGL2.</p></li>
+<li><p><strong>type</strong> (<strong>number</strong>) – Typ shadera (<cite>gl.VERTEX_SHADER</cite> lub <cite>gl.FRAGMENT_SHADER</cite>).</p></li>
+<li><p><strong>source</strong> (<strong>string</strong>) – Kod źródłowy shadera w języku GLSL.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>WebGLShader|null</strong> – - Skompilowany shader lub <cite>null</cite> w przypadku błędu kompilacji.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="createProgram">
+<span class="sig-name descname"><span class="n"><span class="pre">createProgram</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertexShader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fragmentShader</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#createProgram" title="Link to this definition">¶</a></dt>
+<dd><p>Tworzy i linkuje program WebGL z shaderów wierzchołków i fragmentów.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gl</strong> (<strong>WebGL2RenderingContext</strong>) – Aktywny kontekst WebGL2.</p></li>
+<li><p><strong>vertexShader</strong> (<strong>WebGLShader</strong>) – Skompilowany shader wierzchołków.</p></li>
+<li><p><strong>fragmentShader</strong> (<strong>WebGLShader</strong>) – Skompilowany shader fragmentów.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>WebGLProgram|null</strong> – - Zlinkowany program WebGL lub <cite>null</cite> w przypadku błędu linkowania.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="loadShaderSource">
+<span class="sig-name descname"><span class="n"><span class="pre">loadShaderSource</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#loadShaderSource" title="Link to this definition">¶</a></dt>
+<dd><p>Asynchronicznie ładuje kod źródłowy shadera z pliku.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<strong>string</strong>) – Nazwa pliku shadera znajdującego się w katalogu <cite>/static/shaders/</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Error</strong> – <ul class="simple">
+<li><p>Gdy plik shadera nie może zostać załadowany.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Promise.&lt;string&gt;</strong> – - Kod źródłowy shadera w formacie tekstowym.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="init">
+<span class="sig-name descname"><span class="n"><span class="pre">init</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#init" title="Link to this definition">¶</a></dt>
+<dd><p>Asynchronicznie ładuje wszystkie shadery wykorzystywane w aplikacji.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Promise.&lt;{vertexShaderSource: string, fragmentShaderSource: string, fragmentAsciiShaderSource: string, fragmentFXAASource: string}&gt;</strong> – - Obiekt zawierający kody źródłowe wszystkich shaderów.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="createTextureFromImage">
+<span class="sig-name descname"><span class="n"><span class="pre">createTextureFromImage</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">program</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">textureSlot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uniformName</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#createTextureFromImage" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja tworząca teksturę 2D z wczytanego obrazu.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gl</strong> (<strong>WebGL2RenderingContext</strong>) – wskaźnik na kontekst gl.</p></li>
+<li><p><strong>program</strong> (<strong>WebGLProgram</strong>) – wskaźnik na program.</p></li>
+<li><p><strong>image</strong> (<strong>TexImageSource</strong>) – plik obrazu.</p></li>
+<li><p><strong>textureSlot</strong> (<strong>number</strong>) – wskaźnik na slot w który ładujemy teksturę.</p></li>
+<li><p><strong>uniformName</strong> (<strong>string</strong>) – nazwa uniformu pod który podpinamy teksturę.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>WebGLTexture</strong> – - obiekt tekstury</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="createRenderTarget">
+<span class="sig-name descname"><span class="n"><span class="pre">createRenderTarget</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#createRenderTarget" title="Link to this definition">¶</a></dt>
+<dd><p>Tworzy bufor ramki (Framebuffer) z teksturą jako celem renderowania.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gl</strong> (<strong>WebGL2RenderingContext</strong>) – Aktywny kontekst WebGL2.</p></li>
+<li><p><strong>width</strong> (<strong>number</strong>) – Szerokość tekstury render targetu w pikselach.</p></li>
+<li><p><strong>height</strong> (<strong>number</strong>) – Wysokość tekstury render targetu w pikselach.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Object</strong> – - Obiekt zawierający framebuffer oraz powiązaną z nim teksturę.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="toggleScene">
+<span class="sig-name descname"><span class="n"><span class="pre">toggleScene</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#toggleScene" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja obsługująca zmiane sceny.</p>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="vector1i">
+<span class="sig-name descname"><span class="n"><span class="pre">vector1i</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#vector1i" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja tworząca jednowymiarowy wektor INT.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_</strong> (<strong>int</strong>) – wartość x</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>wektor jednowymiarowy w formie listy [x]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="vector2i">
+<span class="sig-name descname"><span class="n"><span class="pre">vector2i</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#vector2i" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja tworząca dwuwymiarowy wektor INT.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_</strong> (<strong>int</strong>) – wartość x</p></li>
+<li><p><strong>y_</strong> (<strong>int</strong>) – wartość y</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>wektor dwuwymiarowy w formie listy [x, y]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="vector3i">
+<span class="sig-name descname"><span class="n"><span class="pre">vector3i</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#vector3i" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja tworząca trójwymiarowy wektor INT.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_</strong> (<strong>int</strong>) – wartość x</p></li>
+<li><p><strong>y_</strong> (<strong>int</strong>) – wartość y</p></li>
+<li><p><strong>z_</strong> (<strong>int</strong>) – wartość z</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>wektor trójwymiarowy w formie listy [x, y, z]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="vector4i">
+<span class="sig-name descname"><span class="n"><span class="pre">vector4i</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#vector4i" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja tworząca czterowymiarowy wektor INT.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_</strong> (<strong>int</strong>) – wartość x</p></li>
+<li><p><strong>y_</strong> (<strong>int</strong>) – wartość y</p></li>
+<li><p><strong>z_</strong> (<strong>int</strong>) – wartość z</p></li>
+<li><p><strong>t_</strong> (<strong>int</strong>) – wartość t</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>wektor czterowymiarowy w formie listy [x, y, z, t]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="vector1f">
+<span class="sig-name descname"><span class="n"><span class="pre">vector1f</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#vector1f" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja tworząca jednowymiarowy wektor FLOAT.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_</strong> (<strong>float</strong>) – wartość x</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>wektor jednowymiarowy w formie listy [x]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="vector2f">
+<span class="sig-name descname"><span class="n"><span class="pre">vector2f</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#vector2f" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja tworząca dwuwymiarowy wektor FLOAT.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_</strong> (<strong>float</strong>) – wartość x</p></li>
+<li><p><strong>y_</strong> (<strong>float</strong>) – wartość y</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>wektor dwuwymiarowy w formie listy [x, y]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="vector3f">
+<span class="sig-name descname"><span class="n"><span class="pre">vector3f</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#vector3f" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja tworząca trójwymiarowy wektor FLOAT.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_</strong> (<strong>float</strong>) – wartość x</p></li>
+<li><p><strong>y_</strong> (<strong>float</strong>) – wartość y</p></li>
+<li><p><strong>z_</strong> (<strong>float</strong>) – wartość z</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>wektor trójwymiarowy w formie listy [x, y, z]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="vector4f">
+<span class="sig-name descname"><span class="n"><span class="pre">vector4f</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#vector4f" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja tworząca czterowymiarowy wektor FLOAT.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_</strong> (<strong>float</strong>) – wartość x</p></li>
+<li><p><strong>y_</strong> (<strong>float</strong>) – wartość y</p></li>
+<li><p><strong>z_</strong> (<strong>float</strong>) – wartość z</p></li>
+<li><p><strong>t_</strong> (<strong>float</strong>) – wartość t</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>wektor czterowymiarowy w formie listy [x, y, z, t]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="normalize">
+<span class="sig-name descname"><span class="n"><span class="pre">normalize</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#normalize" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja normalizująca każdą wartość w liście do zakresu [0, 1].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>array</strong> (<strong>list</strong>) – tablica</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>znormalizowana tablica.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="starsGenerator">
+<span class="sig-name descname"><span class="n"><span class="pre">starsGenerator</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minDistance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#starsGenerator" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja obsługująca pobieranie wartości do generatora gwiazd.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seed</strong> (<strong>int</strong>) – ziarno</p></li>
+<li><p><strong>minDistance</strong> (<strong>int</strong>) – minimalna odleglość pomiędzy dwoma punktami</p></li>
+<li><p><strong>K</strong> (<strong>int</strong>) – ilość prób podjęta do znalezienia pasującego punktu</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>wypłaszczony wektor zawierający współrzędne gwiazd [x1, y1, x2, y2, …, xn, yn].</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="gaussian">
+<span class="sig-name descname"><span class="n"><span class="pre">gaussian</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gaussian" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja pomocnicza do wyznaczania wartości jednowymiarowej funkcji Gaussa.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<strong>int</strong>) – wartość</p></li>
+<li><p><strong>sigma</strong> (<strong>float</strong>) – rozmycie sigma</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>wartość funkcji Gaussa.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="gaussianBlur">
+<span class="sig-name descname"><span class="n"><span class="pre">gaussianBlur</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernelSize_handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intensity_handler</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gaussianBlur" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja obsługująca pobieranie wartości do shadera Gaussian Blur.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kernelSize_handler</strong> (<strong>int</strong>) – wielkość kernela</p></li>
+<li><p><strong>intensity_handler</strong> (<strong>float</strong>) – intensywność efektu</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>gotowe wartości dla shadera.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="bloom">
+<span class="sig-name descname"><span class="n"><span class="pre">bloom</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bloomIntensity_handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bloomKernelSize_handler</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bloom" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja obsługująca pobieranie wartości do shadera Bloom.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bloomIntensity_handler</strong> (<strong>float</strong>) – intensywność efektu</p></li>
+<li><p><strong>bloomKernelSize_handler</strong> (<strong>int</strong>) – wielkość kernela</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>gotowe wartości dla shadera.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="isChecked">
+<span class="sig-name descname"><span class="n"><span class="pre">isChecked</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#isChecked" title="Link to this definition">¶</a></dt>
+<dd><p>Sprawdza czy przycisk jest wciśnięty.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>element</strong> (<strong>object</strong>) – obiekt DOM</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>boolean true/false.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="sliderValue">
+<span class="sig-name descname"><span class="n"><span class="pre">sliderValue</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slider</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sliderValue" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja pilnująca by wprowadzana wartość nie wchodziła poza zakres &lt;min, max&gt;.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>slider</strong> (<strong>object</strong>) – <ul>
+<li><p>input type Range</p></li>
+</ul>
+</p></li>
+<li><p><strong>input</strong> (<strong>object</strong>) – input type Number</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="restoreDefault">
+<span class="sig-name descname"><span class="n"><span class="pre">restoreDefault</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#restoreDefault" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja ustawiająca wartość na minimum jeżeli zostanie całkowicie usunięta z text area.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<strong>object</strong>) – input type Number</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="inputValue">
+<span class="sig-name descname"><span class="n"><span class="pre">inputValue</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slider</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inputValue" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja ustawiający input.value takie samo jak w sliderze.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>slider</strong> (<strong>object</strong>) – input type Range</p></li>
+<li><p><strong>input</strong> (<strong>object</strong>) – input type Number</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="inputValidation">
+<span class="sig-name descname"><span class="n"><span class="pre">inputValidation</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inputValidation" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja pilnująca żeby w inpucie nie można było przekroczyć wartości minimalnej i maksymalnej.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<strong>object</strong>) – input type Number</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="saveSessionData">
+<span class="sig-name descname"><span class="n"><span class="pre">saveSessionData</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#saveSessionData" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja zapisująca dane sesji.</p>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="fetchSceneValues">
+<span class="sig-name descname"><span class="n"><span class="pre">fetchSceneValues</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fetchSceneValues" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja pobierająca aktualne wartości w danej scenie.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="updateSceneValues">
+<span class="sig-name descname"><span class="n"><span class="pre">updateSceneValues</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scene</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#updateSceneValues" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja aktualizująca wartości w tablicy dla podanej sceny.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>array</strong> (<strong>dict</strong>) – tablica z wartościami</p></li>
+<li><p><strong>scene</strong> (<strong>string</strong>) – wskaźnik na aktywną scene</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="setSceneValues">
+<span class="sig-name descname"><span class="n"><span class="pre">setSceneValues</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scene</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#setSceneValues" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja ustawiająca wartości dla podanej sceny.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>array</strong> (<strong>dict</strong>) – tablica z wartościami</p></li>
+<li><p><strong>scene</strong> (<strong>string</strong>) – wskaźnik na aktywną scene</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="updateSceneShaders">
+<span class="sig-name descname"><span class="n"><span class="pre">updateSceneShaders</span></span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scene1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scene2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#updateSceneShaders" title="Link to this definition">¶</a></dt>
+<dd><p>Ukrywa shadery niedostępne w wybranej scenie.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scene1</strong> (<strong>list</strong>) – tablica zawierająca liste shaderów dostępnych na scenie 1</p></li>
+<li><p><strong>scene2</strong> (<strong>list</strong>) – tablica zawierająca liste shaderów dostępnych na scenie 2</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="hideButton">
+<span class="sig-name descname"><span class="n"><span class="pre">hideButton</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hideButton" title="Link to this definition">¶</a></dt>
+<dd><p>Ukrywa przycisk do renderowania sceny 1</p>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="createJSON">
+<span class="sig-name descname"><span class="n"><span class="pre">createJSON</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#createJSON" title="Link to this definition">¶</a></dt>
+<dd><p>Tworzy plik JSON i zapisuje do niego ustawienia aplikacji.</p>
+</dd></dl>
+
+<dl class="js function">
+<dt class="sig sig-object js" id="loadJSON">
+<span class="sig-name descname"><span class="n"><span class="pre">loadJSON</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#loadJSON" title="Link to this definition">¶</a></dt>
+<dd><p>Funkcja wczytuje plik JSON i odczytuje zapisane w nim ustawienia aplikacji.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>sparsowany plik JSON.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">WallpaperWeb</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../python/python-functions.html">Python Functions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">JavaScript Functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#updateStats"><code class="docutils literal notranslate"><span class="pre">updateStats()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#resizeCanvas"><code class="docutils literal notranslate"><span class="pre">resizeCanvas()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#createShader"><code class="docutils literal notranslate"><span class="pre">createShader()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#createProgram"><code class="docutils literal notranslate"><span class="pre">createProgram()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#loadShaderSource"><code class="docutils literal notranslate"><span class="pre">loadShaderSource()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#init"><code class="docutils literal notranslate"><span class="pre">init()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#createTextureFromImage"><code class="docutils literal notranslate"><span class="pre">createTextureFromImage()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#createRenderTarget"><code class="docutils literal notranslate"><span class="pre">createRenderTarget()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#toggleScene"><code class="docutils literal notranslate"><span class="pre">toggleScene()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vector1i"><code class="docutils literal notranslate"><span class="pre">vector1i()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vector2i"><code class="docutils literal notranslate"><span class="pre">vector2i()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vector3i"><code class="docutils literal notranslate"><span class="pre">vector3i()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vector4i"><code class="docutils literal notranslate"><span class="pre">vector4i()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vector1f"><code class="docutils literal notranslate"><span class="pre">vector1f()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vector2f"><code class="docutils literal notranslate"><span class="pre">vector2f()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vector3f"><code class="docutils literal notranslate"><span class="pre">vector3f()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vector4f"><code class="docutils literal notranslate"><span class="pre">vector4f()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#normalize"><code class="docutils literal notranslate"><span class="pre">normalize()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#starsGenerator"><code class="docutils literal notranslate"><span class="pre">starsGenerator()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gaussian"><code class="docutils literal notranslate"><span class="pre">gaussian()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gaussianBlur"><code class="docutils literal notranslate"><span class="pre">gaussianBlur()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bloom"><code class="docutils literal notranslate"><span class="pre">bloom()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#isChecked"><code class="docutils literal notranslate"><span class="pre">isChecked()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sliderValue"><code class="docutils literal notranslate"><span class="pre">sliderValue()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#restoreDefault"><code class="docutils literal notranslate"><span class="pre">restoreDefault()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#inputValue"><code class="docutils literal notranslate"><span class="pre">inputValue()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#inputValidation"><code class="docutils literal notranslate"><span class="pre">inputValidation()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#saveSessionData"><code class="docutils literal notranslate"><span class="pre">saveSessionData()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fetchSceneValues"><code class="docutils literal notranslate"><span class="pre">fetchSceneValues()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#updateSceneValues"><code class="docutils literal notranslate"><span class="pre">updateSceneValues()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setSceneValues"><code class="docutils literal notranslate"><span class="pre">setSceneValues()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#updateSceneShaders"><code class="docutils literal notranslate"><span class="pre">updateSceneShaders()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hideButton"><code class="docutils literal notranslate"><span class="pre">hideButton()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#createJSON"><code class="docutils literal notranslate"><span class="pre">createJSON()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#loadJSON"><code class="docutils literal notranslate"><span class="pre">loadJSON()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../python/python-functions.html" title="previous chapter">Python Functions</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Agnieszka Głowacka, Anastasiya Dorosh, Martyna Trębacz, Anna Waleczek, Oliwia Skucha, Jakub Rogoża, Krzysztof Emerling, Szymon Duda.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/js/js-functions.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
