@@ -28,6 +28,16 @@ extensions = [
     'sphinx_js',
 ]
 
+latex_documents = [
+    ('index',
+     'wallpaperweb.tex',
+     'Dokumentacja projektu WallpaperWeb',
+     r'Agnieszka Głowacka \\ Anastasiya Dorosh \\ Martyna Trębacz \\ Anna Waleczek \\ Oliwia Skucha \\ Jakub Rogoża \\ Krzysztof Emerling \\ Szymon Duda',
+     'manual'),
+]
+
+
+latex_engine = 'pdflatex'
 js_source_path = '../../app/static'
 
 templates_path = ['_templates']

@@ -1,0 +1,82 @@
+\begin{sphinxtheindex}
+\let\bigletter\sphinxstyleindexlettergroup
+\let\spxpagem \sphinxstyleindexpagemain
+\let\spxentry \sphinxstyleindexentry
+\let\spxextra \sphinxstyleindexextra
+
+  \bigletter B
+  \item \spxentry{bloom()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{8}
+
+  \indexspace
+  \bigletter C
+  \item \spxentry{createJSON()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{10}
+  \item \spxentry{createProgram()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{5}
+  \item \spxentry{createRenderTarget()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{6}
+  \item \spxentry{createShader()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{5}
+  \item \spxentry{createTextureFromImage()}\spxextra{built\sphinxhyphen{}in function}, 
+		\hyperpage{6}
+
+  \indexspace
+  \bigletter F
+  \item \spxentry{fetchSceneValues()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{9}
+
+  \indexspace
+  \bigletter G
+  \item \spxentry{gaussian()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{8}
+  \item \spxentry{gaussianBlur()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{8}
+  \item \spxentry{get\_locale()}\spxextra{in module app}, \hyperpage{3}
+
+  \indexspace
+  \bigletter H
+  \item \spxentry{hideButton()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{10}
+
+  \indexspace
+  \bigletter I
+  \item \spxentry{init()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{5}
+  \item \spxentry{inputValidation()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{9}
+  \item \spxentry{inputValue()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{9}
+  \item \spxentry{isChecked()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{9}
+
+  \indexspace
+  \bigletter L
+  \item \spxentry{loadJSON()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{10}
+  \item \spxentry{loadShaderSource()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{5}
+
+  \indexspace
+  \bigletter N
+  \item \spxentry{normalize()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{8}
+
+  \indexspace
+  \bigletter R
+  \item \spxentry{resizeCanvas()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{5}
+  \item \spxentry{restoreDefault()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{9}
+
+  \indexspace
+  \bigletter S
+  \item \spxentry{saveSessionData()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{9}
+  \item \spxentry{setSceneValues()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{10}
+  \item \spxentry{sliderValue()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{9}
+  \item \spxentry{starsGenerator()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{8}
+
+  \indexspace
+  \bigletter T
+  \item \spxentry{toggleScene()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{6}
+
+  \indexspace
+  \bigletter U
+  \item \spxentry{updateSceneShaders()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{10}
+  \item \spxentry{updateSceneValues()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{9}
+  \item \spxentry{updateStats()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{5}
+
+  \indexspace
+  \bigletter V
+  \item \spxentry{vector1f()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{7}
+  \item \spxentry{vector1i()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{6}
+  \item \spxentry{vector2f()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{7}
+  \item \spxentry{vector2i()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{6}
+  \item \spxentry{vector3f()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{7}
+  \item \spxentry{vector3i()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{6}
+  \item \spxentry{vector4f()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{7}
+  \item \spxentry{vector4i()}\spxextra{built\sphinxhyphen{}in function}, \hyperpage{7}
+
+\end{sphinxtheindex}
