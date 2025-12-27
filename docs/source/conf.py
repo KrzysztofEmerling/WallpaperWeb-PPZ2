@@ -33,9 +33,14 @@ latex_documents = [
      'wallpaperweb.tex',
      'Dokumentacja projektu WallpaperWeb',
      r'Agnieszka Głowacka \\ Anastasiya Dorosh \\ Martyna Trębacz \\ Anna Waleczek \\ Oliwia Skucha \\ Jakub Rogoża \\ Krzysztof Emerling \\ Szymon Duda',
-     'manual'),
+     'manual')
 ]
 
+latex_elements = {
+    'papersize': 'a4paper',
+    'pointsize': '10pt',
+    'classoptions': ',openany'
+}
 
 latex_engine = 'pdflatex'
 js_source_path = '../../app/static'

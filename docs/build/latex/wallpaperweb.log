@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2025/dev/Debian) (preloaded format=pdflatex 2025.12.27)  27 DEC 2025 17:22
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2025/dev/Debian) (preloaded format=pdflatex 2025.12.27)  27 DEC 2025 19:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -796,16 +796,16 @@ e
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
 * driver: pdftex
-* paper: letterpaper
+* paper: a4paper
 * layout: <same size as paper>
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
 * modes: twoside 
-* h-part:(L,W,R)=(72.26999pt, 469.75502pt, 72.26999pt)
-* v-part:(T,H,B)=(72.26999pt, 650.43001pt, 72.26999pt)
-* \paperwidth=614.295pt
-* \paperheight=794.96999pt
-* \textwidth=469.75502pt
-* \textheight=650.43001pt
+* h-part:(L,W,R)=(72.26999pt, 452.9679pt, 72.26999pt)
+* v-part:(T,H,B)=(72.26999pt, 700.50687pt, 72.26999pt)
+* \paperwidth=597.50787pt
+* \paperheight=845.04684pt
+* \textwidth=452.9679pt
+* \textheight=700.50687pt
 * \oddsidemargin=0.0pt
 * \evensidemargin=0.0pt
 * \topmargin=-37.0pt
@@ -853,12 +853,7 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texmf/fonts/enc/
-dvips/tex-gyre/q-ec.enc}]
-
-[2
-
-
-] (./wallpaperweb.toc)
+dvips/tex-gyre/q-ec.enc}] (./wallpaperweb.toc)
 \tf@toc=\write6
 \openout6 = `wallpaperweb.toc'.
 
@@ -866,9 +861,7 @@ dvips/tex-gyre/q-ec.enc}]
 
 [1
 
-]
 
-[2
 
 ]
 LaTeX Font Info:    Trying to load font information for T1+txtt on input line 8
@@ -877,9 +870,7 @@ LaTeX Font Info:    Trying to load font information for T1+txtt on input line 8
 File: t1txtt.fd 2000/12/15 v3.1
 )
 
-[1]
-
-[2
+[1
 
 ]
 Chapter 1.
@@ -887,39 +878,33 @@ LaTeX Font Info:    Font shape `T1/txtt/b/n' in size <10> not available
 (Font)              Font shape `T1/txtt/bx/n' tried instead on input line 105.
 
 
-[3]
-
-[4
+[2
 
 ]
 Chapter 2.
-
-Underfull \hbox (badness 5847) in paragraph at lines 147--150
-\T1/qtm/m/n/10 Funkcja ob-sªugu-j¡ca au-tomaty-czne dos-tosowywanie rozmi-aru c
-an-vasu do ak-tu-al-nego rozmi-aru okna
- []
-
 LaTeX Font Info:    Trying to load font information for TS1+qtm on input line 1
 67.
 (/usr/share/texmf/tex/latex/tex-gyre/ts1qtm.fd
 File: ts1qtm.fd 2009/09/25 v1.2 font definition file for TS1/qtm
 )
 
-[5{/usr/share/texmf/fonts/enc/dvips/tex-gyre/q-ts1.enc}]
+[3
+
+{/usr/share/texmf/fonts/enc/dvips/tex-gyre/q-ts1.enc}]
+
+[4]
+
+[5]
 
 [6]
 
-[7]
+[7] (./wallpaperweb.ind
 
 [8]
 
-[9] (./wallpaperweb.ind
-
-[10]
 
 
-
-[11
+[9
 
 
 ]) (./wallpaperweb.aux)
@@ -931,23 +916,23 @@ Package rerunfilecheck Info: File `wallpaperweb.out' has not changed.
 (rerunfilecheck)             Checksum: 826285DB0F960C79C4B304B79B55C2EF;342.
  ) 
 Here is how much of TeX's memory you used:
- 17068 strings out of 475178
- 290644 string characters out of 5766538
- 701582 words of memory out of 5000000
- 39649 multiletter control sequences out of 15000+600000
+ 17067 strings out of 475178
+ 290649 string characters out of 5766538
+ 703617 words of memory out of 5000000
+ 39651 multiletter control sequences out of 15000+600000
  602267 words of font info for 67 fonts, out of 8000000 for 9000
  15 hyphenation exceptions out of 8191
- 72i,11n,82p,1201b,726s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 72i,11n,82p,1201b,738s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf/fonts/type1/public/tex-gyre/qhvb.pfb></usr/share/texmf/font
 s/type1/public/tex-gyre/qhvbi.pfb></usr/share/texmf/fonts/type1/public/tex-gyre
 /qhvr.pfb></usr/share/texmf/fonts/type1/public/tex-gyre/qtmb.pfb></usr/share/te
 xmf/fonts/type1/public/tex-gyre/qtmr.pfb></usr/share/texmf/fonts/type1/public/t
 ex-gyre/qtmri.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/txfonts/t1x
 btt.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/txfonts/t1xtt.pfb>
-Output written on wallpaperweb.pdf (15 pages, 179478 bytes).
+Output written on wallpaperweb.pdf (11 pages, 178189 bytes).
 PDF statistics:
- 216 PDF objects out of 1000 (max. 8388607)
- 183 compressed objects within 2 object streams
- 55 named destinations out of 1000 (max. 500000)
+ 199 PDF objects out of 1000 (max. 8388607)
+ 170 compressed objects within 2 object streams
+ 52 named destinations out of 1000 (max. 500000)
  45 words of extra memory for PDF output out of 10000 (max. 10000000)
 
